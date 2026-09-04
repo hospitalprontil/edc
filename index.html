@@ -1,36 +1,24 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="dark">
+<html lang="pt-BR" class="h-full bg-slate-950 text-slate-100">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Organizador de EDC - Everyday Carry Manager</title>
+  <title>EDC Manager Pro - Controle de Equipamentos</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          },
           colors: {
-            tactical: {
-              50: '#f4f7f6',
-              100: '#e3eae7',
-              200: '#c7d6d1',
-              300: '#9fb8b0',
-              400: '#73958c',
-              500: '#567970',
-              600: '#436159',
-              700: '#384f49',
-              800: '#2f423d',
-              900: '#2a3835',
-              950: '#16211f',
+            brand: {
+              50: '#f0fdf4',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
             }
           }
         }
@@ -38,529 +26,455 @@
     }
   </script>
   <style>
-    /* Custom scrollbar and drag styling */
+    /* Custom scrollbars */
     ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #18181b;
+      background: #090d16;
     }
     ::-webkit-scrollbar-thumb {
-      background: #3f3f46;
-      border-radius: 4px;
+      background: #1e293b;
+      border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #52525b;
-    }
-    .dragging {
-      opacity: 0.4;
-      transform: scale(0.98);
+      background: #334155;
     }
     .drag-over {
-      border-color: #10b981 !important;
-      background-color: rgba(16, 185, 129, 0.05) !important;
+      outline: 2px dashed #22c55e !important;
+      outline-offset: -2px;
+      background-color: rgba(34, 197, 94, 0.05) !important;
     }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 font-sans min-h-screen flex flex-col selection:bg-emerald-500 selection:text-zinc-950">
+<body class="min-h-full flex flex-col font-sans selection:bg-brand-500 selection:text-white pb-12">
 
-  <!-- Top Navigation Header -->
-  <header class="bg-zinc-900 border-b border-zinc-800 sticky top-0 z-30 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16 gap-4">
-        
-        <!-- Logo / Title -->
-        <div class="flex items-center gap-3 shrink-0">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-zinc-950 font-bold shadow-lg shadow-emerald-500/20">
-            <i class="fa-solid fa-shield-halved text-lg"></i>
-          </div>
-          <div>
-            <h1 class="text-lg font-bold tracking-wide text-zinc-100 flex items-center gap-2">
-              EDC Manager Pro
-              <span class="text-xs font-mono font-normal bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full">v2.0</span>
-            </h1>
-            <p class="text-xs text-zinc-400 hidden sm:block">Organize, realoque e monitore seus equipamentos de rotina</p>
-          </div>
+  <!-- TOP HEADER -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-brand-500/10 text-brand-500 border border-brand-500/20 rounded-xl">
+          <i data-lucide="shield-check" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            EDC Manager Pro
+            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700">v2.5</span>
+          </h1>
+          <p class="text-xs text-slate-400 hidden sm:block">Inventário Tático, Localização e Prontidão</p>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Cloud Storage Status Badge -->
+        <div id="cloud-status-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300 transition-all">
+          <span id="cloud-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="cloud-status-text">Conectando...</span>
         </div>
 
-        <!-- Global Search & Filters -->
-        <div class="flex-1 max-w-md mx-2">
-          <div class="relative">
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 text-sm"></i>
-            <input id="searchInput" type="text" placeholder="Buscar canivete, lanterna, cabo, remédio..." 
-              class="w-full bg-zinc-800/80 border border-zinc-700 text-zinc-200 text-sm rounded-lg pl-10 pr-8 py-2 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all placeholder:text-zinc-500">
-            <button id="clearSearchBtn" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-200 text-xs">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </div>
+        <button id="btn-checklist-mode" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors flex items-center gap-1.5" title="Modo Conferência / Saída de Campo">
+          <i data-lucide="check-square" class="w-4 h-4 text-brand-500"></i>
+          <span class="hidden md:inline">Modo</span> Conferência
+        </button>
+
+        <button id="btn-add-item" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors flex items-center gap-1.5 shadow-lg shadow-brand-900/30">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          <span>Novo Item</span>
+        </button>
+
+        <button id="btn-add-location" class="p-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Criar Novo Compartimento / Local">
+          <i data-lucide="folder-plus" class="w-4 h-4"></i>
+        </button>
+
+        <button id="btn-open-tools" class="p-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Exportar, Importar ou Copiar Lista">
+          <i data-lucide="share-2" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- FILTER & SEARCH BAR -->
+    <div class="border-t border-slate-800/80 bg-slate-900/50 py-2.5">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-3">
+        <!-- Search Input -->
+        <div class="relative w-full md:w-80">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+          <input type="text" id="search-input" placeholder="Buscar por item, notas ou local..." class="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-9 pr-8 py-1.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+          <button id="clear-search-btn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+          </button>
         </div>
 
-        <!-- Top Right Actions -->
-        <div class="flex items-center gap-2">
-          <button id="toggleChecklistBtn" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-emerald-400"></i>
-            <span class="hidden md:inline">Modo Checklist</span>
-          </button>
-          
-          <button id="exportMenuBtn" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 p-2 sm:px-3 sm:py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
-            <i class="fa-solid fa-arrow-up-from-bracket text-zinc-400"></i>
-            <span class="hidden md:inline">Exportar / Menu</span>
-          </button>
-
-          <button id="addItemBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-lg shadow-emerald-600/20">
-            <i class="fa-solid fa-plus"></i>
-            <span class="hidden sm:inline">Novo Item</span>
-          </button>
+        <!-- Category Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none" id="category-pills">
+          <!-- Dynamic Pills Injected via JS -->
         </div>
 
+        <!-- Stats summary -->
+        <div class="hidden lg:flex items-center gap-3 text-xs text-slate-400 font-mono">
+          <span id="stat-total-items">Itens: 0</span>
+          <span class="text-slate-700">|</span>
+          <span id="stat-total-locations">Locais: 0</span>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Main App Layout -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-
-    <!-- KPI / Statistics Banner -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-4 flex items-center gap-4 shadow-sm">
-        <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-lg text-xl">
-          <i class="fa-solid fa-boxes-stacked"></i>
+  <!-- MAIN VIEW CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 flex-1 w-full">
+    <!-- Notice Banner for Checklist Mode -->
+    <div id="checklist-banner" class="hidden mb-6 p-4 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-between gap-4 animate-fade-in">
+      <div class="flex items-center gap-3">
+        <div class="p-2 rounded-lg bg-brand-500/20 text-brand-400">
+          <i data-lucide="clipboard-check" class="w-5 h-5"></i>
         </div>
         <div>
-          <div id="statTotalItems" class="text-2xl font-bold font-mono text-zinc-100">0</div>
-          <div class="text-xs text-zinc-400">Total de Itens</div>
+          <p class="text-sm font-semibold text-brand-300">Modo de Conferência Ativado</p>
+          <p class="text-xs text-slate-400">Clique nas caixas de seleção de cada item para confirmar sua presença antes de partir.</p>
         </div>
       </div>
-
-      <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-4 flex items-center gap-4 shadow-sm">
-        <div class="p-3 bg-blue-500/10 text-blue-400 rounded-lg text-xl">
-          <i class="fa-solid fa-layer-group"></i>
-        </div>
-        <div>
-          <div id="statTotalLocations" class="text-2xl font-bold font-mono text-zinc-100">0</div>
-          <div class="text-xs text-zinc-400">Locais / Recipientes</div>
-        </div>
-      </div>
-
-      <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-4 flex items-center gap-4 shadow-sm">
-        <div class="p-3 bg-amber-500/10 text-amber-400 rounded-lg text-xl">
-          <i class="fa-solid fa-triangle-exclamation"></i>
-        </div>
-        <div>
-          <div id="statNeedsRefill" class="text-2xl font-bold font-mono text-amber-400">0</div>
-          <div class="text-xs text-zinc-400">Precisam Reposição</div>
-        </div>
-      </div>
-
-      <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-4 flex items-center gap-4 shadow-sm">
-        <div class="p-3 bg-purple-500/10 text-purple-400 rounded-lg text-xl">
-          <i class="fa-solid fa-tags"></i>
-        </div>
-        <div>
-          <div id="statTopCategory" class="text-base font-bold text-zinc-100 truncate max-w-[100px] sm:max-w-[120px]">-</div>
-          <div class="text-xs text-zinc-400">Cat. Mais Frequente</div>
-        </div>
+      <div class="flex items-center gap-2">
+        <button id="btn-uncheck-all" class="px-2.5 py-1 text-xs rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Desmarcar Todos</button>
+        <button id="btn-exit-checklist" class="px-2.5 py-1 text-xs rounded-md bg-brand-600 hover:bg-brand-500 text-white">Concluir</button>
       </div>
     </div>
 
-    <!-- Filter Pills & View Control Bar -->
-    <div class="flex flex-wrap items-center justify-between gap-3 bg-zinc-900/60 p-3 rounded-xl border border-zinc-800">
-      
-      <!-- Category Filter Buttons -->
-      <div id="categoryFilterContainer" class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none w-full lg:w-auto">
-        <!-- Injected via JavaScript -->
+    <!-- Empty search result notice -->
+    <div id="empty-state" class="hidden text-center py-16">
+      <div class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500 mb-4">
+        <i data-lucide="inbox" class="w-8 h-8"></i>
       </div>
-
-      <!-- Action Buttons -->
-      <div class="flex items-center gap-2 ml-auto">
-        <button id="addLocationBtn" class="text-xs bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 px-3 py-2 rounded-lg transition flex items-center gap-1.5">
-          <i class="fa-solid fa-folder-plus text-emerald-400"></i>
-          <span>Novo Local</span>
-        </button>
-
-        <button id="resetDefaultBtn" title="Restaurar EDC padrão" class="text-xs bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-400 hover:text-zinc-200 p-2 rounded-lg transition">
-          <i class="fa-solid fa-rotate-left"></i>
-        </button>
-      </div>
-
+      <h3 class="text-base font-semibold text-slate-300">Nenhum equipamento localizado</h3>
+      <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Tente ajustar seus termos de busca ou mudar a categoria selecionada.</p>
+      <button onclick="resetFilters()" class="mt-4 px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-brand-400 rounded-lg border border-slate-700">Limpar Filtros</button>
     </div>
 
-    <!-- Active Search Filter Alert -->
-    <div id="activeFilterNotice" class="hidden bg-emerald-950/40 border border-emerald-800/50 text-emerald-300 px-4 py-2 rounded-lg text-xs flex items-center justify-between">
-      <span flex items-center gap-2>
-        <i class="fa-solid fa-filter mr-1"></i>
-        Exibindo resultados filtrados. <span id="activeFilterText" class="font-bold"></span>
-      </span>
-      <button id="clearFilterBtn" class="underline hover:text-emerald-100 font-medium">Limpar Filtros</button>
+    <!-- LOCATIONS GRID (KANBAN / CONTAINERS) -->
+    <div id="locations-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 items-start">
+      <!-- Injected Dynamically by JS -->
     </div>
-
-    <!-- Kanban Board Grid of EDC Locations -->
-    <div id="boardContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-start">
-      <!-- Container columns injected dynamically by JS -->
-    </div>
-
-    <!-- Checklist Mode View (Initially Hidden) -->
-    <div id="checklistView" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-zinc-800 pb-4">
-        <div>
-          <h2 class="text-xl font-bold text-zinc-100 flex items-center gap-2">
-            <i class="fa-solid fa-clipboard-check text-emerald-400"></i>
-            Conferência Rápida de EDC
-          </h2>
-          <p class="text-xs text-zinc-400 mt-1">Marque os itens à medida que verifica se estão no seu bolso, mochila ou carro.</p>
-        </div>
-        <div class="flex items-center gap-3">
-          <span id="checklistCounter" class="text-xs font-mono bg-zinc-800 px-3 py-1.5 rounded-lg border border-zinc-700 text-emerald-400 font-bold">0 / 0 OK</span>
-          <button id="uncheckAllBtn" class="text-xs bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg border border-zinc-700 transition">
-            Desmarcar Todos
-          </button>
-          <button id="closeChecklistBtn" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg transition font-medium">
-            Voltar ao Quadro
-          </button>
-        </div>
-      </div>
-
-      <div id="checklistGroupedContent" class="space-y-6">
-        <!-- Injected via JS -->
-      </div>
-    </div>
-
   </main>
 
-  <!-- MODAL: Add/Edit Item -->
-  <div id="itemModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl transition-all transform scale-100">
-      
-      <div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/80">
-        <h3 id="itemModalTitle" class="text-base font-bold text-zinc-100 flex items-center gap-2">
-          <i class="fa-solid fa-box text-emerald-400"></i>
-          Adicionar Novo Item
+  <!-- MODAL: ADD / EDIT ITEM -->
+  <div id="item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-scale-in">
+      <div class="flex items-center justify-between p-4 border-b border-slate-800">
+        <h3 id="item-modal-title" class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="package" class="w-4 h-4 text-brand-500"></i>
+          Adicionar Equipamento
         </h3>
-        <button id="closeItemModalBtn" class="text-zinc-400 hover:text-zinc-200 text-lg">
-          <i class="fa-solid fa-xmark"></i>
+        <button id="item-modal-close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-
-      <form id="itemForm" class="p-6 space-y-4">
-        <input type="hidden" id="itemId">
+      <form id="item-form" class="p-5 space-y-4">
+        <input type="hidden" id="item-id">
 
         <div>
-          <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Nome do Equipamento *</label>
-          <input type="text" id="itemName" required placeholder="Ex: Lanterna Olight, Canivete Victorinox..." 
-            class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Item *</label>
+          <input type="text" id="item-name" required placeholder="Ex: Canivete Victorinox, Lanterna USB..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Locais / Recipientes * (Selecione um ou mais)</label>
-            <div id="itemLocationsCheckboxes" class="bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 space-y-1.5 max-h-36 overflow-y-auto">
-              <!-- Dynamically populated with checkboxes -->
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Categoria *</label>
-            <select id="itemCategory" required class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500">
-              <option value="Ferramentas">🛠️ Ferramentas</option>
-              <option value="Iluminação">🔦 Iluminação</option>
-              <option value="Eletrônicos & Energia">🔌 Eletrônicos & Energia</option>
-              <option value="Saúde & 1ºs Socorros">🩹 Saúde & 1ºs Socorros</option>
-              <option value="Documentos & Dinheiro">📄 Documentos & Dinheiro</option>
-              <option value="Sobrevivência & Aventura">🏕️ Sobrevivência & Aventura</option>
-              <option value="Utilidades & Outros">🧩 Utilidades & Outros</option>
-            </select>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Locais Onde Fica Guardado *</label>
+          <p class="text-[11px] text-slate-500 mb-2">Marque um ou mais locais simultâneos onde este item é mantido:</p>
+          <div id="item-locations-container" class="grid grid-cols-2 gap-2 bg-slate-950 border border-slate-800 rounded-lg p-3 max-h-40 overflow-y-auto">
+            <!-- Injected dynamically: checkboxes for locations -->
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Quantidade / Unidades</label>
-            <input type="text" id="itemQty" placeholder="Ex: 1 un, 10-15m, 1 frasco" 
-              class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria *</label>
+            <select id="item-category" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+              <option value="Ferramentas">Ferramentas</option>
+              <option value="Iluminação">Iluminação</option>
+              <option value="Saúde & 1ºs Socorros">Saúde & 1ºs Socorros</option>
+              <option value="Eletrônicos & Cabos">Eletrônicos & Cabos</option>
+              <option value="Documentos & Valores">Documentos & Valores</option>
+              <option value="Sobrevivência & Fogo">Sobrevivência & Fogo</option>
+              <option value="Utilidades & Reparo">Utilidades & Reparo</option>
+              <option value="Outros">Outros</option>
+            </select>
           </div>
-
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Status do Item</label>
-            <select id="itemStatus" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500">
-              <option value="ok">🟢 OK (Pronto para uso)</option>
-              <option value="refill">🟡 Repor / Refilar / Recarregar</option>
-              <option value="missing">🔴 Ausente / Comprar</option>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Status de Prontidão</label>
+            <select id="item-status" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+              <option value="ok">🟢 Operacional / Pronto</option>
+              <option value="repor">🟡 Precisa Recarregar / Repor</option>
+              <option value="faltando">🔴 Faltando / Crítico</option>
             </select>
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Observações / Detalhes</label>
-          <textarea id="itemNotes" rows="2" placeholder="Especificações, validade, modelo, cor, observação emergencial..." 
-            class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Notas / Detalhes (Opcional)</label>
+          <input type="text" id="item-notes" placeholder="Ex: 100+ dB, pilhas extras, validade 12/2026..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
         </div>
 
-        <div class="pt-2 flex items-center justify-between border-t border-zinc-800">
-          <button type="button" id="deleteItemBtn" class="hidden text-rose-400 hover:text-rose-300 text-xs font-medium px-3 py-2 rounded-lg hover:bg-rose-950/30 transition">
-            <i class="fa-solid fa-trash mr-1"></i> Excluir Item
-          </button>
-          <div class="flex items-center gap-2 ml-auto">
-            <button type="button" id="cancelItemModalBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-sm transition">
-              Cancelar
-            </button>
-            <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition shadow-lg shadow-emerald-600/20">
-              Salvar Item
-            </button>
-          </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+          <button type="button" id="item-modal-cancel" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Equipamento</button>
         </div>
-
       </form>
-
     </div>
   </div>
 
-  <!-- MODAL: Add/Edit Location -->
-  <div id="locationModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-      
-      <div class="px-6 py-4 border-b border-zinc-800 flex items-center justify-between bg-zinc-900/80">
-        <h3 id="locationModalTitle" class="text-base font-bold text-zinc-100 flex items-center gap-2">
-          <i class="fa-solid fa-folder-plus text-emerald-400"></i>
-          Gerenciar Local de EDC
+  <!-- MODAL: ADD / EDIT LOCATION -->
+  <div id="loc-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between p-4 border-b border-slate-800">
+        <h3 id="loc-modal-title" class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="folder-plus" class="w-4 h-4 text-brand-500"></i>
+          Novo Compartimento / Local
         </h3>
-        <button id="closeLocationModalBtn" class="text-zinc-400 hover:text-zinc-200 text-lg">
-          <i class="fa-solid fa-xmark"></i>
+        <button id="loc-modal-close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-
-      <form id="locationForm" class="p-6 space-y-4">
-        <input type="hidden" id="locationId">
+      <form id="loc-form" class="p-5 space-y-4">
+        <input type="hidden" id="loc-id">
 
         <div>
-          <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Nome do Local *</label>
-          <input type="text" id="locationName" required placeholder="Ex: Pochete Tática, Bolso Jaqueta..." 
-            class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Compartimento *</label>
+          <input type="text" id="loc-name" required placeholder="Ex: Chaveiro, Mochila Tática, Bolso..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Ícone</label>
-          <select id="locationIcon" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500">
-            <option value="fa-key">🔑 Chaveiro / Bolso</option>
-            <option value="fa-bag-shopping">🛍️ Bolsa / Pochete</option>
-            <option value="fa-backpack">🎒 Mochila</option>
-            <option value="fa-car">🚗 No Carro / Veículo</option>
-            <option value="fa-house">🏠 Casa / Base</option>
-            <option value="fa-briefcase">💼 Maleta / Trabalho</option>
-            <option value="fa-kit-medical">🚑 Kit Primeiros Socorros</option>
-            <option value="fa-box shadow">📦 Caixa / Organizador</option>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ícone</label>
+          <select id="loc-icon" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+            <option value="key">🔑 Chaveiro / Chaves</option>
+            <option value="briefcase">💼 Bolsa / Pasta</option>
+            <option value="backpack">🎒 Mochila</option>
+            <option value="car">🚗 No Carro / Veículo</option>
+            <option value="box">📦 Caixa / Organizador</option>
+            <option value="shield">🛡️ Kit Sobrevivência</option>
+            <option value="pocket">👖 Bolso / No Corpo</option>
+            <option value="archive">🗄️ Gaveta / Casa</option>
           </select>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Descrição / Nota Breve</label>
-          <input type="text" id="locationDescription" placeholder="Ex: Organizado na divisória lateral direita" 
-            class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3.5 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição Curta</label>
+          <input type="text" id="loc-desc" placeholder="Ex: Transporte diário (bolso frontal)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
         </div>
 
-        <div class="pt-2 flex items-center justify-between border-t border-zinc-800">
-          <button type="button" id="deleteLocationBtn" class="hidden text-rose-400 hover:text-rose-300 text-xs font-medium px-3 py-2 rounded-lg hover:bg-rose-950/30 transition">
-            <i class="fa-solid fa-trash mr-1"></i> Excluir Local
-          </button>
-          <div class="flex items-center gap-2 ml-auto">
-            <button type="button" id="cancelLocationModalBtn" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-sm transition">
-              Cancelar
-            </button>
-            <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-medium transition">
-              Salvar Local
-            </button>
-          </div>
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+          <button type="button" id="loc-modal-cancel" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Local</button>
         </div>
-
       </form>
-
     </div>
   </div>
 
-  <!-- MODAL: Quick Move Item (For Mobile/Touch accessibility) -->
-  <div id="quickMoveModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl p-6 space-y-4">
-      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
-        <h3 class="text-sm font-bold text-zinc-100 flex items-center gap-2">
-          <i class="fa-solid fa-arrows-up-down-left-right text-emerald-400"></i>
-          Mover Equipamento
+  <!-- MODAL: QUICK MOVE (Convenient for mobile or multiple containers) -->
+  <div id="quick-move-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm shadow-2xl p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i data-lucide="layers" class="w-4 h-4 text-brand-500"></i>
+          Locais do Equipamento
         </h3>
-        <button id="closeQuickMoveModalBtn" class="text-zinc-400 hover:text-zinc-200">
-          <i class="fa-solid fa-xmark"></i>
+        <button id="quick-move-close" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-
-      <p class="text-xs text-zinc-400">Escolha para onde deseja mover o item <strong id="quickMoveItemTitle" class="text-zinc-200"></strong>:</p>
-
-      <div id="quickMoveOptions" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-        <!-- Dynamically injected -->
+      <p id="quick-move-item-name" class="text-xs text-slate-300 font-medium mb-3 p-2 rounded bg-slate-950 border border-slate-800"></p>
+      <p class="text-[11px] text-slate-400 mb-2">Marque os compartimentos onde deseja alocar este item:</p>
+      <div id="quick-move-options" class="space-y-1.5 max-h-60 overflow-y-auto pr-1">
+        <!-- Injected via JS -->
+      </div>
+      <div class="flex justify-end gap-2 mt-4 pt-3 border-t border-slate-800">
+        <button id="btn-save-quick-move" class="px-4 py-1.5 text-xs font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white w-full">Salvar Locais</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: Export / Share / Backup -->
-  <div id="exportModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl space-y-4 p-6 max-h-[90vh] flex flex-col">
-      
-      <div class="flex items-center justify-between border-b border-zinc-800 pb-3 shrink-0">
-        <h3 class="text-base font-bold text-zinc-100 flex items-center gap-2">
-          <i class="fa-solid fa-sliders text-emerald-400"></i>
-          Exportar & Edição em Massa
+  <!-- MODAL: TOOLS, EXPORT, BACKUP & JSON EDITOR -->
+  <div id="tools-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="flex items-center justify-between p-4 border-b border-slate-800">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i data-lucide="settings" class="w-4 h-4 text-brand-500"></i>
+          Gerenciamento e Backup de Dados
         </h3>
-        <button id="closeExportModalBtn" class="text-zinc-400 hover:text-zinc-200">
-          <i class="fa-solid fa-xmark"></i>
+        <button id="tools-modal-close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+          <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <!-- Navigation Tabs inside Modal -->
-      <div class="flex border-b border-zinc-800 gap-2 shrink-0">
-        <button id="tabTextBtn" class="px-3.5 py-2 text-xs font-semibold rounded-t-lg bg-zinc-800 text-emerald-400 border-t border-x border-zinc-700 transition">
-          <i class="fa-solid fa-file-lines mr-1.5"></i>Texto / Backup
-        </button>
-        <button id="tabJsonEditBtn" class="px-3.5 py-2 text-xs font-semibold rounded-t-lg text-zinc-400 hover:text-zinc-200 transition">
-          <i class="fa-solid fa-code mr-1.5"></i>Editar JSON Diretamente
+      <!-- Navigation Tabs -->
+      <div class="flex border-b border-slate-800 bg-slate-950/60 px-4 gap-4 text-xs font-semibold">
+        <button id="tab-btn-tools" class="py-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none">Opções & Arquivos</button>
+        <button id="tab-btn-json-editor" class="py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none flex items-center gap-1.5">
+          <span>Editar JSON Diretamente</span>
+          <span class="px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-400 text-[10px]">Avançado</span>
         </button>
       </div>
 
-      <!-- Tab Content 1: Copy / Backup -->
-      <div id="modalTabTextContent" class="space-y-3 overflow-y-auto pr-1">
-        <p class="text-xs text-zinc-400">Copie a lista formatada para mensagens ou baixe/restaure o arquivo de backup `.json`.</p>
-
-        <!-- Actions -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <button id="copyFormattedTextBtn" class="bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/30 text-emerald-300 px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition">
-            <i class="fa-regular fa-copy"></i> Copiar Texto Formatado
-          </button>
-          
-          <button id="downloadJsonBtn" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-200 px-4 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition">
-            <i class="fa-solid fa-download"></i> Baixar Backup JSON
+      <!-- TAB 1: Standard Tools & Actions -->
+      <div id="tab-content-tools" class="p-5 space-y-4 overflow-y-auto">
+        <!-- Copy Plain Text List -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+          <div>
+            <h4 class="text-sm font-semibold text-slate-200">Copiar Lista em Texto</h4>
+            <p class="text-xs text-slate-400">Gera uma lista formatada e pronta para enviar no WhatsApp ou salvar no bloco de notas.</p>
+          </div>
+          <button id="btn-copy-text" class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            Copiar Lista
           </button>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-zinc-400 mb-1">Restaurar de arquivo JSON existente:</label>
-          <div class="flex gap-2">
-            <input type="file" id="importFileInput" accept=".json" class="hidden">
-            <button id="triggerImportBtn" class="flex-1 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 px-3 py-2 rounded-lg text-xs font-medium text-left truncate">
-              <i class="fa-solid fa-upload mr-1.5 text-zinc-400"></i> Selecionar arquivo JSON...
-            </button>
+        <!-- Download JSON Backup -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+          <div>
+            <h4 class="text-sm font-semibold text-slate-200">Baixar Arquivo JSON de Backup</h4>
+            <p class="text-xs text-slate-400">Faça o download do arquivo .json contendo todos os seus compartimentos e itens.</p>
+          </div>
+          <button id="btn-download-json" class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            Baixar JSON
+          </button>
+        </div>
+
+        <!-- Restore from File -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between gap-4">
+            <div>
+              <h4 class="text-sm font-semibold text-slate-200">Restaurar de arquivo JSON</h4>
+              <p class="text-xs text-slate-400">Importe um arquivo de backup (.json) para atualizar a sua lista.</p>
+            </div>
+            <label class="shrink-0 cursor-pointer px-3 py-1.5 text-xs font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 transition-colors">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+              <span>Selecionar arquivo JSON...</span>
+              <input type="file" id="import-json-file" accept=".json,application/json" class="hidden">
+            </label>
           </div>
         </div>
 
+        <!-- Reset to Default Data -->
+        <div class="p-3.5 rounded-xl bg-red-950/20 border border-red-900/30 flex items-center justify-between gap-4">
+          <div>
+            <h4 class="text-sm font-semibold text-red-300">Restaurar Lista Padrão Original</h4>
+            <p class="text-xs text-slate-400">Recarrega a lista pré-configurada inicial com todos os itens do seu EDC.</p>
+          </div>
+          <button id="btn-reset-default" class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-800/60 flex items-center gap-1.5">
+            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+            Restaurar Original
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 2: In-App Interactive JSON Editor -->
+      <div id="tab-content-json-editor" class="p-5 hidden space-y-3 flex-1 flex flex-col overflow-hidden">
         <div>
-          <label class="block text-xs font-semibold text-zinc-400 mb-1">Pré-visualização da Lista em Texto:</label>
-          <textarea id="formattedTextPreview" readonly rows="7" 
-            class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-xs font-mono text-zinc-300 select-all resize-none"></textarea>
+          <p class="text-xs text-slate-400 mb-1">
+            Modifique, adicione ou cole qualquer configuração JSON completa no campo abaixo. Ao salvar, ela se tornará a nova lista ativa do seu aplicativo.
+          </p>
         </div>
-      </div>
-
-      <div id="modalTabJsonEditContent" class="hidden space-y-3 overflow-y-auto pr-1 flex-1 flex flex-col">
-        <p class="text-xs text-zinc-400">Edite ou cole sua nova estrutura JSON abaixo e clique em <strong>"Salvar e Aplicar Esta Configuração"</strong> para atualizar todo o seu EDC instantaneamente.</p>
-        
-        <textarea id="jsonTextEditor" rows="10" 
-          class="w-full font-mono text-xs bg-zinc-950 text-emerald-400 border border-zinc-800 rounded-lg p-3 focus:outline-none focus:border-emerald-500 resize-y flex-1"
-          spellcheck="false" placeholder="Cole ou edite seu JSON aqui..."></textarea>
-
-        <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
-          <button id="formatJsonBtn" type="button" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg text-xs font-medium transition">
-            <i class="fa-solid fa-align-left mr-1"></i> Formatar / Indentar
+        <div class="relative flex-1 min-h-[220px]">
+          <textarea id="json-editor-textarea" spellcheck="false" class="w-full h-full p-3 font-mono text-xs bg-slate-950 text-slate-200 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 resize-none"></textarea>
+        </div>
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+          <button id="btn-format-json" type="button" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1">
+            <i data-lucide="align-left" class="w-3.5 h-3.5"></i> Formatar / Indentar
           </button>
-
-          <button id="applyJsonEditBtn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-lg shadow-emerald-600/20">
-            <i class="fa-solid fa-check mr-1.5"></i> Salvar e Aplicar Esta Configuração
+          <button id="btn-save-json-editor" type="button" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 shadow-lg shadow-brand-900/40">
+            <i data-lucide="check" class="w-4 h-4"></i> Salvar e Aplicar Esta Configuração
           </button>
         </div>
       </div>
-
-      <div class="flex justify-end pt-2 border-t border-zinc-800 shrink-0">
-        <button id="closeExportModalBottomBtn" class="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg text-xs font-medium">Fechar</button>
-      </div>
-
     </div>
   </div>
 
-  <!-- Toast Notification Container -->
-  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl text-xs sm:text-sm text-slate-200">
+    <div id="toast-icon" class="text-brand-500"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
+    <span id="toast-message">Notificação</span>
+  </div>
 
-  <!-- Application Core Script -->
-  <script>
-    /* Default EDC Data provided by the user */
+  <!-- FIREBASE SCRIPTS (MODULAR SDK via script type module) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    /* DEFAULT EDC DATA DEFINITIONS */
     const DEFAULT_LOCATIONS = [
-      { id: 'loc_chaveiro', name: 'Chaveiro', icon: 'fa-key', description: 'Porta-chaves e acesso rápido' },
-      { id: 'loc_bolsa_preta', name: 'Bolsa Preta', icon: 'fa-bag-shopping', description: 'Pochete / Pouch principal de EDC' },
-      { id: 'loc_mochila', name: 'Mochila', icon: 'fa-backpack', description: 'Mochila tática / trabalho' },
-      { id: 'loc_no_carro', name: 'No Carro', icon: 'fa-car', description: 'Porta-luvas / Porta-malas do veículo' }
+      { id: 'chaveiro', name: 'Chaveiro', icon: 'key', description: 'Itens de bolso de saque imediato' },
+      { id: 'bolsa-preta', name: 'Bolsa Preta', icon: 'briefcase', description: 'Kit intermediário de viagem e rotina diária' },
+      { id: 'mochila', name: 'Mochila', icon: 'backpack', description: 'Capacidade expandida e ferramentas completas' },
+      { id: 'no-carro', name: 'No Carro', icon: 'car', description: 'Emergência veicular e suporte móvel' }
     ];
 
     const DEFAULT_ITEMS = [
-      // Chaveiro
-      { id: 'item_1', name: 'Canivete Nextool', locationIds: ['loc_chaveiro'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Multitool compacto para chaveiro' },
-      { id: 'item_2', name: 'Lanterna Chaveiro', locationIds: ['loc_chaveiro'], category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Iluminação de emergência rápida' },
+      // CHAVEIRO
+      { id: 'item-1', name: 'Canivete Nextool', locationIds: ['chaveiro'], category: 'Ferramentas', status: 'ok', notes: 'Multiuso de bolso' },
+      { id: 'item-2', name: 'Lanterna Chaveiro', locationIds: ['chaveiro'], category: 'Iluminação', status: 'ok', notes: 'Recarga USB compacta' },
 
-      // Bolsa Preta
-      { id: 'item_3', name: 'Lanterna Cabeça', locationIds: ['loc_bolsa_preta'], category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Headlamp mãos livres' },
-      { id: 'item_4', name: 'Powerbank - (da lanterna)', locationIds: ['loc_bolsa_preta'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Bateria externa dedicada' },
-      { id: 'item_5', name: 'Cabos USB', locationIds: ['loc_bolsa_preta'], category: 'Eletrônicos & Energia', qty: '1 conjunto', status: 'ok', notes: 'USB-C / Micro-USB / Lightning' },
-      { id: 'item_6', name: 'Documentos Impressos / Carteirinha Plano', locationIds: ['loc_bolsa_preta'], category: 'Documentos & Dinheiro', qty: '1 kit', status: 'ok', notes: 'Docs pessoais, CNH, plano' },
-      { id: 'item_7', name: 'Dinheiro em espécie fracionado', locationIds: ['loc_bolsa_preta'], category: 'Documentos & Dinheiro', qty: 'Notas pequenas', status: 'ok', notes: 'Notas de pequeno valor para emergências' },
-      { id: 'item_8', name: 'Garrafa de Água', locationIds: ['loc_bolsa_preta'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Hidratação portátil' },
-      { id: 'item_9', name: 'Rolo de Silver Tape compacto', locationIds: ['loc_bolsa_preta'], category: 'Utilidades & Outros', qty: '1 rolo cartão', status: 'ok', notes: 'Fita adesiva enrolada em cartão' },
-      { id: 'item_10', name: 'Apito de emergência sem esfera (100+ dB)', locationIds: ['loc_bolsa_preta'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Sinalização sonora de alta potência' },
-      { id: 'item_11', name: 'Capas de chuva', locationIds: ['loc_bolsa_preta'], category: 'Utilidades & Outros', qty: '2 un', status: 'ok', notes: 'Capas descartáveis / compactas' },
-      { id: 'item_12', name: 'Caneta', locationIds: ['loc_bolsa_preta'], category: 'Utilidades & Outros', qty: '1 un', status: 'ok', notes: 'Caneta esferográfica tática / EDC' },
-      { id: 'item_13', name: 'Bloco de notas compacto', locationIds: ['loc_bolsa_preta'], category: 'Utilidades & Outros', qty: '1 un', status: 'ok', notes: 'Caderno de anotações impermeável' },
-      { id: 'item_14', name: 'Carregador 120W', locationIds: ['loc_bolsa_preta'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Carregamento ultra-rápido' },
-      { id: 'item_15', name: 'Pastilhas de purificação de água (Clorin)', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 cartela', status: 'ok', notes: 'Purificação química de água' },
-      { id: 'item_16', name: 'Kit 1ºs Socorros', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 bolsa', status: 'ok', notes: 'Bolsa modular de emergência' },
-      { id: 'item_17', name: 'Carteira Convênio Médico', locationIds: ['loc_bolsa_preta'], category: 'Documentos & Dinheiro', qty: '1 un', status: 'ok', notes: 'Carteirinha e documentos de saúde' },
-      { id: 'item_18', name: 'Gaze / Micropore / Bandaid / Atadura', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 kit', status: 'ok', notes: 'Curativos simples e fixação' },
-      { id: 'item_19', name: 'Farmacinha de viagem', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 estojo', status: 'refill', notes: 'Medicamentos contínuos e emergenciais' },
-      { id: 'item_20', name: 'Curativo ponto-falso', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: 'Sutura cutânea', status: 'ok', notes: 'Suturas adesivas para cortes' },
-      { id: 'item_21', name: 'Kit Injetáveis + Epipen', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 estojo', status: 'ok', notes: 'Auto-injetor de epinefrina e antialérgicos' },
-      { id: 'item_22', name: 'Álcool em Gel', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 frasco', status: 'ok', notes: 'Higiene e antissepsia' },
-      { id: 'item_23', name: 'Cobertor de emergência', locationIds: ['loc_bolsa_preta'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Manta aluminizada de Mylar' },
-      { id: 'item_24', name: 'Ficha de emergência (ICE)', locationIds: ['loc_bolsa_preta'], category: 'Documentos & Dinheiro', qty: '1 cartão', status: 'ok', notes: 'Tipo sanguíneo, alergias e contatos de emergência' },
+      // BOLSA PRETA
+      { id: 'item-3', name: 'Lanterna de Cabeça', locationIds: ['bolsa-preta'], category: 'Iluminação', status: 'ok', notes: 'Manos livres' },
+      { id: 'item-4', name: 'Powerbank (da lanterna)', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Bateria recarregável' },
+      { id: 'item-5', name: 'Cabos USB', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Tipo-C / Lightning / Micro' },
+      { id: 'item-6', name: 'Documentos Impressos / Carteirinha Plano', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Cópias plastificadas' },
+      { id: 'item-7', name: 'Dinheiro em espécie fracionado', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Notas pequenas para emergências' },
+      { id: 'item-8', name: 'Rolo de Silver Tape compacto', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Enrolado em cartão plástico' },
+      { id: 'item-9', name: 'Apito de emergência sem esfera', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: '100+ dB de potência sonora' },
+      { id: 'item-10', name: 'Capas de chuva', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Descartáveis compactas' },
+      { id: 'item-11', name: 'Caneta + Bloco de notas compacto', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Papel resistente' },
+      { id: 'item-12', name: 'Carregador 120W', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Carga ultrarrápida GaN' },
+      { id: 'item-13', name: 'Pastilhas de purificação de água (Clorin)', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Tratamento de água emergencial' },
+      { id: 'item-14', name: '1os Socorros Básicos', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Kit rápido' },
+      { id: 'item-15', name: 'Carteira Convênio Médico', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Cartões físicos' },
+      { id: 'item-16', name: 'Gaze / Micropore / Bandaid / Atadura', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Curativos e hemostasia' },
+      { id: 'item-17', name: 'Farmacinha de viagem', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Medicamentos contínuos e emergenciais' },
+      { id: 'item-18', name: 'Curativo Ponto-Falso', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Sutura adesiva rápida' },
+      { id: 'item-19', name: 'Kit Injetáveis + Epipen', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Protocolo de anafilaxia / antialérgico' },
+      { id: 'item-20', name: 'Álcool em Gel', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Higienização e assepsia' },
+      { id: 'item-21', name: 'Cobertor de emergência', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Mylar aluminizado térmico' },
+      { id: 'item-22', name: 'Ficha de emergência (ICE)', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Tipo sanguíneo, alergias e contatos vitais' },
 
-      // Mochila
-      { id: 'item_25', name: 'Canivete Victorinox', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Canivete suíço multifunção' },
-      { id: 'item_26', name: 'Mini Catraca', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Mini catraca porta-bits' },
-      { id: 'item_27', name: 'Jogo de bits na caixinha com ÍMÃ + adaptador', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Jogo de ponteiras e extensor' },
-      { id: 'item_28', name: 'Caneta de mini bits', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Chave de precisão em formato de caneta' },
-      { id: 'item_29', name: 'Alicate de pressão mini', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Alicate com trava mecânica' },
-      { id: 'item_30', name: 'Chaves universais de boca', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Chaves ajustáveis universais' },
-      { id: 'item_31', name: 'Lanterna Joca', locationIds: ['loc_mochila'], category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Lanterna tática principal' },
-      { id: 'item_32', name: 'Lanterna plaquinha USB', locationIds: ['loc_mochila'], category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Luz ultrafina COB para leitura/iluminação' },
-      { id: 'item_33', name: 'Pilhas extras', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '4 un', status: 'ok', notes: 'Pilhas alcalinas / recarregáveis' },
-      { id: 'item_34', name: 'Carregador Relógio', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Cabo proprietário smartwatch' },
-      { id: 'item_35', name: 'Adaptador universal de tomada', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Padrão internacional com portas USB' },
-      { id: 'item_36', name: 'Rastreador inteligente (AirTag / Galaxy SmartTag)', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Rastreamento de localização da mochila' },
-      { id: 'item_37', name: 'Carregador / Painel solar portátil', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Geração de energia solar fotovoltaica' },
-      { id: 'item_38', name: 'Filtro de água portátil (Sawyer / LifeStraw)', locationIds: ['loc_mochila'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Filtração por membrana oca para água selvagem' },
-      { id: 'item_39', name: 'Isqueiro e Pederneira', locationIds: ['loc_mochila'], category: 'Sobrevivência & Aventura', qty: '1 kit', status: 'ok', notes: 'Iniciadores de fogo (Bic + Ferrocerio)' },
-      { id: 'item_40', name: 'Corda Paracord 550 (10 a 15 metros)', locationIds: ['loc_mochila'], category: 'Sobrevivência & Aventura', qty: '15m', status: 'ok', notes: 'Corda de nylon de alta resistência' },
-      { id: 'item_41', name: 'Durepoxi', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '1 caixa', status: 'ok', notes: 'Massa epóxi para reparos estruturais' },
-      { id: 'item_42', name: 'Superbonder', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '1 tubo', status: 'ok', notes: 'Cianoacrilato colagem rápida' },
-      { id: 'item_43', name: 'Engasga gato (Abraçadeiras de Nylon)', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '10 un', status: 'ok', notes: 'Enforca-gato / Zip ties diversos tamanhos' },
-      { id: 'item_44', name: 'Cartão de nós', locationIds: ['loc_mochila'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Guia de bolso ilustrado de nós táticos' },
-      { id: 'item_45', name: 'Sacos Zip Lock', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '5 un', status: 'ok', notes: 'Organização impermeável' },
-      { id: 'item_46', name: 'Elásticos / Cabelo', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '1 punhado', status: 'ok', notes: 'Amarrações e utilidades rápidas' },
+      // MOCHILA
+      { id: 'item-23', name: 'Canivete Victorinox', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Canivete multifunção suíço' },
+      { id: 'item-24', name: 'Mini catraca', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Aperto em espaços reduzidos' },
+      { id: 'item-25', name: 'Jogo de bits na caixinha com Ímã + adaptador', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Bits variados Torx/Phillips/Fenda' },
+      { id: 'item-26', name: 'Caneta de mini bits', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Manutenção fina e eletrônica' },
+      { id: 'item-27', name: 'Alicate de pressão mini', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Trava mecânica portátil' },
+      { id: 'item-28', name: 'Chaves universais de boca', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Ajustável rápida' },
+      { id: 'item-29', name: 'Lanterna Joca', locationIds: ['mochila'], category: 'Iluminação', status: 'ok', notes: 'Alta intensidade' },
+      { id: 'item-30', name: 'Lanterna plaquinha USB', locationIds: ['mochila'], category: 'Iluminação', status: 'ok', notes: 'Iluminação ambiente compacta' },
+      { id: 'item-31', name: 'Pilhas extras', locationIds: ['mochila'], category: 'Iluminação', status: 'ok', notes: 'Para dispositivos e lanternas' },
+      { id: 'item-32', name: 'Carregador Relógio', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Indução' },
+      { id: 'item-33', name: 'Adaptador universal de tomada', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Padrões internacionais' },
+      { id: 'item-34', name: 'Rastreador inteligente (AirTag / SmartTag)', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Localização georreferenciada' },
+      { id: 'item-35', name: 'Carregador ou painel solar portátil', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Geração autônoma off-grid' },
+      { id: 'item-36', name: 'Filtro de água portátil (Sawyer / LifeStraw)', locationIds: ['mochila'], category: 'Sobrevivência & Fogo', status: 'ok', notes: '0.1 mícron para rios e trilhas' },
+      { id: 'item-37', name: 'Isqueiro e Pederneira', locationIds: ['mochila'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Ignição em qualquer condição climática' },
+      { id: 'item-38', name: 'Corda Paracord 550 (10 a 15m)', locationIds: ['mochila'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Resistência de 250kg' },
+      { id: 'item-39', name: 'Durepoxi + Superbonder', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Fixações mecânicas instantâneas' },
+      { id: 'item-40', name: 'Engasga gato (Abraçadeiras de nylon)', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Fixações rápidas' },
+      { id: 'item-41', name: 'Cartão de nós', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Instruções ilustradas de amarração' },
+      { id: 'item-42', name: 'Sacos Zip Lock', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Impermeabilização de itens' },
+      { id: 'item-43', name: 'Elásticos / Cabelo', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Organização de pequenos cabos e fios' },
 
-      // No Carro
-      { id: 'item_47', name: 'Kit reparo de Pneus', locationIds: ['loc_no_carro'], category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Macarrão, aplicador e escarificador' },
-      { id: 'item_48', name: 'Calibrador 12V', locationIds: ['loc_no_carro'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Compressor elétrico portátil para acendedor' },
-      { id: 'item_49', name: 'Soprador / Soprador de ar', locationIds: ['loc_no_carro'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Limpeza de poeira e secagem rápida' }
+      // NO CARRO
+      { id: 'item-44', name: 'Kit reparo de Pneus', locationIds: ['no-carro'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Macarrão + aplicador manual' },
+      { id: 'item-45', name: 'Calibrador 12V', locationIds: ['no-carro'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Compressor de ar portátil' },
+      { id: 'item-46', name: 'Soprador', locationIds: ['no-carro'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Limpeza de filtros e equipamentos' }
     ];
 
-    // CATEGORY CONFIGURATION & ICONS
     const CATEGORIES = [
-      { name: 'Todas', icon: 'fa-cubes' },
-      { name: 'Ferramentas', icon: 'fa-wrench', badgeBg: 'bg-amber-500/10 text-amber-400 border-amber-500/20' },
-      { name: 'Iluminação', icon: 'fa-lightbulb', badgeBg: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
-      { name: 'Eletrônicos & Energia', icon: 'fa-bolt', badgeBg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
-      { name: 'Saúde & 1ºs Socorros', icon: 'fa-heart-pulse', badgeBg: 'bg-rose-500/10 text-rose-400 border-rose-500/20' },
-      { name: 'Documentos & Dinheiro', icon: 'fa-address-card', badgeBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
-      { name: 'Sobrevivência & Aventura', icon: 'fa-compass', badgeBg: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
-      { name: 'Utilidades & Outros', icon: 'fa-screwdriver-wrench', badgeBg: 'bg-purple-500/10 text-purple-400 border-purple-500/20' }
+      'Todas',
+      'Ferramentas',
+      'Iluminação',
+      'Saúde & 1ºs Socorros',
+      'Eletrônicos & Cabos',
+      'Documentos & Valores',
+      'Sobrevivência & Fogo',
+      'Utilidades & Reparo',
+      'Outros'
     ];
 
     /* APP STATE MANAGEMENT */
@@ -572,948 +486,943 @@
     let draggedFromLocId = null;
     let checkedItems = new Set(); // For checklist mode
 
-    /* HELPER: Normalize location IDs for single/multi-location support */
-    function getItemLocationIds(item) {
-      if (Array.isArray(item.locationIds) && item.locationIds.length > 0) {
-        return item.locationIds;
+    /* FIREBASE & DATA PERSISTENCE INITIALIZATION */
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'equipedc-app';
+    let db = null;
+    let auth = null;
+    let userId = null;
+    let isCloudAvailable = false;
+
+    // Configuração oficial do seu projeto Firebase
+    const MY_FIREBASE_CONFIG = {
+      apiKey: "AIzaSyDB8sJBPQvHlcIOzQtSlM1Cw1gbSqae3MA",
+      authDomain: "equipedc-99ff9.firebaseapp.com",
+      projectId: "equipedc-99ff9",
+      storageBucket: "equipedc-99ff9.firebasestorage.app",
+      messagingSenderId: "501675097684",
+      appId: "1:501675097684:web:cc809e4e931b9020b777c1",
+      measurementId: "G-DGW7WR036X"
+    };
+
+    /* UPDATE CLOUD STATUS BADGE IN HEADER */
+    function updateCloudStatus(status, text) {
+      const badge = document.getElementById('cloud-status-badge');
+      const dot = document.getElementById('cloud-status-dot');
+      const label = document.getElementById('cloud-status-text');
+      if (!badge) return;
+
+      badge.classList.remove('hidden');
+      label.textContent = text;
+
+      if (status === 'online') {
+        dot.className = 'w-2 h-2 rounded-full bg-brand-500';
+        badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-500/10 border border-brand-500/20 text-xs text-brand-300';
+      } else if (status === 'saving') {
+        dot.className = 'w-2 h-2 rounded-full bg-blue-400 animate-spin';
+        badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+        badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300';
       }
-      if (item.locationId) {
-        return [item.locationId];
-      }
-      return [];
     }
 
-    /* LOCAL STORAGE CONTROLLER */
-    function loadData() {
-      const savedLocs = localStorage.getItem('edc_locations_v2');
-      const savedItems = localStorage.getItem('edc_items_v2');
-      
-      if (savedLocs && savedItems) {
+    /* FIREBASE AUTH & FIRESTORE SETUP */
+    async function initCloudStorage() {
+      // Prioriza a configuração injetada se existir, senão usa as suas credenciais
+      const configToUse = typeof __firebase_config !== 'undefined' 
+        ? JSON.parse(__firebase_config) 
+        : MY_FIREBASE_CONFIG;
+
+      if (configToUse && configToUse.apiKey) {
         try {
-          locations = JSON.parse(savedLocs);
-          items = JSON.parse(savedItems);
+          const app = initializeApp(configToUse);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+
+          userId = auth.currentUser?.uid || 'edc-user';
+          isCloudAvailable = true;
+          updateCloudStatus('online', 'Salvo na Nuvem');
+
+          // Assina listener em tempo real do Firestore
+          setupFirestoreRealtimeListener();
         } catch (e) {
-          locations = [...DEFAULT_LOCATIONS];
-          items = [...DEFAULT_ITEMS];
+          console.warn("Firebase offline ou inicializando localmente", e);
+          isCloudAvailable = false;
+          updateCloudStatus('local', 'Salvo Localmente');
         }
       } else {
-        locations = [...DEFAULT_LOCATIONS];
-        items = [...DEFAULT_ITEMS];
-        saveData();
+        updateCloudStatus('local', 'Salvo Localmente');
+      }
+
+      await loadData();
+    }
+
+    /* REALTIME LISTENERS */
+    function setupFirestoreRealtimeListener() {
+      if (!db || !isCloudAvailable) return;
+
+      try {
+        const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'main');
+        onSnapshot(publicDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data && data.locations && data.items) {
+              locations = data.locations;
+              items = normalizeItems(data.items);
+              renderApp();
+              updateStats();
+            }
+          }
+        }, (error) => {
+          console.warn("Snapshot notice:", error);
+        });
+      } catch (err) {
+        console.warn("Falha ao registrar listener em tempo real:", err);
       }
     }
 
-    function saveData() {
-      localStorage.setItem('edc_locations_v2', JSON.stringify(locations));
-      localStorage.setItem('edc_items_v2', JSON.stringify(items));
-      updateUI();
-    }
+    /* DATA PERSISTENCE ROUTINE */
+    async function saveData() {
+      updateCloudStatus('saving', 'Gravando...');
+      const serializedData = {
+        locations: locations,
+        items: items,
+        updatedAt: new Date().toISOString()
+      };
 
-    // Helper functions
-    function getItemCategoryBadge(category) {
-      const found = CATEGORIES.find(c => c.name === category);
-      if (found && found.badgeBg) {
-        return found.badgeBg;
+      // 1. Sempre grava no Firestore se disponível
+      if (db && isCloudAvailable) {
+        try {
+          const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'main');
+          await setDoc(publicDocRef, serializedData);
+          updateCloudStatus('online', 'Salvo na Nuvem');
+        } catch (error) {
+          console.error("Erro ao salvar no Firebase:", error);
+          updateCloudStatus('local', 'Salvo no Cache');
+        }
+      } else {
+        updateCloudStatus('local', 'Salvo no Cache');
       }
-      return 'bg-zinc-800 text-zinc-300 border-zinc-700';
+
+      updateStats();
     }
 
-    function getCategoryIcon(category) {
-      const found = CATEGORIES.find(c => c.name === category);
-      return found ? found.icon : 'fa-tag';
-    }
-
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      
-      const bgColor = type === 'success' ? 'bg-emerald-900/90 border-emerald-700 text-emerald-200' :
-                      type === 'warning' ? 'bg-amber-900/90 border-amber-700 text-amber-200' :
-                      'bg-rose-900/90 border-rose-700 text-rose-200';
-      
-      toast.className = `pointer-events-auto px-4 py-3 rounded-xl border ${bgColor} shadow-xl text-xs font-medium flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0`;
-      toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-triangle-exclamation' : 'fa-circle-exclamation'}"></i> <span>${message}</span>`;
-      
-      container.appendChild(toast);
-      
-      requestAnimationFrame(() => {
-        toast.classList.remove('translate-y-2', 'opacity-0');
+    /* NORMALIZE ITEMS TO MULTI-LOCATION FORMAT */
+    function normalizeItems(rawItems) {
+      if (!Array.isArray(rawItems)) return [];
+      return rawItems.map(item => {
+        let locIds = [];
+        if (Array.isArray(item.locationIds)) {
+          locIds = item.locationIds;
+        } else if (item.locationId) {
+          locIds = [item.locationId];
+        } else {
+          locIds = ['bolsa-preta'];
+        }
+        return {
+          id: item.id || 'item-' + Math.random().toString(36).substr(2, 9),
+          name: item.name || 'Sem Nome',
+          locationIds: locIds,
+          category: item.category || 'Outros',
+          status: item.status || 'ok',
+          notes: item.notes || ''
+        };
       });
-
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-2');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
     }
 
-    /* RENDER ENGINE */
-    function updateUI() {
-      renderCategoryFilters();
-      renderStats();
-      renderBoard();
-      renderChecklist();
-      populateLocationSelects();
-      updateFilterNotice();
+    /* LOAD DATA */
+    async function loadData() {
+      locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+      items = normalizeItems(DEFAULT_ITEMS);
+      renderApp();
+      updateStats();
     }
 
-    function renderCategoryFilters() {
-      const container = document.getElementById('categoryFilterContainer');
+    /* ICONS MAPPING */
+    function getLucideIconForLocation(iconKey) {
+      switch(iconKey) {
+        case 'key': return 'key-round';
+        case 'briefcase': return 'briefcase';
+        case 'backpack': return 'backpack';
+        case 'car': return 'car';
+        case 'box': return 'box';
+        case 'shield': return 'shield';
+        case 'pocket': return 'pocket';
+        case 'archive': return 'archive';
+        default: return 'folder';
+      }
+    }
+
+    function getCategoryBadgeClass(category) {
+      switch(category) {
+        case 'Ferramentas': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+        case 'Iluminação': return 'bg-yellow-500/10 text-yellow-300 border-yellow-500/20';
+        case 'Saúde & 1ºs Socorros': return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+        case 'Eletrônicos & Cabos': return 'bg-sky-500/10 text-sky-400 border-sky-500/20';
+        case 'Documentos & Valores': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+        case 'Sobrevivência & Fogo': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+        case 'Utilidades & Reparo': return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+        default: return 'bg-slate-800 text-slate-300 border-slate-700';
+      }
+    }
+
+    function getStatusDot(status) {
+      switch(status) {
+        case 'ok': return '<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block" title="Pronto / Operacional"></span>';
+        case 'repor': return '<span class="w-2 h-2 rounded-full bg-amber-500 inline-block" title="Precisa Repor / Recarregar"></span>';
+        case 'faltando': return '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Faltando!"></span>';
+        default: return '<span class="w-2 h-2 rounded-full bg-slate-600 inline-block"></span>';
+      }
+    }
+
+    /* RENDER CATEGORY FILTER PILLS */
+    function renderCategoryPills() {
+      const container = document.getElementById('category-pills');
       container.innerHTML = '';
 
       CATEGORIES.forEach(cat => {
-        const count = cat.name === 'Todas' ? items.length : items.filter(i => i.category === cat.name).length;
-        const isActive = selectedCategory === cat.name;
-
+        const isSelected = selectedCategory === cat;
         const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 ${
-          isActive 
-            ? 'bg-emerald-500 text-zinc-950 font-semibold shadow-md shadow-emerald-500/20' 
-            : 'bg-zinc-800/80 hover:bg-zinc-700 text-zinc-300 border border-zinc-700/60'
+        btn.className = `px-2.5 py-1 text-xs rounded-lg whitespace-nowrap transition-all ${
+          isSelected 
+            ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-900/30' 
+            : 'bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800'
         }`;
-        
-        btn.innerHTML = `
-          <i class="fa-solid ${cat.icon}"></i>
-          <span>${cat.name}</span>
-          <span class="ml-0.5 text-[10px] font-mono ${isActive ? 'bg-zinc-950/20 text-zinc-950 px-1.5 rounded-full' : 'text-zinc-400'}">${count}</span>
-        `;
-
+        btn.textContent = cat;
         btn.onclick = () => {
-          selectedCategory = cat.name;
-          updateUI();
+          selectedCategory = cat;
+          renderCategoryPills();
+          renderLocationsGrid();
         };
-
         container.appendChild(btn);
       });
     }
 
-    function renderStats() {
-      document.getElementById('statTotalItems').innerText = items.length;
-      document.getElementById('statTotalLocations').innerText = locations.length;
-      
-      const needsRefillCount = items.filter(i => i.status === 'refill' || i.status === 'missing').length;
-      document.getElementById('statNeedsRefill').innerText = needsRefillCount;
-
-      // Top category calculation
-      const counts = {};
-      items.forEach(i => {
-        counts[i.category] = (counts[i.category] || 0) + 1;
-      });
-      let topCat = '-';
-      let maxCount = 0;
-      for (const [cat, cnt] of Object.entries(counts)) {
-        if (cnt > maxCount) {
-          maxCount = cnt;
-          topCat = cat;
-        }
-      }
-      document.getElementById('statTopCategory').innerText = topCat;
+    /* STATS UPDATE */
+    function updateStats() {
+      const totalItemsEl = document.getElementById('stat-total-items');
+      const totalLocsEl = document.getElementById('stat-total-locations');
+      if (totalItemsEl) totalItemsEl.textContent = `Itens: ${items.length}`;
+      if (totalLocsEl) totalLocsEl.textContent = `Locais: ${locations.length}`;
     }
 
-    function updateFilterNotice() {
-      const notice = document.getElementById('activeFilterNotice');
-      const noticeText = document.getElementById('activeFilterText');
-      const isFiltered = searchQuery.trim() !== '' || selectedCategory !== 'Todas';
+    /* RENDER MAIN GRID */
+    function renderLocationsGrid() {
+      const grid = document.getElementById('locations-grid');
+      const emptyState = document.getElementById('empty-state');
+      grid.innerHTML = '';
 
-      if (isFiltered) {
-        notice.classList.remove('hidden');
-        let parts = [];
-        if (selectedCategory !== 'Todas') parts.push(`Categoria: "${selectedCategory}"`);
-        if (searchQuery.trim() !== '') parts.push(`Busca: "${searchQuery}"`);
-        noticeText.innerText = parts.join(' e ');
-      } else {
-        notice.classList.add('hidden');
-      }
-    }
-
-    function renderBoard() {
-      const container = document.getElementById('boardContainer');
-      container.innerHTML = '';
-
-      const query = searchQuery.toLowerCase().trim();
+      let anyItemMatched = false;
+      const isChecklistMode = !document.getElementById('checklist-banner').classList.contains('hidden');
 
       locations.forEach(loc => {
-        // Filter items present in this location
-        let locItems = items.filter(i => getItemLocationIds(i).includes(loc.id));
+        // Obter itens alocados para este container
+        const locItems = items.filter(item => {
+          const inThisLoc = Array.isArray(item.locationIds) && item.locationIds.includes(loc.id);
+          if (!inThisLoc) return false;
 
-        if (selectedCategory !== 'Todas') {
-          locItems = locItems.filter(i => i.category === selectedCategory);
-        }
+          // Filtro por Categoria
+          if (selectedCategory !== 'Todas' && item.category !== selectedCategory) {
+            return false;
+          }
 
-        if (query) {
-          locItems = locItems.filter(i => 
-            i.name.toLowerCase().includes(query) ||
-            (i.notes && i.notes.toLowerCase().includes(query)) ||
-            i.category.toLowerCase().includes(query)
-          );
-        }
+          // Filtro por Busca
+          if (searchQuery.trim() !== '') {
+            const q = searchQuery.toLowerCase();
+            const nameMatch = item.name.toLowerCase().includes(q);
+            const notesMatch = item.notes && item.notes.toLowerCase().includes(q);
+            const catMatch = item.category.toLowerCase().includes(q);
+            const locNameMatch = loc.name.toLowerCase().includes(q);
+            return nameMatch || notesMatch || catMatch || locNameMatch;
+          }
 
-        // Location Column Card
+          return true;
+        });
+
+        if (locItems.length > 0) anyItemMatched = true;
+
+        // Montar Coluna do Local
         const col = document.createElement('div');
-        col.className = 'bg-zinc-900 border border-zinc-800 rounded-2xl flex flex-col max-h-[80vh] shadow-xl overflow-hidden transition-all duration-200';
+        col.className = 'flex flex-col bg-slate-900/70 border border-slate-800/80 rounded-2xl overflow-hidden transition-all duration-200 shadow-lg';
         col.dataset.locationId = loc.id;
 
-        // Header
-        const totalInLoc = items.filter(i => getItemLocationIds(i).includes(loc.id)).length;
+        // Drag & Drop listeners
+        col.addEventListener('dragover', handleDragOver);
+        col.addEventListener('dragleave', handleDragLeave);
+        col.addEventListener('drop', (e) => handleDrop(e, loc.id));
+
+        const iconName = getLucideIconForLocation(loc.icon);
 
         col.innerHTML = `
-          <!-- Location Column Header -->
-          <div class="p-4 border-b border-zinc-800/80 bg-zinc-900/90 flex items-center justify-between sticky top-0 z-10">
+          <!-- Location Header -->
+          <div class="p-3.5 bg-slate-900 border-b border-slate-800/90 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5 min-w-0">
-              <div class="w-8 h-8 rounded-lg bg-zinc-800 border border-zinc-700 flex items-center justify-center text-emerald-400 shrink-0">
-                <i class="fa-solid ${loc.icon || 'fa-box'} text-sm"></i>
+              <div class="p-2 rounded-xl bg-slate-800 text-brand-400 border border-slate-700/60 shrink-0">
+                <i data-lucide="${iconName}" class="w-4 h-4"></i>
               </div>
-              <div class="truncate">
-                <h3 class="font-bold text-sm text-zinc-100 truncate">${escapeHtml(loc.name)}</h3>
-                <p class="text-[11px] text-zinc-400 truncate">${escapeHtml(loc.description || 'Sem descrição')}</p>
+              <div class="min-w-0">
+                <h3 class="font-bold text-sm text-slate-200 truncate flex items-center gap-2">
+                  ${loc.name}
+                  <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-normal">
+                    ${locItems.length}
+                  </span>
+                </h3>
+                ${loc.description ? `<p class="text-[11px] text-slate-500 truncate">${loc.description}</p>` : ''}
               </div>
             </div>
 
+            <!-- Actions -->
             <div class="flex items-center gap-1 shrink-0">
-              <span class="text-xs font-mono font-semibold bg-zinc-800 text-emerald-400 px-2 py-0.5 rounded-full border border-zinc-700/60">
-                ${locItems.length} ${locItems.length !== totalInLoc ? `<span class="text-zinc-500">/ ${totalInLoc}</span>` : ''}
-              </span>
-              <button onclick="openEditLocationModal('${loc.id}')" class="text-zinc-400 hover:text-zinc-200 p-1.5 rounded-md hover:bg-zinc-800 transition text-xs">
-                <i class="fa-solid fa-gear"></i>
+              <button onclick="openAddItemModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-brand-400 hover:bg-slate-800 rounded-lg transition-colors" title="Adicionar item neste local">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+              <button onclick="openEditLocationModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors" title="Editar Local">
+                <i data-lucide="more-vertical" class="w-4 h-4"></i>
               </button>
             </div>
           </div>
 
-          <!-- Drag and Drop Dropzone Body -->
-          <div class="dropzone p-3 flex-1 overflow-y-auto space-y-2.5 min-h-[160px]" data-location-id="${loc.id}">
-            <!-- Item Cards injected below -->
-          </div>
-
-          <!-- Location Footer: Quick Add Item -->
-          <div class="p-3 border-t border-zinc-800/80 bg-zinc-900/40">
-            <button onclick="openAddItemModal('${loc.id}')" class="w-full py-2 px-3 bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 hover:text-emerald-400 border border-dashed border-zinc-700/80 hover:border-emerald-500/50 rounded-xl text-xs font-medium transition flex items-center justify-center gap-2">
-              <i class="fa-solid fa-plus text-xs"></i>
-              <span>Adicionar neste local</span>
-            </button>
-          </div>
-        `;
-
-        const dropzone = col.querySelector('.dropzone');
-
-        if (locItems.length === 0) {
-          dropzone.innerHTML = `
-            <div class="h-32 border-2 border-dashed border-zinc-800 rounded-xl flex flex-col items-center justify-center text-center p-4 text-zinc-600">
-              <i class="fa-solid fa-box-open text-xl mb-1"></i>
-              <span class="text-xs">Nenhum item aqui</span>
-            </div>
-          `;
-        } else {
-          locItems.forEach(item => {
-            const itemCard = createItemCardElement(item, loc.id);
-            dropzone.appendChild(itemCard);
-          });
-        }
-
-        // Setup Drag & Drop Listeners for Dropzone
-        setupDropzoneEvents(dropzone, loc.id);
-
-        container.appendChild(col);
-      });
-    }
-
-    function createItemCardElement(item, currentLocId) {
-      const card = document.createElement('div');
-      card.className = 'group bg-zinc-800/70 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 rounded-xl p-3 shadow-sm transition-all duration-150 cursor-grab active:cursor-grabbing relative';
-      card.draggable = true;
-      card.dataset.itemId = item.id;
-
-      const badgeClass = getItemCategoryBadge(item.category);
-      const catIcon = getCategoryIcon(item.category);
-
-      let statusDot = 'bg-emerald-500';
-      let statusTitle = 'OK';
-      if (item.status === 'refill') {
-        statusDot = 'bg-amber-500 animate-pulse';
-        statusTitle = 'Precisa Reposição';
-      } else if (item.status === 'missing') {
-        statusDot = 'bg-rose-500';
-        statusTitle = 'Ausente';
-      }
-
-      const allLocIds = getItemLocationIds(item);
-      const isMultiLoc = allLocIds.length > 1;
-
-      card.innerHTML = `
-        <div class="flex items-start justify-between gap-2">
-          <div class="flex items-start gap-2 flex-1 min-w-0">
-            <span class="mt-1 w-2 h-2 rounded-full ${statusDot} shrink-0" title="${statusTitle}"></span>
-            <div class="min-w-0 flex-1">
-              <div class="text-xs font-semibold text-zinc-100 leading-snug group-hover:text-emerald-300 transition-colors">
-                ${escapeHtml(item.name)}
+          <!-- Items Container -->
+          <div class="p-2.5 space-y-2 min-h-[140px] flex-1">
+            ${locItems.length === 0 ? `
+              <div class="h-28 flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-800 rounded-xl">
+                <i data-lucide="inbox" class="w-5 h-5 text-slate-600 mb-1"></i>
+                <span class="text-xs text-slate-500">Nenhum item aqui</span>
+                <span class="text-[10px] text-slate-600">Arraste ou adicione</span>
               </div>
-              
-              <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                <span class="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md border ${badgeClass}">
-                  <i class="fa-solid ${catIcon}"></i> ${escapeHtml(item.category)}
-                </span>
-                
-                ${item.qty ? `<span class="text-[10px] font-mono text-zinc-400 bg-zinc-900/60 border border-zinc-700/50 px-1.5 py-0.5 rounded">${escapeHtml(item.qty)}</span>` : ''}
+            ` : ''}
 
-                ${isMultiLoc ? `<span class="text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded" title="Presente em ${allLocIds.length} locais"><i class="fa-solid fa-layer-group text-[9px] mr-1"></i>+${allLocIds.length - 1} local</span>` : ''}
-              </div>
-
-              ${item.notes ? `<p class="text-[11px] text-zinc-400 mt-1.5 line-clamp-2 leading-relaxed bg-zinc-900/40 p-1.5 rounded-md border border-zinc-800/50">${escapeHtml(item.notes)}</p>` : ''}
-            </div>
-          </div>
-
-          <!-- Quick Actions -->
-          <div class="flex flex-col items-end gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
-            <button onclick="event.stopPropagation(); openEditItemModal('${item.id}')" title="Editar item" class="p-1 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 rounded transition text-xs">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-
-            <button onclick="event.stopPropagation(); openQuickMoveModal('${item.id}')" title="Gerenciar locais" class="p-1 hover:bg-zinc-700 text-zinc-400 hover:text-emerald-400 rounded transition text-xs">
-              <i class="fa-solid fa-folder-tree"></i>
-            </button>
-          </div>
-        </div>
-      `;
-
-      // Card Drag Events
-      card.addEventListener('dragstart', (e) => {
-        draggedItemId = item.id;
-        draggedFromLocId = currentLocId;
-        card.classList.add('dragging');
-        e.dataTransfer.setData('text/plain', item.id);
-        e.dataTransfer.effectAllowed = 'move';
-      });
-
-      card.addEventListener('dragend', () => {
-        card.classList.remove('dragging');
-        draggedItemId = null;
-        draggedFromLocId = null;
-        document.querySelectorAll('.dropzone').forEach(dz => dz.classList.remove('drag-over'));
-      });
-
-      // Click card to edit
-      card.addEventListener('click', (e) => {
-        if (!e.target.closest('button')) {
-          openEditItemModal(item.id);
-        }
-      });
-
-      return card;
-    }
-
-    // Drag & Drop Handlers for Containers
-    function setupDropzoneEvents(dropzone, targetLocationId) {
-      dropzone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        dropzone.classList.add('drag-over');
-      });
-
-      dropzone.addEventListener('dragleave', (e) => {
-        if (!dropzone.contains(e.relatedTarget)) {
-          dropzone.classList.remove('drag-over');
-        }
-      });
-
-      dropzone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropzone.classList.remove('drag-over');
-        
-        const itemId = e.dataTransfer.getData('text/plain') || draggedItemId;
-        if (!itemId) return;
-
-        const targetItem = items.find(i => i.id === itemId);
-        if (!targetItem) return;
-
-        let locIds = getItemLocationIds(targetItem);
-
-        // If not already in target location
-        if (!locIds.includes(targetLocationId)) {
-          // Replace source location with target location (Move)
-          if (draggedFromLocId && locIds.includes(draggedFromLocId)) {
-            locIds = locIds.filter(id => id !== draggedFromLocId);
-          }
-          locIds.push(targetLocationId);
-
-          targetItem.locationIds = locIds;
-          delete targetItem.locationId; // clean up single location property if present
-
-          const newLocName = locations.find(l => l.id === targetLocationId)?.name || '';
-          saveData();
-          showToast(`'${targetItem.name}' movido para ${newLocName}!`, 'success');
-        }
-      });
-    }
-
-    /* CHECKLIST MODE */
-    function renderChecklist() {
-      const container = document.getElementById('checklistGroupedContent');
-      container.innerHTML = '';
-
-      let totalChecklistItems = items.length;
-      let checkedCount = checkedItems.size;
-
-      document.getElementById('checklistCounter').innerText = `${checkedCount} / ${totalChecklistItems} OK`;
-
-      locations.forEach(loc => {
-        const locItems = items.filter(i => getItemLocationIds(i).includes(loc.id));
-        if (locItems.length === 0) return;
-
-        const section = document.createElement('div');
-        section.className = 'bg-zinc-950/60 border border-zinc-800 rounded-xl p-4 space-y-3';
-
-        section.innerHTML = `
-          <div class="flex items-center gap-2 border-b border-zinc-800 pb-2">
-            <i class="fa-solid ${loc.icon || 'fa-box'} text-emerald-400"></i>
-            <h4 class="font-bold text-sm text-zinc-200">${escapeHtml(loc.name)}</h4>
-            <span class="text-xs font-mono text-zinc-500">(${locItems.length} itens)</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             ${locItems.map(item => {
               const isChecked = checkedItems.has(item.id);
+              const otherLocsCount = (item.locationIds || []).length - 1;
+
               return `
-                <label class="flex items-center gap-2.5 p-2.5 rounded-lg border transition cursor-pointer select-none ${
-                  isChecked 
-                    ? 'bg-emerald-950/20 border-emerald-800/40 text-zinc-400 line-through' 
-                    : 'bg-zinc-800/40 hover:bg-zinc-800 border-zinc-700/60 text-zinc-200'
-                }">
-                  <input type="checkbox" onchange="toggleChecklistItem('${item.id}')" ${isChecked ? 'checked' : ''} 
-                    class="w-4 h-4 accent-emerald-500 rounded border-zinc-700 focus:ring-0 cursor-pointer">
-                  <div class="min-w-0 flex-1">
-                    <span class="text-xs font-medium block truncate">${escapeHtml(item.name)}</span>
-                    <span class="text-[10px] text-zinc-500 block truncate">${escapeHtml(item.category)}</span>
+                <div 
+                  draggable="true" 
+                  data-item-id="${item.id}"
+                  data-source-loc="${loc.id}"
+                  class="item-card group relative p-3 rounded-xl bg-slate-950/90 border ${
+                    isChecked ? 'border-brand-500/40 bg-brand-500/5' : 'border-slate-800/90 hover:border-slate-700'
+                  } transition-all duration-150 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md"
+                >
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="flex items-start gap-2.5 flex-1 min-w-0">
+                      ${isChecklistMode ? `
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleItemCheck('${item.id}')" class="mt-0.5 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-900 cursor-pointer">
+                      ` : ''}
+                      <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                          ${getStatusDot(item.status)}
+                          <span class="text-xs font-semibold text-slate-200 group-hover:text-white break-words ${isChecked ? 'line-through text-slate-500' : ''}">
+                            ${item.name}
+                          </span>
+                        </div>
+                        ${item.notes ? `
+                          <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">${item.notes}</p>
+                        ` : ''}
+                      </div>
+                    </div>
+
+                    <!-- Quick buttons -->
+                    <div class="opacity-0 group-hover:opacity-100 sm:transition-opacity flex items-center gap-0.5 shrink-0">
+                      <button onclick="openQuickMoveModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-brand-400" title="Alocar em outros compartimentos">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button onclick="openEditItemModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200" title="Editar item">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button onclick="deleteItem('${item.id}', '${loc.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400" title="Remover deste local">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
                   </div>
-                </label>
+
+                  <!-- Footer tags -->
+                  <div class="mt-2.5 pt-2 border-t border-slate-900 flex items-center justify-between gap-1">
+                    <span class="text-[10px] px-2 py-0.5 rounded-full border font-medium ${getCategoryBadgeClass(item.category)}">
+                      ${item.category}
+                    </span>
+                    ${otherLocsCount > 0 ? `
+                      <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium" title="Este equipamento também está presente em outros compartimentos">
+                        +${otherLocsCount} ${otherLocsCount === 1 ? 'outro local' : 'outros locais'}
+                      </span>
+                    ` : ''}
+                  </div>
+                </div>
               `;
             }).join('')}
           </div>
         `;
 
-        container.appendChild(section);
+        grid.appendChild(col);
+      });
+
+      // Show or hide empty search feedback
+      if (!anyItemMatched && (searchQuery.trim() !== '' || selectedCategory !== 'Todas')) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      // Re-initialize Lucide Icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+
+      // Bind drag start & end
+      document.querySelectorAll('.item-card').forEach(card => {
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
       });
     }
 
-    function toggleChecklistItem(itemId) {
+    /* DRAG & DROP LOGIC */
+    function handleDragStart(e) {
+      draggedItemId = this.dataset.itemId;
+      draggedFromLocId = this.dataset.sourceLoc;
+      this.classList.add('opacity-40');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragEnd() {
+      this.classList.remove('opacity-40');
+      document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+      draggedItemId = null;
+      draggedFromLocId = null;
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      this.classList.add('drag-over');
+    }
+
+    function handleDragLeave() {
+      this.classList.remove('drag-over');
+    }
+
+    async function handleDrop(e, targetLocationId) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+
+      if (!draggedItemId || !targetLocationId) return;
+
+      const item = items.find(i => i.id === draggedItemId);
+      if (!item) return;
+
+      // Se já pertencer ao local, ignora
+      if (item.locationIds.includes(targetLocationId)) {
+        showToast('O equipamento já está neste local!', 'info');
+        return;
+      }
+
+      // Atualiza: substitui o local de origem pelo novo local
+      if (draggedFromLocId) {
+        item.locationIds = item.locationIds.filter(id => id !== draggedFromLocId);
+      }
+      item.locationIds.push(targetLocationId);
+
+      renderLocationsGrid();
+      await saveData();
+
+      const targetLoc = locations.find(l => l.id === targetLocationId);
+      showToast(`Movido para "${targetLoc ? targetLoc.name : 'novo local'}"`, 'success');
+    }
+
+    /* CHECKLIST TOGGLE */
+    window.toggleItemCheck = function(itemId) {
       if (checkedItems.has(itemId)) {
         checkedItems.delete(itemId);
       } else {
         checkedItems.add(itemId);
       }
-      renderChecklist();
-    }
+      renderLocationsGrid();
+    };
 
-    /* MODALS MANAGEMENT */
-    function populateLocationSelects(selectedLocIds = []) {
-      const container = document.getElementById('itemLocationsCheckboxes');
-      container.innerHTML = locations.map(l => {
-        const checked = selectedLocIds.includes(l.id) ? 'checked' : '';
-        return `
-          <label class="flex items-center gap-2 p-1.5 rounded hover:bg-zinc-700/50 cursor-pointer select-none">
-            <input type="checkbox" value="${l.id}" ${checked} class="item-loc-checkbox w-4 h-4 accent-emerald-500 rounded border-zinc-600 focus:ring-0">
-            <span class="text-xs text-zinc-200 flex items-center gap-2">
-              <i class="fa-solid ${l.icon || 'fa-box'} text-emerald-400 w-4"></i>
-              ${escapeHtml(l.name)}
-            </span>
-          </label>
+    /* ITEM CREATION & EDITING */
+    function renderLocationCheckboxes(selectedIds = []) {
+      const container = document.getElementById('item-locations-container');
+      container.innerHTML = '';
+
+      locations.forEach(loc => {
+        const isChecked = selectedIds.includes(loc.id);
+        const label = document.createElement('label');
+        label.className = 'flex items-center gap-2 text-xs text-slate-300 hover:text-white cursor-pointer select-none';
+        label.innerHTML = `
+          <input type="checkbox" value="${loc.id}" ${isChecked ? 'checked' : ''} class="item-loc-checkbox rounded border-slate-700 text-brand-500 focus:ring-0 bg-slate-900">
+          <span class="truncate">${loc.name}</span>
         `;
-      }).join('');
+        container.appendChild(label);
+      });
     }
 
-    function openAddItemModal(defaultLocId = null) {
-      document.getElementById('itemForm').reset();
-      document.getElementById('itemId').value = '';
-      document.getElementById('itemModalTitle').innerHTML = '<i class="fa-solid fa-box text-emerald-400"></i> Adicionar Novo Item';
-      document.getElementById('deleteItemBtn').classList.add('hidden');
+    window.openAddItemModal = function(preselectedLocId = null) {
+      document.getElementById('item-modal-title').innerHTML = '<i data-lucide="package" class="w-4 h-4 text-brand-500"></i> Adicionar Equipamento';
+      document.getElementById('item-id').value = '';
+      document.getElementById('item-name').value = '';
+      document.getElementById('item-notes').value = '';
+      document.getElementById('item-category').value = 'Ferramentas';
+      document.getElementById('item-status').value = 'ok';
 
-      const initialLocs = defaultLocId ? [defaultLocId] : (locations.length > 0 ? [locations[0].id] : []);
-      populateLocationSelects(initialLocs);
+      const preselected = preselectedLocId ? [preselectedLocId] : [locations[0]?.id || 'chaveiro'];
+      renderLocationCheckboxes(preselected);
 
-      document.getElementById('itemModal').classList.remove('hidden');
-    }
+      document.getElementById('item-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+      document.getElementById('item-name').focus();
+    };
 
-    function openEditItemModal(itemId) {
+    window.openEditItemModal = function(itemId) {
       const item = items.find(i => i.id === itemId);
       if (!item) return;
 
-      document.getElementById('itemId').value = item.id;
-      document.getElementById('itemName').value = item.name;
-      document.getElementById('itemCategory').value = item.category;
-      document.getElementById('itemQty').value = item.qty || '';
-      document.getElementById('itemStatus').value = item.status || 'ok';
-      document.getElementById('itemNotes').value = item.notes || '';
+      document.getElementById('item-modal-title').innerHTML = '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Equipamento';
+      document.getElementById('item-id').value = item.id;
+      document.getElementById('item-name').value = item.name;
+      document.getElementById('item-notes').value = item.notes || '';
+      document.getElementById('item-category').value = item.category || 'Outros';
+      document.getElementById('item-status').value = item.status || 'ok';
 
-      populateLocationSelects(getItemLocationIds(item));
+      renderLocationCheckboxes(item.locationIds || []);
 
-      document.getElementById('itemModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-emerald-400"></i> Editar Equipamento';
-      document.getElementById('deleteItemBtn').classList.remove('hidden');
+      document.getElementById('item-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
 
-      document.getElementById('itemModal').classList.remove('hidden');
-    }
+    document.getElementById('item-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('item-id').value;
+      const name = document.getElementById('item-name').value.trim();
+      const notes = document.getElementById('item-notes').value.trim();
+      const category = document.getElementById('item-category').value;
+      const status = document.getElementById('item-status').value;
 
-    function closeItemModal() {
-      document.getElementById('itemModal').classList.add('hidden');
-    }
+      // Obter checkboxes de locais marcados
+      const checkedBoxes = document.querySelectorAll('.item-loc-checkbox:checked');
+      const selectedLocIds = Array.from(checkedBoxes).map(cb => cb.value);
 
-    function openAddLocationModal() {
-      document.getElementById('locationForm').reset();
-      document.getElementById('locationId').value = '';
-      document.getElementById('locationModalTitle').innerHTML = '<i class="fa-solid fa-folder-plus text-emerald-400"></i> Criar Novo Local';
-      document.getElementById('deleteLocationBtn').classList.add('hidden');
-      document.getElementById('locationModal').classList.remove('hidden');
-    }
+      if (selectedLocIds.length === 0) {
+        showToast('Selecione ao menos 1 local para guardar o item!', 'info');
+        return;
+      }
 
-    function openEditLocationModal(locId) {
+      if (id) {
+        // Atualizar item existente
+        const item = items.find(i => i.id === id);
+        if (item) {
+          item.name = name;
+          item.locationIds = selectedLocIds;
+          item.notes = notes;
+          item.category = category;
+          item.status = status;
+        }
+        showToast('Item atualizado com sucesso!', 'success');
+      } else {
+        // Criar novo item
+        const newItem = {
+          id: 'item-' + Date.now(),
+          name: name,
+          locationIds: selectedLocIds,
+          category: category,
+          status: status,
+          notes: notes
+        };
+        items.push(newItem);
+        showToast('Novo item cadastrado!', 'success');
+      }
+
+      document.getElementById('item-modal').classList.add('hidden');
+      renderLocationsGrid();
+      await saveData();
+    };
+
+    window.deleteItem = async function(itemId, fromLocationId) {
+      const item = items.find(i => i.id === itemId);
+      if (!item) return;
+
+      if ((item.locationIds || []).length > 1) {
+        // Se estiver em múltiplos locais, remove apenas deste container
+        item.locationIds = item.locationIds.filter(id => id !== fromLocationId);
+        showToast(`Removido deste local (continua nos outros)`, 'info');
+      } else {
+        // Se estiver em apenas um local, exclui da lista
+        items = items.filter(i => i.id !== itemId);
+        checkedItems.delete(itemId);
+        showToast(`"${item.name}" excluído.`, 'info');
+      }
+
+      renderLocationsGrid();
+      await saveData();
+    };
+
+    /* QUICK MOVE MODAL (MULTI-LOCATION ASSIGNMENT) */
+    let currentQuickMoveItemId = null;
+
+    window.openQuickMoveModal = function(itemId) {
+      const item = items.find(i => i.id === itemId);
+      if (!item) return;
+
+      currentQuickMoveItemId = itemId;
+      document.getElementById('quick-move-item-name').textContent = item.name;
+
+      const optsContainer = document.getElementById('quick-move-options');
+      optsContainer.innerHTML = '';
+
+      locations.forEach(loc => {
+        const isPresent = (item.locationIds || []).includes(loc.id);
+        const iconName = getLucideIconForLocation(loc.icon);
+
+        const label = document.createElement('label');
+        label.className = `w-full flex items-center justify-between p-2.5 rounded-xl border text-xs cursor-pointer transition-all select-none ${
+          isPresent 
+            ? 'bg-brand-500/10 border-brand-500/30 text-brand-300 font-semibold' 
+            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+        }`;
+
+        label.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <i data-lucide="${iconName}" class="w-4 h-4 text-slate-400"></i>
+            <span>${loc.name}</span>
+          </div>
+          <input type="checkbox" value="${loc.id}" ${isPresent ? 'checked' : ''} class="quick-loc-cb rounded border-slate-700 text-brand-500 focus:ring-0 bg-slate-900">
+        `;
+
+        optsContainer.appendChild(label);
+      });
+
+      document.getElementById('quick-move-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
+
+    document.getElementById('btn-save-quick-move').onclick = async function() {
+      if (!currentQuickMoveItemId) return;
+      const item = items.find(i => i.id === currentQuickMoveItemId);
+      if (!item) return;
+
+      const selected = Array.from(document.querySelectorAll('.quick-loc-cb:checked')).map(cb => cb.value);
+
+      if (selected.length === 0) {
+        showToast('O equipamento precisa ficar em pelo menos 1 local.', 'info');
+        return;
+      }
+
+      item.locationIds = selected;
+      document.getElementById('quick-move-modal').classList.add('hidden');
+      renderLocationsGrid();
+      await saveData();
+      showToast('Locais do item atualizados!', 'success');
+    };
+
+    /* LOCATION CREATION & EDITING */
+    window.openEditLocationModal = function(locId) {
       const loc = locations.find(l => l.id === locId);
       if (!loc) return;
 
-      document.getElementById('locationId').value = loc.id;
-      document.getElementById('locationName').value = loc.name;
-      document.getElementById('locationIcon').value = loc.icon || 'fa-box';
-      document.getElementById('locationDescription').value = loc.description || '';
+      document.getElementById('loc-modal-title').innerHTML = '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Compartimento';
+      document.getElementById('loc-id').value = loc.id;
+      document.getElementById('loc-name').value = loc.name;
+      document.getElementById('loc-icon').value = loc.icon || 'box';
+      document.getElementById('loc-desc').value = loc.description || '';
 
-      document.getElementById('locationModalTitle').innerHTML = '<i class="fa-solid fa-gears text-emerald-400"></i> Editar Local';
-      document.getElementById('deleteLocationBtn').classList.remove('hidden');
+      document.getElementById('loc-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
 
-      document.getElementById('locationModal').classList.remove('hidden');
-    }
+    document.getElementById('btn-add-location').onclick = function() {
+      document.getElementById('loc-modal-title').innerHTML = '<i data-lucide="folder-plus" class="w-4 h-4 text-brand-500"></i> Novo Compartimento';
+      document.getElementById('loc-id').value = '';
+      document.getElementById('loc-name').value = '';
+      document.getElementById('loc-icon').value = 'box';
+      document.getElementById('loc-desc').value = '';
 
-    function closeLocationModal() {
-      document.getElementById('locationModal').classList.add('hidden');
-    }
+      document.getElementById('loc-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
 
-    function openQuickMoveModal(itemId) {
-      const item = items.find(i => i.id === itemId);
-      if (!item) return;
+    document.getElementById('loc-form').onsubmit = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('loc-id').value;
+      const name = document.getElementById('loc-name').value.trim();
+      const icon = document.getElementById('loc-icon').value;
+      const desc = document.getElementById('loc-desc').value.trim();
 
-      document.getElementById('quickMoveItemTitle').innerText = item.name;
-      const optionsContainer = document.getElementById('quickMoveOptions');
-      optionsContainer.innerHTML = '';
-
-      const activeLocIds = getItemLocationIds(item);
-
-      locations.forEach(loc => {
-        const isPresent = activeLocIds.includes(loc.id);
-        const label = document.createElement('label');
-        label.className = `w-full p-3 rounded-xl border text-left text-xs font-medium flex items-center justify-between transition cursor-pointer select-none ${
-          isPresent 
-            ? 'bg-emerald-950/20 border-emerald-700/50 text-emerald-300' 
-            : 'bg-zinc-800 hover:bg-zinc-700 border-zinc-700 text-zinc-200'
-        }`;
-        
-        label.innerHTML = `
-          <span class="flex items-center gap-2">
-            <i class="fa-solid ${loc.icon || 'fa-box'} text-emerald-400"></i>
-            ${escapeHtml(loc.name)}
-          </span>
-          <input type="checkbox" ${isPresent ? 'checked' : ''} class="w-4 h-4 accent-emerald-500 rounded border-zinc-600 focus:ring-0">
-        `;
-
-        const checkbox = label.querySelector('input');
-        checkbox.onchange = () => {
-          let updatedLocs = getItemLocationIds(item);
-          if (checkbox.checked) {
-            if (!updatedLocs.includes(loc.id)) updatedLocs.push(loc.id);
-          } else {
-            updatedLocs = updatedLocs.filter(id => id !== loc.id);
-          }
-
-          if (updatedLocs.length === 0) {
-            showToast('O item deve ter pelo menos 1 local marcado!', 'warning');
-            checkbox.checked = true;
-            return;
-          }
-
-          item.locationIds = updatedLocs;
-          delete item.locationId;
-          saveData();
-          showToast(`Locais de '${item.name}' atualizados!`, 'success');
-        };
-
-        optionsContainer.appendChild(label);
-      });
-
-      document.getElementById('quickMoveModal').classList.remove('hidden');
-    }
-
-    /* EXPORT & TEXT PREVIEW GENERATOR */
-    function generateFormattedText() {
-      let text = "========================================\n";
-      text += "🎒 MEU CARREGAMENTO EDC (EVERYDAY CARRY)\n";
-      text += "========================================\n\n";
-
-      locations.forEach(loc => {
-        const locItems = items.filter(i => getItemLocationIds(i).includes(loc.id));
-        text += `📍 ${loc.name.toUpperCase()} (${locItems.length} itens)\n`;
-        text += `----------------------------------------\n`;
-        if (locItems.length === 0) {
-          text += `  (Nenhum item)\n`;
-        } else {
-          locItems.forEach((i, idx) => {
-            const statusFlag = i.status === 'refill' ? ' [REPOR]' : i.status === 'missing' ? ' [AUSENTE]' : '';
-            text += `  ${idx + 1}. ${i.name}${statusFlag}\n`;
-            if (i.qty || i.notes) {
-              text += `     ↳ ${i.qty ? `Qtd: ${i.qty}` : ''} ${i.notes ? `| ${i.notes}` : ''}\n`;
-            }
-          });
+      if (id) {
+        const loc = locations.find(l => l.id === id);
+        if (loc) {
+          loc.name = name;
+          loc.icon = icon;
+          loc.description = desc;
         }
-        text += `\n`;
-      });
-
-      text += `Gerado via EDC Manager Pro em ${new Date().toLocaleDateString('pt-BR')}\n`;
-      return text;
-    }
-
-    function openExportModal() {
-      document.getElementById('formattedTextPreview').value = generateFormattedText();
-      document.getElementById('jsonTextEditor').value = JSON.stringify({ locations, items }, null, 2);
-      
-      // Default to text tab
-      switchModalTab('text');
-      document.getElementById('exportModal').classList.remove('hidden');
-    }
-
-    function switchModalTab(tabName) {
-      const tabTextBtn = document.getElementById('tabTextBtn');
-      const tabJsonEditBtn = document.getElementById('tabJsonEditBtn');
-      const textContent = document.getElementById('modalTabTextContent');
-      const jsonContent = document.getElementById('modalTabJsonEditContent');
-
-      if (tabName === 'text') {
-        tabTextBtn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg bg-zinc-800 text-emerald-400 border-t border-x border-zinc-700 transition';
-        tabJsonEditBtn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg text-zinc-400 hover:text-zinc-200 transition';
-        textContent.classList.remove('hidden');
-        jsonContent.classList.add('hidden');
+        showToast('Local atualizado com sucesso!', 'success');
       } else {
-        tabJsonEditBtn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg bg-zinc-800 text-emerald-400 border-t border-x border-zinc-700 transition';
-        tabTextBtn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg text-zinc-400 hover:text-zinc-200 transition';
-        textContent.classList.add('hidden');
-        jsonContent.classList.remove('hidden');
+        const newLocId = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now().toString().slice(-4);
+        locations.push({
+          id: newLocId,
+          name: name,
+          icon: icon,
+          description: desc
+        });
+        showToast('Novo local criado!', 'success');
+      }
+
+      document.getElementById('loc-modal').classList.add('hidden');
+      renderLocationsGrid();
+      await saveData();
+    };
+
+    /* EXPORT & TOOLS MODAL LOGIC */
+    const toolsModal = document.getElementById('tools-modal');
+    const tabBtnTools = document.getElementById('tab-btn-tools');
+    const tabBtnJson = document.getElementById('tab-btn-json-editor');
+    const tabContentTools = document.getElementById('tab-content-tools');
+    const tabContentJson = document.getElementById('tab-content-json-editor');
+    const jsonTextarea = document.getElementById('json-editor-textarea');
+
+    function switchToolsTab(tab) {
+      if (tab === 'tools') {
+        tabBtnTools.className = 'py-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none';
+        tabBtnJson.className = 'py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none flex items-center gap-1.5';
+        tabContentTools.classList.remove('hidden');
+        tabContentJson.classList.add('hidden');
+      } else {
+        tabBtnJson.className = 'py-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none flex items-center gap-1.5';
+        tabBtnTools.className = 'py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none';
+        tabContentJson.classList.remove('hidden');
+        tabContentTools.classList.add('hidden');
+
+        // Populate JSON editor with current full state
+        const currentData = { locations: locations, items: items };
+        jsonTextarea.value = JSON.stringify(currentData, null, 2);
       }
     }
 
-    function closeExportModal() {
-      document.getElementById('exportModal').classList.add('hidden');
-    }
+    tabBtnTools.onclick = () => switchToolsTab('tools');
+    tabBtnJson.onclick = () => switchToolsTab('json');
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
+    document.getElementById('btn-open-tools').onclick = () => {
+      switchToolsTab('tools');
+      toolsModal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
 
-    /* EVENT LISTENERS ATTACHMENT */
-    document.addEventListener('DOMContentLoaded', () => {
-      loadData();
+    // Format JSON in Textarea
+    document.getElementById('btn-format-json').onclick = () => {
+      try {
+        const parsed = JSON.parse(jsonTextarea.value);
+        jsonTextarea.value = JSON.stringify(parsed, null, 2);
+        showToast('JSON formatado com sucesso!', 'info');
+      } catch (err) {
+        showToast('Erro de sintaxe no JSON: ' + err.message, 'error');
+      }
+    };
 
-      // Search Inputs
-      const searchInput = document.getElementById('searchInput');
-      const clearSearchBtn = document.getElementById('clearSearchBtn');
+    // Save JSON directly from Textarea
+    document.getElementById('btn-save-json-editor').onclick = async () => {
+      try {
+        const parsed = JSON.parse(jsonTextarea.value);
+        if (!parsed.locations || !parsed.items) {
+          throw new Error('O JSON precisa conter as chaves "locations" e "items".');
+        }
 
-      searchInput.addEventListener('input', (e) => {
-        searchQuery = e.target.value;
-        if (searchQuery.trim() !== '') {
-          clearSearchBtn.classList.remove('hidden');
+        locations = parsed.locations;
+        items = normalizeItems(parsed.items);
+
+        renderLocationsGrid();
+        await saveData();
+        toolsModal.classList.add('hidden');
+        showToast(`Salvo! ${items.length} itens e ${locations.length} compartimentos ativos.`, 'success');
+      } catch (err) {
+        showToast('JSON Inválido: ' + err.message, 'error');
+      }
+    };
+
+    // Copy Plain Text List
+    document.getElementById('btn-copy-text').onclick = () => {
+      let output = `=== EDC INVENTORY REPORT ===\nData: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+
+      locations.forEach(loc => {
+        const locItems = items.filter(i => (i.locationIds || []).includes(loc.id));
+        output += `[ ${loc.name.toUpperCase()} ] (${locItems.length} itens)\n`;
+        if (locItems.length === 0) {
+          output += `  (vazio)\n`;
         } else {
-          clearSearchBtn.classList.add('hidden');
-        }
-        updateUI();
-      });
-
-      clearSearchBtn.addEventListener('click', () => {
-        searchInput.value = '';
-        searchQuery = '';
-        clearSearchBtn.classList.add('hidden');
-        updateUI();
-      });
-
-      document.getElementById('clearFilterBtn').addEventListener('click', () => {
-        searchInput.value = '';
-        searchQuery = '';
-        selectedCategory = 'Todas';
-        clearSearchBtn.classList.add('hidden');
-        updateUI();
-      });
-
-      // Top Actions
-      document.getElementById('addItemBtn').addEventListener('click', () => openAddItemModal());
-      document.getElementById('addLocationBtn').addEventListener('click', () => openAddLocationModal());
-      document.getElementById('exportMenuBtn').addEventListener('click', openExportModal);
-
-      // Checklist Toggle
-      const toggleChecklistBtn = document.getElementById('toggleChecklistBtn');
-      const boardContainer = document.getElementById('boardContainer');
-      const checklistView = document.getElementById('checklistView');
-
-      toggleChecklistBtn.addEventListener('click', () => {
-        if (checklistView.classList.contains('hidden')) {
-          checklistView.classList.remove('hidden');
-          boardContainer.classList.add('hidden');
-          toggleChecklistBtn.classList.add('bg-emerald-600', 'text-white');
-          renderChecklist();
-        } else {
-          checklistView.classList.add('hidden');
-          boardContainer.classList.remove('hidden');
-          toggleChecklistBtn.classList.remove('bg-emerald-600', 'text-white');
-        }
-      });
-
-      document.getElementById('closeChecklistBtn').addEventListener('click', () => {
-        checklistView.classList.add('hidden');
-        boardContainer.classList.remove('hidden');
-        toggleChecklistBtn.classList.remove('bg-emerald-600', 'text-white');
-      });
-
-      document.getElementById('uncheckAllBtn').addEventListener('click', () => {
-        checkedItems.clear();
-        renderChecklist();
-      });
-
-      // Reset to Default EDC Data
-      document.getElementById('resetDefaultBtn').addEventListener('click', () => {
-        if (confirm('Deseja restaurar a lista padrão de EDC inicial? Quaisquer edições personalizadas serão redefinidas.')) {
-          locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
-          items = JSON.parse(JSON.stringify(DEFAULT_ITEMS));
-          saveData();
-          showToast('Lista de EDC redefinida para o estado original!', 'warning');
-        }
-      });
-
-      // Item Form Submit
-      document.getElementById('itemForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const id = document.getElementById('itemId').value;
-        const name = document.getElementById('itemName').value.trim();
-        const category = document.getElementById('itemCategory').value;
-        const qty = document.getElementById('itemQty').value.trim();
-        const status = document.getElementById('itemStatus').value;
-        const notes = document.getElementById('itemNotes').value.trim();
-
-        // Get all checked location checkboxes
-        const checkedBoxes = document.querySelectorAll('.item-loc-checkbox:checked');
-        const selectedLocationIds = Array.from(checkedBoxes).map(cb => cb.value);
-
-        if (selectedLocationIds.length === 0) {
-          showToast('Selecione pelo menos um local para este item.', 'warning');
-          return;
-        }
-
-        if (id) {
-          // Edit existing
-          const item = items.find(i => i.id === id);
-          if (item) {
-            item.name = name;
-            item.locationIds = selectedLocationIds;
-            delete item.locationId;
-            item.category = category;
-            item.qty = qty;
-            item.status = status;
-            item.notes = notes;
-            showToast(`Item '${name}' atualizado!`, 'success');
-          }
-        } else {
-          // Add new
-          const newItem = {
-            id: 'item_' + Date.now(),
-            name,
-            locationIds: selectedLocationIds,
-            category,
-            qty,
-            status,
-            notes
-          };
-          items.push(newItem);
-          showToast(`Item '${name}' adicionado!`, 'success');
-        }
-
-        saveData();
-        closeItemModal();
-      });
-
-      document.getElementById('deleteItemBtn').addEventListener('click', () => {
-        const id = document.getElementById('itemId').value;
-        const item = items.find(i => i.id === id);
-        if (item && confirm(`Tem certeza que deseja excluir '${item.name}'?`)) {
-          items = items.filter(i => i.id !== id);
-          saveData();
-          closeItemModal();
-          showToast('Item excluído com sucesso.', 'warning');
-        }
-      });
-
-      document.getElementById('closeItemModalBtn').addEventListener('click', closeItemModal);
-      document.getElementById('cancelItemModalBtn').addEventListener('click', closeItemModal);
-
-      // Location Form Submit
-      document.getElementById('locationForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const id = document.getElementById('locationId').value;
-        const name = document.getElementById('locationName').value.trim();
-        const icon = document.getElementById('locationIcon').value;
-        const description = document.getElementById('locationDescription').value.trim();
-
-        if (id) {
-          const loc = locations.find(l => l.id === id);
-          if (loc) {
-            loc.name = name;
-            loc.icon = icon;
-            loc.description = description;
-            showToast(`Local '${name}' atualizado!`, 'success');
-          }
-        } else {
-          const newLoc = {
-            id: 'loc_' + Date.now(),
-            name,
-            icon,
-            description
-          };
-          locations.push(newLoc);
-          showToast(`Novo local '${name}' criado!`, 'success');
-        }
-
-        saveData();
-        closeLocationModal();
-      });
-
-      document.getElementById('deleteLocationBtn').addEventListener('click', () => {
-        const id = document.getElementById('locationId').value;
-        const loc = locations.find(l => l.id === id);
-        if (!loc) return;
-
-        const countItemsInLoc = items.filter(i => getItemLocationIds(i).includes(id)).length;
-        if (countItemsInLoc > 0) {
-          if (!confirm(`Este local contém ${countItemsInLoc} item(ns). Ao excluir o local, ele será removido da lista de locais desses itens. Continuar?`)) {
-            return;
-          }
-          items.forEach(i => {
-            let locIds = getItemLocationIds(i);
-            if (locIds.includes(id)) {
-              locIds = locIds.filter(lId => lId !== id);
-              if (locIds.length === 0) {
-                const targetLoc = locations.find(l => l.id !== id);
-                if (targetLoc) locIds.push(targetLoc.id);
-              }
-              i.locationIds = locIds;
-              delete i.locationId;
-            }
+          locItems.forEach(i => {
+            output += `  • ${i.name} [${i.category}]`;
+            if (i.notes) output += ` - ${i.notes}`;
+            output += `\n`;
           });
         }
-
-        locations = locations.filter(l => l.id !== id);
-        saveData();
-        closeLocationModal();
-        showToast('Local removido com sucesso.', 'warning');
+        output += `\n`;
       });
 
-      document.getElementById('closeLocationModalBtn').addEventListener('click', closeLocationModal);
-      document.getElementById('cancelLocationModalBtn').addEventListener('click', closeLocationModal);
-
-      // Quick Move Modal Close
-      document.getElementById('closeQuickMoveModalBtn').addEventListener('click', () => {
-        document.getElementById('quickMoveModal').classList.add('hidden');
-      });
-
-      document.getElementById('tabTextBtn').addEventListener('click', () => switchModalTab('text'));
-      document.getElementById('tabJsonEditBtn').addEventListener('click', () => switchModalTab('json'));
-
-      // Export / Backup Modal Listeners
-      document.getElementById('closeExportModalBtn').addEventListener('click', closeExportModal);
-      document.getElementById('closeExportModalBottomBtn').addEventListener('click', closeExportModal);
-
-      document.getElementById('copyFormattedTextBtn').addEventListener('click', () => {
-        const text = generateFormattedText();
-        const tempTextArea = document.createElement('textarea');
-        tempTextArea.value = text;
-        document.body.appendChild(tempTextArea);
-        tempTextArea.select();
+      // ExecCommand fallback for iframe clipboard support
+      const tempTextarea = document.createElement('textarea');
+      tempTextarea.value = output;
+      document.body.appendChild(tempTextarea);
+      tempTextarea.select();
+      try {
         document.execCommand('copy');
-        document.body.removeChild(tempTextArea);
         showToast('Lista copiada para a área de transferência!', 'success');
-      });
+      } catch (e) {
+        showToast('Não foi possível copiar o texto.', 'error');
+      }
+      document.body.removeChild(tempTextarea);
+    };
 
-      document.getElementById('downloadJsonBtn').addEventListener('click', () => {
-        const data = {
-          locations,
-          items,
-          exportDate: new Date().toISOString()
-        };
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `EDC_Backup_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        showToast('Backup JSON gerado!', 'success');
-      });
+    // Download Backup JSON
+    document.getElementById('btn-download-json').onclick = () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ locations, items }, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `EDC_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Download do backup JSON iniciado!', 'success');
+    };
 
-      // Format JSON button
-      document.getElementById('formatJsonBtn').addEventListener('click', () => {
+    // Import Backup JSON from File
+    document.getElementById('import-json-file').onchange = function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = async (event) => {
         try {
-          const raw = document.getElementById('jsonTextEditor').value;
-          const parsed = JSON.parse(raw);
-          document.getElementById('jsonTextEditor').value = JSON.stringify(parsed, null, 2);
-          showToast('JSON formatado com sucesso!', 'success');
-        } catch (e) {
-          showToast('Erro de sintaxe no JSON. Verifique vírgulas ou chaves.', 'error');
-        }
-      });
-
-      // Apply Live JSON Edit
-      document.getElementById('applyJsonEditBtn').addEventListener('click', () => {
-        try {
-          const raw = document.getElementById('jsonTextEditor').value;
-          const parsed = JSON.parse(raw);
-
-          if (parsed && Array.isArray(parsed.locations) && Array.isArray(parsed.items)) {
-            locations = parsed.locations;
-            items = parsed.items;
-            saveData();
-            closeExportModal();
-            showToast(`Nova configuração salva com sucesso! (${items.length} itens)`, 'success');
+          const imported = JSON.parse(event.target.result);
+          if (imported.locations && imported.items) {
+            locations = imported.locations;
+            items = normalizeItems(imported.items);
+            renderLocationsGrid();
+            await saveData();
+            toolsModal.classList.add('hidden');
+            showToast(`Restaurado com sucesso! (${items.length} itens, ${locations.length} locais)`, 'success');
           } else {
-            showToast('O JSON precisa conter as propriedades "locations" e "items".', 'error');
+            showToast('Estrutura JSON inválida para este aplicativo.', 'error');
           }
-        } catch (e) {
-          showToast('Erro de sintaxe no JSON! Verifique a formatação.', 'error');
+        } catch (err) {
+          showToast('Erro ao processar arquivo JSON: ' + err.message, 'error');
         }
-      });
+        // Reseta o input para permitir importar o mesmo arquivo se reeditado
+        e.target.value = '';
+      };
+      reader.readAsText(file);
+    };
 
-      // JSON Import File Selection
-      const importFileInput = document.getElementById('importFileInput');
-      document.getElementById('triggerImportBtn').addEventListener('click', () => {
-        importFileInput.click();
-      });
+    // Reset to initial default data
+    document.getElementById('btn-reset-default').onclick = async () => {
+      locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+      items = normalizeItems(DEFAULT_ITEMS);
+      renderLocationsGrid();
+      await saveData();
+      toolsModal.classList.add('hidden');
+      showToast('Lista padrão restaurada!', 'info');
+    };
 
-      importFileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    /* SEARCH & FILTER LISTENERS */
+    const searchInput = document.getElementById('search-input');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          try {
-            const importedData = JSON.parse(event.target.result);
-            if (importedData.locations && Array.isArray(importedData.locations) && importedData.items && Array.isArray(importedData.items)) {
-              locations = importedData.locations;
-              items = importedData.items;
-              saveData();
-              closeExportModal();
-              showToast(`Backup importado! ${items.length} itens em ${locations.length} locais.`, 'success');
-            } else {
-              showToast('Formato do arquivo de backup inválido.', 'error');
-            }
-          } catch (err) {
-            showToast('Erro ao ler o arquivo JSON.', 'error');
-          }
-          // Reset file input so re-selecting the same file triggers change event
-          importFileInput.value = '';
-        };
-        reader.readAsText(file);
-      });
+    searchInput.oninput = (e) => {
+      searchQuery = e.target.value;
+      if (searchQuery.trim() !== '') {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
+      renderLocationsGrid();
+    };
 
-    });
+    clearSearchBtn.onclick = () => {
+      searchInput.value = '';
+      searchQuery = '';
+      clearSearchBtn.classList.add('hidden');
+      renderLocationsGrid();
+    };
+
+    window.resetFilters = function() {
+      searchInput.value = '';
+      searchQuery = '';
+      selectedCategory = 'Todas';
+      clearSearchBtn.classList.add('hidden');
+      renderCategoryPills();
+      renderLocationsGrid();
+    };
+
+    /* CHECKLIST MODE TOGGLE */
+    const checklistBanner = document.getElementById('checklist-banner');
+    const btnChecklistMode = document.getElementById('btn-checklist-mode');
+
+    btnChecklistMode.onclick = () => {
+      checklistBanner.classList.toggle('hidden');
+      renderLocationsGrid();
+    };
+
+    document.getElementById('btn-exit-checklist').onclick = () => {
+      checklistBanner.classList.add('hidden');
+      renderLocationsGrid();
+    };
+
+    document.getElementById('btn-uncheck-all').onclick = () => {
+      checkedItems.clear();
+      renderLocationsGrid();
+      showToast('Todos os itens foram desmarcados.', 'info');
+    };
+
+    /* MODAL CLOSE BUTTON HANDLERS */
+    document.getElementById('btn-add-item').onclick = () => openAddItemModal();
+    document.getElementById('item-modal-close').onclick = () => document.getElementById('item-modal').classList.add('hidden');
+    document.getElementById('item-modal-cancel').onclick = () => document.getElementById('item-modal').classList.add('hidden');
+
+    document.getElementById('loc-modal-close').onclick = () => document.getElementById('loc-modal').classList.add('hidden');
+    document.getElementById('loc-modal-cancel').onclick = () => document.getElementById('loc-modal').classList.add('hidden');
+
+    document.getElementById('quick-move-close').onclick = () => document.getElementById('quick-move-modal').classList.add('hidden');
+    document.getElementById('tools-modal-close').onclick = () => toolsModal.classList.add('hidden');
+
+    /* TOAST NOTIFICATION HELPER */
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.textContent = message;
+
+      if (type === 'success') {
+        toastIcon.className = 'text-brand-500';
+        toastIcon.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i>';
+      } else if (type === 'error') {
+        toastIcon.className = 'text-rose-500';
+        toastIcon.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4"></i>';
+      } else {
+        toastIcon.className = 'text-sky-400';
+        toastIcon.innerHTML = '<i data-lucide="info" class="w-4 h-4"></i>';
+      }
+
+      if (window.lucide) lucide.createIcons();
+
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    /* RENDER ALL APP COMPONENTS */
+    function renderApp() {
+      renderCategoryPills();
+      renderLocationsGrid();
+    }
+
+    /* BOOTSTRAP APP ON LOAD */
+    window.onload = async function() {
+      await initCloudStorage();
+    };
   </script>
 </body>
 </html>
