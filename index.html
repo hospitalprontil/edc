@@ -416,6 +416,23 @@
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+    /* APP STATE GLOBALS (REQUIRED FOR STRICT MODE) */
+    let locations = [];
+    let items = [];
+    let selectedCategory = 'Todas';
+    let searchQuery = '';
+    let draggedItemId = null;
+    let draggedFromLocId = null;
+    let checkedItems = new Set();
+    const CATEGORIES = ['Todas', 'Ferramentas', 'Iluminação', 'Saúde & 1ºs Socorros', 'Eletrônicos & Cabos', 'Documentos & Valores', 'Sobrevivência & Fogo', 'Utilidades & Reparo', 'Outros'];
+
+    /* FIREBASE GLOBALS */
+    let db = null;
+    let auth = null;
+    let userId = null;
+    let isCloudAvailable = false;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'equipedc-pro';
+
     /* DEFAULT EDC DATA DEFINITIONS */
     const DEFAULT_LOCATIONS = [
       { id: 'chaveiro', name: 'Chaveiro', icon: 'key', description: 'Itens de bolso de saque imediato' },
@@ -573,9 +590,8 @@
 
     /* FIREBASE AUTH & FIRESTORE SETUP */
     async function initCloudStorage() {
-      const configToUse = typeof __firebase_config !== 'undefined' 
-        ? JSON.parse(__firebase_config) 
-        : MY_FIREBASE_CONFIG;
+      // Força o uso EXCLUSIVO das suas credenciais configuradas
+      const configToUse = MY_FIREBASE_CONFIG;
 
       if (configToUse && configToUse.apiKey) {
         try {
@@ -583,9 +599,15 @@
           auth = getAuth(app);
           db = getFirestore(app);
 
-          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-          } else {
+          try {
+            // Tenta o token do ambiente, mas com fallback seguro para login anônimo
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (authErr) {
+            console.warn("Utilizando login anônimo para o projeto próprio...", authErr);
             await signInAnonymously(auth);
           }
 
@@ -595,7 +617,7 @@
 
           setupFirestoreRealtimeListener();
         } catch (e) {
-          console.warn("Firebase offline ou inicializando localmente", e);
+          console.warn("Erro ao conectar com Firebase:", e);
           isCloudAvailable = false;
           updateCloudStatus('local', 'Salvo Localmente');
         }
