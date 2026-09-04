@@ -555,6 +555,43 @@
       return palette[hash % palette.length];
     }
 
+    /* UI HELPER FUNCTIONS (ICONS & BADGES) */
+    function getLucideIconForLocation(iconKey) {
+      switch(iconKey) {
+        case 'key': return 'key-round';
+        case 'briefcase': return 'briefcase';
+        case 'backpack': return 'backpack';
+        case 'car': return 'car';
+        case 'box': return 'box';
+        case 'shield': return 'shield';
+        case 'pocket': return 'pocket';
+        case 'archive': return 'archive';
+        default: return 'folder';
+      }
+    }
+
+    function getCategoryBadgeClass(category) {
+      switch(category) {
+        case 'Ferramentas': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+        case 'Iluminação': return 'bg-yellow-500/10 text-yellow-300 border-yellow-500/20';
+        case 'Saúde & 1ºs Socorros': return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+        case 'Eletrônicos & Cabos': return 'bg-sky-500/10 text-sky-400 border-sky-500/20';
+        case 'Documentos & Valores': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+        case 'Sobrevivência & Fogo': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+        case 'Utilidades & Reparo': return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+        default: return 'bg-slate-800 text-slate-300 border-slate-700';
+      }
+    }
+
+    function getStatusDot(status) {
+      switch(status) {
+        case 'ok': return '<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block" title="Pronto / Operacional"></span>';
+        case 'repor': return '<span class="w-2 h-2 rounded-full bg-amber-500 inline-block" title="Precisa Repor / Recarregar"></span>';
+        case 'faltando': return '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Faltando!"></span>';
+        default: return '<span class="w-2 h-2 rounded-full bg-slate-600 inline-block"></span>';
+      }
+    }
+
     /* FIREBASE CONFIGURATION */
     const MY_FIREBASE_CONFIG = {
       apiKey: "AIzaSyDB8sJBPQvHlcIOzQtSlM1Cw1gbSqae3MA",
@@ -643,6 +680,9 @@
               renderApp();
               updateStats();
             }
+          } else {
+            // Se o documento não existe na nuvem (primeiro acesso), salva os dados locais atuais lá!
+            saveData();
           }
         }, (error) => {
           console.warn("Snapshot notice:", error);
