@@ -253,10 +253,10 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Local / Recipiente *</label>
-            <select id="itemLocation" required class="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500">
-              <!-- Dynamically populated -->
-            </select>
+            <label class="block text-xs font-semibold text-zinc-300 uppercase tracking-wider mb-1">Locais / Recipientes * (Selecione um ou mais)</label>
+            <div id="itemLocationsCheckboxes" class="bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 space-y-1.5 max-h-36 overflow-y-auto">
+              <!-- Dynamically populated with checkboxes -->
+            </div>
           </div>
 
           <div>
@@ -494,61 +494,61 @@
 
     const DEFAULT_ITEMS = [
       // Chaveiro
-      { id: 'item_1', name: 'Canivete Nextool', locationId: 'loc_chaveiro', category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Multitool compacto para chaveiro' },
-      { id: 'item_2', name: 'Lanterna Chaveiro', locationId: 'loc_chaveiro', category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Iluminação de emergência rápida' },
+      { id: 'item_1', name: 'Canivete Nextool', locationIds: ['loc_chaveiro'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Multitool compacto para chaveiro' },
+      { id: 'item_2', name: 'Lanterna Chaveiro', locationIds: ['loc_chaveiro'], category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Iluminação de emergência rápida' },
 
       // Bolsa Preta
-      { id: 'item_3', name: 'Lanterna Cabeça', locationId: 'loc_bolsa_preta', category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Headlamp mãos livres' },
-      { id: 'item_4', name: 'Powerbank - (da lanterna)', locationId: 'loc_bolsa_preta', category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Bateria externa dedicada' },
-      { id: 'item_5', name: 'Cabos USB', locationId: 'loc_bolsa_preta', category: 'Eletrônicos & Energia', qty: '1 conjunto', status: 'ok', notes: 'USB-C / Micro-USB / Lightning' },
-      { id: 'item_6', name: 'Documentos Impressos / Carteirinha Plano', locationId: 'loc_bolsa_preta', category: 'Documentos & Dinheiro', qty: '1 kit', status: 'ok', notes: 'Docs pessoais, CNH, plano' },
-      { id: 'item_7', name: 'Dinheiro em espécie fracionado', locationId: 'loc_bolsa_preta', category: 'Documentos & Dinheiro', qty: 'Notas pequenas', status: 'ok', notes: 'Notas de pequeno valor para emergências' },
-      { id: 'item_8', name: 'Garrafa de Água', locationId: 'loc_bolsa_preta', category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Hidratação portátil' },
-      { id: 'item_9', name: 'Rolo de Silver Tape compacto', locationId: 'loc_bolsa_preta', category: 'Utilidades & Outros', qty: '1 rolo cartão', status: 'ok', notes: 'Fita adesiva enrolada em cartão' },
-      { id: 'item_10', name: 'Apito de emergência sem esfera (100+ dB)', locationId: 'loc_bolsa_preta', category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Sinalização sonora de alta potência' },
-      { id: 'item_11', name: 'Capas de chuva', locationId: 'loc_bolsa_preta', category: 'Utilidades & Outros', qty: '2 un', status: 'ok', notes: 'Capas descartáveis / compactas' },
-      { id: 'item_12', name: 'Caneta', locationId: 'loc_bolsa_preta', category: 'Utilidades & Outros', qty: '1 un', status: 'ok', notes: 'Caneta esferográfica tática / EDC' },
-      { id: 'item_13', name: 'Bloco de notas compacto', locationId: 'loc_bolsa_preta', category: 'Utilidades & Outros', qty: '1 un', status: 'ok', notes: 'Caderno de anotações impermeável' },
-      { id: 'item_14', name: 'Carregador 120W', locationId: 'loc_bolsa_preta', category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Carregamento ultra-rápido' },
-      { id: 'item_15', name: 'Pastilhas de purificação de água (Clorin)', locationId: 'loc_bolsa_preta', category: 'Saúde & 1ºs Socorros', qty: '1 cartela', status: 'ok', notes: 'Purificação química de água' },
-      { id: 'item_16', name: 'Kit 1ºs Socorros', locationId: 'loc_bolsa_preta', category: 'Saúde & 1ºs Socorros', qty: '1 bolsa', status: 'ok', notes: 'Bolsa modular de emergência' },
-      { id: 'item_17', name: 'Carteira Convênio Médico', locationId: 'loc_bolsa_preta', category: 'Documentos & Dinheiro', qty: '1 un', status: 'ok', notes: 'Carteirinha e documentos de saúde' },
-      { id: 'item_18', name: 'Gaze / Micropore / Bandaid / Atadura', locationId: 'loc_bolsa_preta', category: 'Saúde & 1ºs Socorros', qty: '1 kit', status: 'ok', notes: 'Curativos simples e fixação' },
-      { id: 'item_19', name: 'Farmacinha de viagem', locationId: 'loc_bolsa_preta', category: 'Saúde & 1ºs Socorros', qty: '1 estojo', status: 'refill', notes: 'Medicamentos contínuos e emergenciais' },
-      { id: 'item_20', name: 'Curativo ponto-falso', locationId: 'loc_bolsa_preta', category: 'Saúde & 1ºs Socorros', qty: 'Sutura cutânea', status: 'ok', notes: 'Suturas adesivas para cortes' },
-      { id: 'item_21', name: 'Kit Injetáveis + Epipen', locationId: 'loc_bolsa_preta', category: 'Saúde & 1ºs Socorros', qty: '1 estojo', status: 'ok', notes: 'Auto-injetor de epinefrina e antialérgicos' },
-      { id: 'item_22', name: 'Álcool em Gel', locationId: 'loc_bolsa_preta', category: 'Saúde & 1ºs Socorros', qty: '1 frasco', status: 'ok', notes: 'Higiene e antissepsia' },
-      { id: 'item_23', name: 'Cobertor de emergência', locationId: 'loc_bolsa_preta', category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Manta aluminizada de Mylar' },
-      { id: 'item_24', name: 'Ficha de emergência (ICE)', locationId: 'loc_bolsa_preta', category: 'Documentos & Dinheiro', qty: '1 cartão', status: 'ok', notes: 'Tipo sanguíneo, alergias e contatos de emergência' },
+      { id: 'item_3', name: 'Lanterna Cabeça', locationIds: ['loc_bolsa_preta'], category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Headlamp mãos livres' },
+      { id: 'item_4', name: 'Powerbank - (da lanterna)', locationIds: ['loc_bolsa_preta'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Bateria externa dedicada' },
+      { id: 'item_5', name: 'Cabos USB', locationIds: ['loc_bolsa_preta'], category: 'Eletrônicos & Energia', qty: '1 conjunto', status: 'ok', notes: 'USB-C / Micro-USB / Lightning' },
+      { id: 'item_6', name: 'Documentos Impressos / Carteirinha Plano', locationIds: ['loc_bolsa_preta'], category: 'Documentos & Dinheiro', qty: '1 kit', status: 'ok', notes: 'Docs pessoais, CNH, plano' },
+      { id: 'item_7', name: 'Dinheiro em espécie fracionado', locationIds: ['loc_bolsa_preta'], category: 'Documentos & Dinheiro', qty: 'Notas pequenas', status: 'ok', notes: 'Notas de pequeno valor para emergências' },
+      { id: 'item_8', name: 'Garrafa de Água', locationIds: ['loc_bolsa_preta'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Hidratação portátil' },
+      { id: 'item_9', name: 'Rolo de Silver Tape compacto', locationIds: ['loc_bolsa_preta'], category: 'Utilidades & Outros', qty: '1 rolo cartão', status: 'ok', notes: 'Fita adesiva enrolada em cartão' },
+      { id: 'item_10', name: 'Apito de emergência sem esfera (100+ dB)', locationIds: ['loc_bolsa_preta'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Sinalização sonora de alta potência' },
+      { id: 'item_11', name: 'Capas de chuva', locationIds: ['loc_bolsa_preta'], category: 'Utilidades & Outros', qty: '2 un', status: 'ok', notes: 'Capas descartáveis / compactas' },
+      { id: 'item_12', name: 'Caneta', locationIds: ['loc_bolsa_preta'], category: 'Utilidades & Outros', qty: '1 un', status: 'ok', notes: 'Caneta esferográfica tática / EDC' },
+      { id: 'item_13', name: 'Bloco de notas compacto', locationIds: ['loc_bolsa_preta'], category: 'Utilidades & Outros', qty: '1 un', status: 'ok', notes: 'Caderno de anotações impermeável' },
+      { id: 'item_14', name: 'Carregador 120W', locationIds: ['loc_bolsa_preta'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Carregamento ultra-rápido' },
+      { id: 'item_15', name: 'Pastilhas de purificação de água (Clorin)', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 cartela', status: 'ok', notes: 'Purificação química de água' },
+      { id: 'item_16', name: 'Kit 1ºs Socorros', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 bolsa', status: 'ok', notes: 'Bolsa modular de emergência' },
+      { id: 'item_17', name: 'Carteira Convênio Médico', locationIds: ['loc_bolsa_preta'], category: 'Documentos & Dinheiro', qty: '1 un', status: 'ok', notes: 'Carteirinha e documentos de saúde' },
+      { id: 'item_18', name: 'Gaze / Micropore / Bandaid / Atadura', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 kit', status: 'ok', notes: 'Curativos simples e fixação' },
+      { id: 'item_19', name: 'Farmacinha de viagem', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 estojo', status: 'refill', notes: 'Medicamentos contínuos e emergenciais' },
+      { id: 'item_20', name: 'Curativo ponto-falso', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: 'Sutura cutânea', status: 'ok', notes: 'Suturas adesivas para cortes' },
+      { id: 'item_21', name: 'Kit Injetáveis + Epipen', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 estojo', status: 'ok', notes: 'Auto-injetor de epinefrina e antialérgicos' },
+      { id: 'item_22', name: 'Álcool em Gel', locationIds: ['loc_bolsa_preta'], category: 'Saúde & 1ºs Socorros', qty: '1 frasco', status: 'ok', notes: 'Higiene e antissepsia' },
+      { id: 'item_23', name: 'Cobertor de emergência', locationIds: ['loc_bolsa_preta'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Manta aluminizada de Mylar' },
+      { id: 'item_24', name: 'Ficha de emergência (ICE)', locationIds: ['loc_bolsa_preta'], category: 'Documentos & Dinheiro', qty: '1 cartão', status: 'ok', notes: 'Tipo sanguíneo, alergias e contatos de emergência' },
 
       // Mochila
-      { id: 'item_25', name: 'Canivete Victorinox', locationId: 'loc_mochila', category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Canivete suíço multifunção' },
-      { id: 'item_26', name: 'Mini Catraca', locationId: 'loc_mochila', category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Mini catraca porta-bits' },
-      { id: 'item_27', name: 'Jogo de bits na caixinha com ÍMÃ + adaptador', locationId: 'loc_mochila', category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Jogo de ponteiras e extensor' },
-      { id: 'item_28', name: 'Caneta de mini bits', locationId: 'loc_mochila', category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Chave de precisão em formato de caneta' },
-      { id: 'item_29', name: 'Alicate de pressão mini', locationId: 'loc_mochila', category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Alicate com trava mecânica' },
-      { id: 'item_30', name: 'Chaves universais de boca', locationId: 'loc_mochila', category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Chaves ajustáveis universais' },
-      { id: 'item_31', name: 'Lanterna Joca', locationId: 'loc_mochila', category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Lanterna tática principal' },
-      { id: 'item_32', name: 'Lanterna plaquinha USB', locationId: 'loc_mochila', category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Luz ultrafina COB para leitura/iluminação' },
-      { id: 'item_33', name: 'Pilhas extras', locationId: 'loc_mochila', category: 'Eletrônicos & Energia', qty: '4 un', status: 'ok', notes: 'Pilhas alcalinas / recarregáveis' },
-      { id: 'item_34', name: 'Carregador Relógio', locationId: 'loc_mochila', category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Cabo proprietário smartwatch' },
-      { id: 'item_35', name: 'Adaptador universal de tomada', locationId: 'loc_mochila', category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Padrão internacional com portas USB' },
-      { id: 'item_36', name: 'Rastreador inteligente (AirTag / Galaxy SmartTag)', locationId: 'loc_mochila', category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Rastreamento de localização da mochila' },
-      { id: 'item_37', name: 'Carregador / Painel solar portátil', locationId: 'loc_mochila', category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Geração de energia solar fotovoltaica' },
-      { id: 'item_38', name: 'Filtro de água portátil (Sawyer / LifeStraw)', locationId: 'loc_mochila', category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Filtração por membrana oca para água selvagem' },
-      { id: 'item_39', name: 'Isqueiro e Pederneira', locationId: 'loc_mochila', category: 'Sobrevivência & Aventura', qty: '1 kit', status: 'ok', notes: 'Iniciadores de fogo (Bic + Ferrocerio)' },
-      { id: 'item_40', name: 'Corda Paracord 550 (10 a 15 metros)', locationId: 'loc_mochila', category: 'Sobrevivência & Aventura', qty: '15m', status: 'ok', notes: 'Corda de nylon de alta resistência' },
-      { id: 'item_41', name: 'Durepoxi', locationId: 'loc_mochila', category: 'Utilidades & Outros', qty: '1 caixa', status: 'ok', notes: 'Massa epóxi para reparos estruturais' },
-      { id: 'item_42', name: 'Superbonder', locationId: 'loc_mochila', category: 'Utilidades & Outros', qty: '1 tubo', status: 'ok', notes: 'Cianoacrilato colagem rápida' },
-      { id: 'item_43', name: 'Engasga gato (Abraçadeiras de Nylon)', locationId: 'loc_mochila', category: 'Utilidades & Outros', qty: '10 un', status: 'ok', notes: 'Enforca-gato / Zip ties diversos tamanhos' },
-      { id: 'item_44', name: 'Cartão de nós', locationId: 'loc_mochila', category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Guia de bolso ilustrado de nós táticos' },
-      { id: 'item_45', name: 'Sacos Zip Lock', locationId: 'loc_mochila', category: 'Utilidades & Outros', qty: '5 un', status: 'ok', notes: 'Organização impermeável' },
-      { id: 'item_46', name: 'Elásticos / Cabelo', locationId: 'loc_mochila', category: 'Utilidades & Outros', qty: '1 punhado', status: 'ok', notes: 'Amarrações e utilidades rápidas' },
+      { id: 'item_25', name: 'Canivete Victorinox', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Canivete suíço multifunção' },
+      { id: 'item_26', name: 'Mini Catraca', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Mini catraca porta-bits' },
+      { id: 'item_27', name: 'Jogo de bits na caixinha com ÍMÃ + adaptador', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Jogo de ponteiras e extensor' },
+      { id: 'item_28', name: 'Caneta de mini bits', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Chave de precisão em formato de caneta' },
+      { id: 'item_29', name: 'Alicate de pressão mini', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Alicate com trava mecânica' },
+      { id: 'item_30', name: 'Chaves universais de boca', locationIds: ['loc_mochila'], category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Chaves ajustáveis universais' },
+      { id: 'item_31', name: 'Lanterna Joca', locationIds: ['loc_mochila'], category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Lanterna tática principal' },
+      { id: 'item_32', name: 'Lanterna plaquinha USB', locationIds: ['loc_mochila'], category: 'Iluminação', qty: '1 un', status: 'ok', notes: 'Luz ultrafina COB para leitura/iluminação' },
+      { id: 'item_33', name: 'Pilhas extras', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '4 un', status: 'ok', notes: 'Pilhas alcalinas / recarregáveis' },
+      { id: 'item_34', name: 'Carregador Relógio', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Cabo proprietário smartwatch' },
+      { id: 'item_35', name: 'Adaptador universal de tomada', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Padrão internacional com portas USB' },
+      { id: 'item_36', name: 'Rastreador inteligente (AirTag / Galaxy SmartTag)', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Rastreamento de localização da mochila' },
+      { id: 'item_37', name: 'Carregador / Painel solar portátil', locationIds: ['loc_mochila'], category: 'Eletrônicos & Energia', qty: '1 un', status: 'ok', notes: 'Geração de energia solar fotovoltaica' },
+      { id: 'item_38', name: 'Filtro de água portátil (Sawyer / LifeStraw)', locationIds: ['loc_mochila'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Filtração por membrana oca para água selvagem' },
+      { id: 'item_39', name: 'Isqueiro e Pederneira', locationIds: ['loc_mochila'], category: 'Sobrevivência & Aventura', qty: '1 kit', status: 'ok', notes: 'Iniciadores de fogo (Bic + Ferrocerio)' },
+      { id: 'item_40', name: 'Corda Paracord 550 (10 a 15 metros)', locationIds: ['loc_mochila'], category: 'Sobrevivência & Aventura', qty: '15m', status: 'ok', notes: 'Corda de nylon de alta resistência' },
+      { id: 'item_41', name: 'Durepoxi', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '1 caixa', status: 'ok', notes: 'Massa epóxi para reparos estruturais' },
+      { id: 'item_42', name: 'Superbonder', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '1 tubo', status: 'ok', notes: 'Cianoacrilato colagem rápida' },
+      { id: 'item_43', name: 'Engasga gato (Abraçadeiras de Nylon)', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '10 un', status: 'ok', notes: 'Enforca-gato / Zip ties diversos tamanhos' },
+      { id: 'item_44', name: 'Cartão de nós', locationIds: ['loc_mochila'], category: 'Sobrevivência & Aventura', qty: '1 un', status: 'ok', notes: 'Guia de bolso ilustrado de nós táticos' },
+      { id: 'item_45', name: 'Sacos Zip Lock', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '5 un', status: 'ok', notes: 'Organização impermeável' },
+      { id: 'item_46', name: 'Elásticos / Cabelo', locationIds: ['loc_mochila'], category: 'Utilidades & Outros', qty: '1 punhado', status: 'ok', notes: 'Amarrações e utilidades rápidas' },
 
       // No Carro
-      { id: 'item_47', name: 'Kit reparo de Pneus', locationId: 'loc_no_carro', category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Macarrão, aplicador e escarificador' },
-      { id: 'item_48', name: 'Calibrador 12V', locationId: 'loc_no_carro', category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Compressor elétrico portátil para acendedor' },
-      { id: 'item_49', name: 'Soprador / Soprador de ar', locationId: 'loc_no_carro', category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Limpeza de poeira e secagem rápida' }
+      { id: 'item_47', name: 'Kit reparo de Pneus', locationIds: ['loc_no_carro'], category: 'Ferramentas', qty: '1 kit', status: 'ok', notes: 'Macarrão, aplicador e escarificador' },
+      { id: 'item_48', name: 'Calibrador 12V', locationIds: ['loc_no_carro'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Compressor elétrico portátil para acendedor' },
+      { id: 'item_49', name: 'Soprador / Soprador de ar', locationIds: ['loc_no_carro'], category: 'Ferramentas', qty: '1 un', status: 'ok', notes: 'Limpeza de poeira e secagem rápida' }
     ];
 
     // CATEGORY CONFIGURATION & ICONS
@@ -569,7 +569,19 @@
     let selectedCategory = 'Todas';
     let searchQuery = '';
     let draggedItemId = null;
+    let draggedFromLocId = null;
     let checkedItems = new Set(); // For checklist mode
+
+    /* HELPER: Normalize location IDs for single/multi-location support */
+    function getItemLocationIds(item) {
+      if (Array.isArray(item.locationIds) && item.locationIds.length > 0) {
+        return item.locationIds;
+      }
+      if (item.locationId) {
+        return [item.locationId];
+      }
+      return [];
+    }
 
     /* LOCAL STORAGE CONTROLLER */
     function loadData() {
@@ -721,8 +733,8 @@
       const query = searchQuery.toLowerCase().trim();
 
       locations.forEach(loc => {
-        // Filter items in this location
-        let locItems = items.filter(i => i.locationId === loc.id);
+        // Filter items present in this location
+        let locItems = items.filter(i => getItemLocationIds(i).includes(loc.id));
 
         if (selectedCategory !== 'Todas') {
           locItems = locItems.filter(i => i.category === selectedCategory);
@@ -742,7 +754,7 @@
         col.dataset.locationId = loc.id;
 
         // Header
-        const totalInLoc = items.filter(i => i.locationId === loc.id).length;
+        const totalInLoc = items.filter(i => getItemLocationIds(i).includes(loc.id)).length;
 
         col.innerHTML = `
           <!-- Location Column Header -->
@@ -792,7 +804,7 @@
           `;
         } else {
           locItems.forEach(item => {
-            const itemCard = createItemCardElement(item);
+            const itemCard = createItemCardElement(item, loc.id);
             dropzone.appendChild(itemCard);
           });
         }
@@ -804,7 +816,7 @@
       });
     }
 
-    function createItemCardElement(item) {
+    function createItemCardElement(item, currentLocId) {
       const card = document.createElement('div');
       card.className = 'group bg-zinc-800/70 hover:bg-zinc-800 border border-zinc-700/60 hover:border-zinc-600 rounded-xl p-3 shadow-sm transition-all duration-150 cursor-grab active:cursor-grabbing relative';
       card.draggable = true;
@@ -823,6 +835,9 @@
         statusTitle = 'Ausente';
       }
 
+      const allLocIds = getItemLocationIds(item);
+      const isMultiLoc = allLocIds.length > 1;
+
       card.innerHTML = `
         <div class="flex items-start justify-between gap-2">
           <div class="flex items-start gap-2 flex-1 min-w-0">
@@ -838,6 +853,8 @@
                 </span>
                 
                 ${item.qty ? `<span class="text-[10px] font-mono text-zinc-400 bg-zinc-900/60 border border-zinc-700/50 px-1.5 py-0.5 rounded">${escapeHtml(item.qty)}</span>` : ''}
+
+                ${isMultiLoc ? `<span class="text-[10px] font-mono bg-blue-500/10 text-blue-400 border border-blue-500/20 px-1.5 py-0.5 rounded" title="Presente em ${allLocIds.length} locais"><i class="fa-solid fa-layer-group text-[9px] mr-1"></i>+${allLocIds.length - 1} local</span>` : ''}
               </div>
 
               ${item.notes ? `<p class="text-[11px] text-zinc-400 mt-1.5 line-clamp-2 leading-relaxed bg-zinc-900/40 p-1.5 rounded-md border border-zinc-800/50">${escapeHtml(item.notes)}</p>` : ''}
@@ -850,8 +867,8 @@
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
 
-            <button onclick="event.stopPropagation(); openQuickMoveModal('${item.id}')" title="Mover rápido" class="p-1 hover:bg-zinc-700 text-zinc-400 hover:text-emerald-400 rounded transition text-xs md:hidden">
-              <i class="fa-solid fa-arrows-up-down-left-right"></i>
+            <button onclick="event.stopPropagation(); openQuickMoveModal('${item.id}')" title="Gerenciar locais" class="p-1 hover:bg-zinc-700 text-zinc-400 hover:text-emerald-400 rounded transition text-xs">
+              <i class="fa-solid fa-folder-tree"></i>
             </button>
           </div>
         </div>
@@ -860,6 +877,7 @@
       // Card Drag Events
       card.addEventListener('dragstart', (e) => {
         draggedItemId = item.id;
+        draggedFromLocId = currentLocId;
         card.classList.add('dragging');
         e.dataTransfer.setData('text/plain', item.id);
         e.dataTransfer.effectAllowed = 'move';
@@ -868,6 +886,7 @@
       card.addEventListener('dragend', () => {
         card.classList.remove('dragging');
         draggedItemId = null;
+        draggedFromLocId = null;
         document.querySelectorAll('.dropzone').forEach(dz => dz.classList.remove('drag-over'));
       });
 
@@ -903,11 +922,22 @@
         if (!itemId) return;
 
         const targetItem = items.find(i => i.id === itemId);
-        if (targetItem && targetItem.locationId !== targetLocationId) {
-          const oldLocName = locations.find(l => l.id === targetItem.locationId)?.name || '';
+        if (!targetItem) return;
+
+        let locIds = getItemLocationIds(targetItem);
+
+        // If not already in target location
+        if (!locIds.includes(targetLocationId)) {
+          // Replace source location with target location (Move)
+          if (draggedFromLocId && locIds.includes(draggedFromLocId)) {
+            locIds = locIds.filter(id => id !== draggedFromLocId);
+          }
+          locIds.push(targetLocationId);
+
+          targetItem.locationIds = locIds;
+          delete targetItem.locationId; // clean up single location property if present
+
           const newLocName = locations.find(l => l.id === targetLocationId)?.name || '';
-          
-          targetItem.locationId = targetLocationId;
           saveData();
           showToast(`'${targetItem.name}' movido para ${newLocName}!`, 'success');
         }
@@ -925,7 +955,7 @@
       document.getElementById('checklistCounter').innerText = `${checkedCount} / ${totalChecklistItems} OK`;
 
       locations.forEach(loc => {
-        const locItems = items.filter(i => i.locationId === loc.id);
+        const locItems = items.filter(i => getItemLocationIds(i).includes(loc.id));
         if (locItems.length === 0) return;
 
         const section = document.createElement('div');
@@ -973,9 +1003,20 @@
     }
 
     /* MODALS MANAGEMENT */
-    function populateLocationSelects() {
-      const select = document.getElementById('itemLocation');
-      select.innerHTML = locations.map(l => `<option value="${l.id}">${escapeHtml(l.name)}</option>`).join('');
+    function populateLocationSelects(selectedLocIds = []) {
+      const container = document.getElementById('itemLocationsCheckboxes');
+      container.innerHTML = locations.map(l => {
+        const checked = selectedLocIds.includes(l.id) ? 'checked' : '';
+        return `
+          <label class="flex items-center gap-2 p-1.5 rounded hover:bg-zinc-700/50 cursor-pointer select-none">
+            <input type="checkbox" value="${l.id}" ${checked} class="item-loc-checkbox w-4 h-4 accent-emerald-500 rounded border-zinc-600 focus:ring-0">
+            <span class="text-xs text-zinc-200 flex items-center gap-2">
+              <i class="fa-solid ${l.icon || 'fa-box'} text-emerald-400 w-4"></i>
+              ${escapeHtml(l.name)}
+            </span>
+          </label>
+        `;
+      }).join('');
     }
 
     function openAddItemModal(defaultLocId = null) {
@@ -984,11 +1025,8 @@
       document.getElementById('itemModalTitle').innerHTML = '<i class="fa-solid fa-box text-emerald-400"></i> Adicionar Novo Item';
       document.getElementById('deleteItemBtn').classList.add('hidden');
 
-      if (defaultLocId) {
-        document.getElementById('itemLocation').value = defaultLocId;
-      } else if (locations.length > 0) {
-        document.getElementById('itemLocation').value = locations[0].id;
-      }
+      const initialLocs = defaultLocId ? [defaultLocId] : (locations.length > 0 ? [locations[0].id] : []);
+      populateLocationSelects(initialLocs);
 
       document.getElementById('itemModal').classList.remove('hidden');
     }
@@ -999,11 +1037,12 @@
 
       document.getElementById('itemId').value = item.id;
       document.getElementById('itemName').value = item.name;
-      document.getElementById('itemLocation').value = item.locationId;
       document.getElementById('itemCategory').value = item.category;
       document.getElementById('itemQty').value = item.qty || '';
       document.getElementById('itemStatus').value = item.status || 'ok';
       document.getElementById('itemNotes').value = item.notes || '';
+
+      populateLocationSelects(getItemLocationIds(item));
 
       document.getElementById('itemModalTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-emerald-400"></i> Editar Equipamento';
       document.getElementById('deleteItemBtn').classList.remove('hidden');
@@ -1050,33 +1089,47 @@
       const optionsContainer = document.getElementById('quickMoveOptions');
       optionsContainer.innerHTML = '';
 
+      const activeLocIds = getItemLocationIds(item);
+
       locations.forEach(loc => {
-        const isCurrent = loc.id === item.locationId;
-        const btn = document.createElement('button');
-        btn.className = `w-full p-3 rounded-xl border text-left text-xs font-medium flex items-center justify-between transition ${
-          isCurrent 
+        const isPresent = activeLocIds.includes(loc.id);
+        const label = document.createElement('label');
+        label.className = `w-full p-3 rounded-xl border text-left text-xs font-medium flex items-center justify-between transition cursor-pointer select-none ${
+          isPresent 
             ? 'bg-emerald-950/20 border-emerald-700/50 text-emerald-300' 
             : 'bg-zinc-800 hover:bg-zinc-700 border-zinc-700 text-zinc-200'
         }`;
         
-        btn.innerHTML = `
+        label.innerHTML = `
           <span class="flex items-center gap-2">
             <i class="fa-solid ${loc.icon || 'fa-box'} text-emerald-400"></i>
             ${escapeHtml(loc.name)}
           </span>
-          ${isCurrent ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">Atual</span>' : '<i class="fa-solid fa-arrow-right text-zinc-400"></i>'}
+          <input type="checkbox" ${isPresent ? 'checked' : ''} class="w-4 h-4 accent-emerald-500 rounded border-zinc-600 focus:ring-0">
         `;
 
-        if (!isCurrent) {
-          btn.onclick = () => {
-            item.locationId = loc.id;
-            saveData();
-            document.getElementById('quickMoveModal').classList.add('hidden');
-            showToast(`Item movido para ${loc.name}!`, 'success');
-          };
-        }
+        const checkbox = label.querySelector('input');
+        checkbox.onchange = () => {
+          let updatedLocs = getItemLocationIds(item);
+          if (checkbox.checked) {
+            if (!updatedLocs.includes(loc.id)) updatedLocs.push(loc.id);
+          } else {
+            updatedLocs = updatedLocs.filter(id => id !== loc.id);
+          }
 
-        optionsContainer.appendChild(btn);
+          if (updatedLocs.length === 0) {
+            showToast('O item deve ter pelo menos 1 local marcado!', 'warning');
+            checkbox.checked = true;
+            return;
+          }
+
+          item.locationIds = updatedLocs;
+          delete item.locationId;
+          saveData();
+          showToast(`Locais de '${item.name}' atualizados!`, 'success');
+        };
+
+        optionsContainer.appendChild(label);
       });
 
       document.getElementById('quickMoveModal').classList.remove('hidden');
@@ -1089,7 +1142,7 @@
       text += "========================================\n\n";
 
       locations.forEach(loc => {
-        const locItems = items.filter(i => i.locationId === loc.id);
+        const locItems = items.filter(i => getItemLocationIds(i).includes(loc.id));
         text += `📍 ${loc.name.toUpperCase()} (${locItems.length} itens)\n`;
         text += `----------------------------------------\n`;
         if (locItems.length === 0) {
@@ -1233,18 +1286,27 @@
         e.preventDefault();
         const id = document.getElementById('itemId').value;
         const name = document.getElementById('itemName').value.trim();
-        const locationId = document.getElementById('itemLocation').value;
         const category = document.getElementById('itemCategory').value;
         const qty = document.getElementById('itemQty').value.trim();
         const status = document.getElementById('itemStatus').value;
         const notes = document.getElementById('itemNotes').value.trim();
+
+        // Get all checked location checkboxes
+        const checkedBoxes = document.querySelectorAll('.item-loc-checkbox:checked');
+        const selectedLocationIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+        if (selectedLocationIds.length === 0) {
+          showToast('Selecione pelo menos um local para este item.', 'warning');
+          return;
+        }
 
         if (id) {
           // Edit existing
           const item = items.find(i => i.id === id);
           if (item) {
             item.name = name;
-            item.locationId = locationId;
+            item.locationIds = selectedLocationIds;
+            delete item.locationId;
             item.category = category;
             item.qty = qty;
             item.status = status;
@@ -1256,7 +1318,7 @@
           const newItem = {
             id: 'item_' + Date.now(),
             name,
-            locationId,
+            locationIds: selectedLocationIds,
             category,
             qty,
             status,
@@ -1320,17 +1382,23 @@
         const loc = locations.find(l => l.id === id);
         if (!loc) return;
 
-        const countItemsInLoc = items.filter(i => i.locationId === id).length;
+        const countItemsInLoc = items.filter(i => getItemLocationIds(i).includes(id)).length;
         if (countItemsInLoc > 0) {
-          if (!confirm(`Este local contém ${countItemsInLoc} item(ns). Excluir o local moverá seus itens para o primeiro local disponível. Continuar?`)) {
+          if (!confirm(`Este local contém ${countItemsInLoc} item(ns). Ao excluir o local, ele será removido da lista de locais desses itens. Continuar?`)) {
             return;
           }
-          const targetLoc = locations.find(l => l.id !== id);
-          if (targetLoc) {
-            items.forEach(i => {
-              if (i.locationId === id) i.locationId = targetLoc.id;
-            });
-          }
+          items.forEach(i => {
+            let locIds = getItemLocationIds(i);
+            if (locIds.includes(id)) {
+              locIds = locIds.filter(lId => lId !== id);
+              if (locIds.length === 0) {
+                const targetLoc = locations.find(l => l.id !== id);
+                if (targetLoc) locIds.push(targetLoc.id);
+              }
+              i.locationIds = locIds;
+              delete i.locationId;
+            }
+          });
         }
 
         locations = locations.filter(l => l.id !== id);
