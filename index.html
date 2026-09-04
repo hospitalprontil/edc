@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>EDC & Travel Manager Pro</title>
+  <title>EDC Manager Pro - Controle de Equipamentos</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -27,6 +27,7 @@
     }
   </script>
   <style>
+    /* Custom Scrollbars & Touch Utilities */
     ::-webkit-scrollbar {
       width: 5px;
       height: 5px;
@@ -54,6 +55,7 @@
       outline-offset: -2px;
       background-color: rgba(34, 197, 94, 0.08) !important;
     }
+    /* Disable text selection on interactive cards on touch */
     .touch-card {
       -webkit-tap-highlight-color: transparent;
       user-select: none;
@@ -72,16 +74,16 @@
         </div>
         <div class="min-w-0">
           <h1 class="text-sm sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5 truncate">
-            <span class="truncate" id="app-title-header">EDC Manager</span>
-            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700 shrink-0">v3.0</span>
+            <span class="truncate">EDC Manager</span>
+            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700 shrink-0">v2.6</span>
           </h1>
-          <p class="text-[11px] text-slate-400 hidden sm:block truncate" id="app-subtitle-header">Inventário Tático, Localização e Prontidão</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block truncate">Inventário Tático, Localização e Prontidão</p>
         </div>
       </div>
 
       <!-- Header Action Buttons -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <!-- Cloud Status Badge -->
+        <!-- Cloud Storage Status Badge -->
         <div id="cloud-status-badge" class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/90 border border-slate-700 text-[11px] sm:text-xs text-slate-300 transition-all">
           <span id="cloud-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0"></span>
           <span id="cloud-status-text" class="hidden md:inline">Conectando...</span>
@@ -107,24 +109,11 @@
       </div>
     </div>
 
-    <!-- MAIN APP TABS & FILTER BAR -->
+    <!-- FILTER & SEARCH BAR -->
     <div class="border-t border-slate-800/80 bg-slate-900/60 py-2">
       <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-2.5">
-        
-        <!-- App Tab Switcher (EDC vs Viagem) -->
-        <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0 w-full md:w-auto">
-          <button id="tab-edc" class="flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 bg-brand-600 text-white shadow">
-            <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-            <span>EDC Diário</span>
-          </button>
-          <button id="tab-travel" class="flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-slate-200">
-            <i data-lucide="luggage" class="w-3.5 h-3.5"></i>
-            <span>Itens de Viagem</span>
-          </button>
-        </div>
-
         <!-- Search Input -->
-        <div class="relative w-full md:w-64">
+        <div class="relative w-full md:w-80">
           <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
           <input type="text" id="search-input" placeholder="Buscar por item, notas ou local..." class="w-full bg-slate-950/90 border border-slate-800 rounded-lg pl-9 pr-8 py-1.5 text-base sm:text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
           <button id="clear-search-btn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-1">
@@ -132,7 +121,7 @@
           </button>
         </div>
 
-        <!-- Category Filter Pills -->
+        <!-- Category Filter Pills (Horizontal Touch Swipe) -->
         <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none" id="category-pills">
           <!-- Dynamic Pills Injected via JS -->
         </div>
@@ -157,7 +146,7 @@
         </div>
         <div class="min-w-0">
           <p class="text-xs sm:text-sm font-semibold text-brand-300">Modo de Conferência Ativado</p>
-          <p class="text-[11px] sm:text-xs text-slate-400 truncate sm:whitespace-normal">Marque as caixas dos itens para confirmar sua presença.</p>
+          <p class="text-[11px] sm:text-xs text-slate-400 truncate sm:whitespace-normal">Marque as caixas dos itens para confirmar sua presença antes de sair.</p>
         </div>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
@@ -199,14 +188,14 @@
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Item *</label>
-          <input type="text" id="item-name" required placeholder="Ex: Lanterna, Protetor Solar..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
+          <input type="text" id="item-name" required placeholder="Ex: Canivete Victorinox, Lanterna USB..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Locais Onde Fica Guardado *</label>
           <p class="text-[11px] text-slate-500 mb-1.5">Marque um ou mais locais simultâneos para este item:</p>
           <div id="item-locations-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-950 border border-slate-800 rounded-lg p-2.5 max-h-36 overflow-y-auto">
-            <!-- Injected dynamically -->
+            <!-- Injected dynamically: checkboxes for locations -->
           </div>
         </div>
 
@@ -214,7 +203,14 @@
           <div>
             <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria *</label>
             <select id="item-category" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-200 focus:outline-none focus:border-brand-500">
-              <!-- Dynamically populated or default options -->
+              <option value="Ferramentas">Ferramentas</option>
+              <option value="Iluminação">Iluminação</option>
+              <option value="Saúde & 1ºs Socorros">Saúde & 1ºs Socorros</option>
+              <option value="Eletrônicos & Cabos">Eletrônicos & Cabos</option>
+              <option value="Documentos & Valores">Documentos & Valores</option>
+              <option value="Sobrevivência & Fogo">Sobrevivência & Fogo</option>
+              <option value="Utilidades & Reparo">Utilidades & Reparo</option>
+              <option value="Outros">Outros</option>
             </select>
           </div>
           <div>
@@ -229,7 +225,7 @@
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Notas / Detalhes (Opcional)</label>
-          <input type="text" id="item-notes" placeholder="Ex: Quantidade, marca, validade..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
+          <input type="text" id="item-notes" placeholder="Ex: 100+ dB, pilhas extras, validade 12/2026..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800 shrink-0">
@@ -257,25 +253,26 @@
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Compartimento *</label>
-          <input type="text" id="loc-name" required placeholder="Ex: Mala Principal, Frasqueira, Bolsa..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
+          <input type="text" id="loc-name" required placeholder="Ex: Chaveiro, Mochila Tática, Bolso..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Ícone</label>
           <select id="loc-icon" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-200 focus:outline-none focus:border-brand-500">
-            <option value="luggage">🧳 Mala / Bagagem</option>
+            <option value="key">🔑 Chaveiro / Chaves</option>
             <option value="briefcase">💼 Bolsa / Pasta</option>
             <option value="backpack">🎒 Mochila</option>
-            <option value="box">📦 Caixa / Organizador</option>
             <option value="car">🚗 No Carro / Veículo</option>
-            <option value="key">🔑 Chaves / Pequenos</option>
+            <option value="box">📦 Caixa / Organizador</option>
+            <option value="shield">🛡️ Kit Sobrevivência</option>
+            <option value="pocket">👖 Bolso / No Corpo</option>
             <option value="archive">🗄️ Gaveta / Casa</option>
           </select>
         </div>
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição Curta</label>
-          <input type="text" id="loc-desc" placeholder="Ex: Compartimento superior..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
+          <input type="text" id="loc-desc" placeholder="Ex: Transporte diário (bolso frontal)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800 shrink-0">
@@ -286,7 +283,7 @@
     </div>
   </div>
 
-  <!-- MODAL: QUICK MOVE -->
+  <!-- MODAL: QUICK MOVE (MULTI-LOCATION SELECTION) -->
   <div id="quick-move-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm shadow-2xl p-4 sm:p-5 my-auto">
       <div class="flex items-center justify-between mb-2.5">
@@ -309,7 +306,7 @@
     </div>
   </div>
 
-  <!-- MODAL: TOOLS & BACKUP -->
+  <!-- MODAL: TOOLS, EXPORT, BACKUP & JSON EDITOR -->
   <div id="tools-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
@@ -322,6 +319,7 @@
         </button>
       </div>
 
+      <!-- Navigation Tabs -->
       <div class="flex border-b border-slate-800 bg-slate-950/60 px-3 sm:px-4 gap-3 text-xs font-semibold shrink-0">
         <button id="tab-btn-tools" class="py-2.5 text-brand-500 border-b-2 border-brand-500 focus:outline-none">Opções & Arquivos</button>
         <button id="tab-btn-json-editor" class="py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none flex items-center gap-1.5">
@@ -330,11 +328,13 @@
         </button>
       </div>
 
+      <!-- TAB 1: Standard Tools & Actions -->
       <div id="tab-content-tools" class="p-3.5 sm:p-5 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
+        <!-- Copy Plain Text List -->
         <div class="p-3 sm:p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
           <div>
             <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Copiar Lista em Texto</h4>
-            <p class="text-[11px] text-slate-400">Gera lista formatada da aba ativa para WhatsApp ou notas.</p>
+            <p class="text-[11px] text-slate-400">Gera lista formatada para enviar no WhatsApp ou notas.</p>
           </div>
           <button id="btn-copy-text" class="shrink-0 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
@@ -342,10 +342,11 @@
           </button>
         </div>
 
+        <!-- Download JSON Backup -->
         <div class="p-3 sm:p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
           <div>
-            <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Baixar Backup JSON Geral</h4>
-            <p class="text-[11px] text-slate-400">Download de ambas as listas (EDC e Viagem) em .json.</p>
+            <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Baixar Backup JSON</h4>
+            <p class="text-[11px] text-slate-400">Download do arquivo .json completo dos seus itens.</p>
           </div>
           <button id="btn-download-json" class="shrink-0 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
@@ -353,11 +354,12 @@
           </button>
         </div>
 
+        <!-- Restore from File -->
         <div class="p-3 sm:p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
           <div class="flex items-center justify-between gap-3">
             <div>
               <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Restaurar de arquivo JSON</h4>
-              <p class="text-[11px] text-slate-400">Importe um arquivo .json completo.</p>
+              <p class="text-[11px] text-slate-400">Importe um arquivo .json para atualizar sua lista.</p>
             </div>
             <label class="shrink-0 cursor-pointer px-2.5 py-1.5 text-xs font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 transition-colors">
               <i data-lucide="upload" class="w-3.5 h-3.5"></i>
@@ -367,10 +369,11 @@
           </div>
         </div>
 
+        <!-- Reset to Default Data -->
         <div class="p-3 sm:p-3.5 rounded-xl bg-red-950/20 border border-red-900/30 flex items-center justify-between gap-3">
           <div>
-            <h4 class="text-xs sm:text-sm font-semibold text-red-300">Restaurar Padrões Originais</h4>
-            <p class="text-[11px] text-slate-400">Recarrega as listas padrão de EDC e Viagem.</p>
+            <h4 class="text-xs sm:text-sm font-semibold text-red-300">Restaurar Padrão Original</h4>
+            <p class="text-[11px] text-slate-400">Recarrega a lista pré-configurada inicial.</p>
           </div>
           <button id="btn-reset-default" class="shrink-0 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-800/60 flex items-center gap-1.5">
             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
@@ -379,10 +382,11 @@
         </div>
       </div>
 
+      <!-- TAB 2: In-App Interactive JSON Editor -->
       <div id="tab-content-json-editor" class="p-3.5 sm:p-5 hidden space-y-3 flex-1 flex flex-col overflow-hidden">
         <div>
           <p class="text-[11px] sm:text-xs text-slate-400">
-            Edite o código JSON de ambas as abas (EDC e Viagem) simultaneamente.
+            Cole ou modifique qualquer estrutura JSON completa. Ao salvar, ela se tornará a nova lista ativa do seu aplicativo.
           </p>
         </div>
         <div class="relative flex-1 min-h-[180px]">
@@ -412,6 +416,182 @@
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+    /* APP STATE GLOBALS (REQUIRED FOR STRICT MODE) */
+    let locations = [];
+    let items = [];
+    let selectedCategory = 'Todas';
+    let searchQuery = '';
+    let draggedItemId = null;
+    let draggedFromLocId = null;
+    let checkedItems = new Set();
+    const CATEGORIES = ['Todas', 'Ferramentas', 'Iluminação', 'Saúde & 1ºs Socorros', 'Eletrônicos & Cabos', 'Documentos & Valores', 'Sobrevivência & Fogo', 'Utilidades & Reparo', 'Outros'];
+
+    /* FIREBASE GLOBALS */
+    let db = null;
+    let auth = null;
+    let userId = null;
+    let isCloudAvailable = false;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'equipedc-pro';
+
+    /* DEFAULT EDC DATA DEFINITIONS */
+    const DEFAULT_LOCATIONS = [
+      { id: 'chaveiro', name: 'Chaveiro', icon: 'key', description: 'Itens de bolso de saque imediato' },
+      { id: 'bolsa-preta', name: 'Bolsa Preta', icon: 'briefcase', description: 'Kit intermediário de viagem e rotina diária' },
+      { id: 'mochila', name: 'Mochila', icon: 'backpack', description: 'Capacidade expandida e ferramentas completas' },
+      { id: 'no-carro', name: 'No Carro', icon: 'car', description: 'Emergência veicular e suporte móvel' }
+    ];
+
+    const DEFAULT_ITEMS = [
+      // CHAVEIRO
+      { id: 'item-1', name: 'Canivete Nextool', locationIds: ['chaveiro'], category: 'Ferramentas', status: 'ok', notes: 'Multiuso de bolso' },
+      { id: 'item-2', name: 'Lanterna Chaveiro', locationIds: ['chaveiro'], category: 'Iluminação', status: 'ok', notes: 'Recarga USB compacta' },
+
+      // BOLSA PRETA
+      { id: 'item-3', name: 'Lanterna de Cabeça', locationIds: ['bolsa-preta'], category: 'Iluminação', status: 'ok', notes: 'Manos livres' },
+      { id: 'item-4', name: 'Powerbank (da lanterna)', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Bateria recarregável' },
+      { id: 'item-5', name: 'Cabos USB', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Tipo-C / Lightning / Micro' },
+      { id: 'item-6', name: 'Documentos Impressos / Carteirinha Plano', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Cópias plastificadas' },
+      { id: 'item-7', name: 'Dinheiro em espécie fracionado', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Notas pequenas para emergências' },
+      { id: 'item-8', name: 'Garrafa de Água / Cantil', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Hidratação diária e emergencial' },
+      { id: 'item-9', name: 'Rolo de Silver Tape compacto', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Enrolado em cartão plástico' },
+      { id: 'item-10', name: 'Apito de emergência sem esfera', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: '100+ dB de potência sonora' },
+      { id: 'item-11', name: 'Capas de chuva', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Descartáveis compactas' },
+      { id: 'item-12', name: 'Caneta + Bloco de notas compacto', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Papel resistente' },
+      { id: 'item-13', name: 'Carregador 120W', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Carga ultrarrápida GaN' },
+      { id: 'item-14', name: 'Pastilhas de purificação de água (Clorin)', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Tratamento de água emergencial' },
+      { id: 'item-15', name: '1os Socorros Básicos', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Kit rápido' },
+      { id: 'item-16', name: 'Carteira Convênio Médico', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Cartões físicos' },
+      { id: 'item-17', name: 'Gaze / Micropore / Bandaid / Atadura', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Curativos e hemostasia' },
+      { id: 'item-18', name: 'Farmacinha de viagem', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Medicamentos contínuos e emergenciais' },
+      { id: 'item-19', name: 'Curativo Ponto-Falso', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Sutura adesiva rápida' },
+      { id: 'item-20', name: 'Kit Injetáveis + Epipen', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Protocolo de anafilaxia / antialérgico' },
+      { id: 'item-21', name: 'Álcool em Gel', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Higienização e assepsia' },
+      { id: 'item-22', name: 'Cobertor de emergência', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Mylar aluminizado térmico' },
+      { id: 'item-23', name: 'Ficha de emergência (ICE)', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Tipo sanguíneo, alergias e contatos vitais' },
+
+      // MOCHILA
+      { id: 'item-24', name: 'Canivete Victorinox', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Canivete multifunção suíço' },
+      { id: 'item-25', name: 'Mini catraca', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Aperto em espaços reduzidos' },
+      { id: 'item-26', name: 'Jogo de bits na caixinha com Ímã + adaptador', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Bits variados Torx/Phillips/Fenda' },
+      { id: 'item-27', name: 'Caneta de mini bits', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Manutenção fina e eletrônica' },
+      { id: 'item-28', name: 'Alicate de pressão mini', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Trava mecânica portátil' },
+      { id: 'item-29', name: 'Chaves universais de boca', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Ajustável rápida' },
+      { id: 'item-30', name: 'Lanterna Joca', locationIds: ['mochila'], category: 'Iluminação', status: 'ok', notes: 'Alta intensidade' },
+      { id: 'item-31', name: 'Lanterna plaquinha USB', locationIds: ['mochila'], category: 'Iluminação', status: 'ok', notes: 'Iluminação ambiente compacta' },
+      { id: 'item-32', name: 'Pilhas extras', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Para dispositivos e lanternas' },
+      { id: 'item-33', name: 'Carregador Relógio', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Indução' },
+      { id: 'item-34', name: 'Adaptador universal de tomada', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Padrões internacionais' },
+      { id: 'item-35', name: 'Rastreador inteligente (AirTag / SmartTag)', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Localização georreferenciada' },
+      { id: 'item-36', name: 'Carregador ou painel solar portátil', locationIds: ['mochila'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Geração autônoma off-grid' },
+      { id: 'item-37', name: 'Filtro de água portátil (Sawyer / LifeStraw)', locationIds: ['mochila'], category: 'Sobrevivência & Fogo', status: 'ok', notes: '0.1 mícron para rios e trilhas' },
+      { id: 'item-38', name: 'Isqueiro e Pederneira', locationIds: ['mochila'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Ignição em qualquer condição climática' },
+      { id: 'item-39', name: 'Corda Paracord 550 (10 a 15m)', locationIds: ['mochila'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Resistência de 250kg' },
+      { id: 'item-40', name: 'Durepoxi + Superbonder', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Fixações mecânicas instantâneas' },
+      { id: 'item-41', name: 'Engasga gato (Abraçadeiras de nylon)', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Fixações rápidas' },
+      { id: 'item-42', name: 'Cartão de nós', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Instruções ilustradas de amarração' },
+      { id: 'item-43', name: 'Sacos Zip Lock', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Impermeabilização de itens' },
+      { id: 'item-44', name: 'Elásticos / Cabelo', locationIds: ['mochila'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Organização de pequenos cabos e fios' },
+
+      // NO CARRO
+      { id: 'item-45', name: 'Kit reparo de Pneus', locationIds: ['no-carro'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Macarrão + aplicador manual' },
+      { id: 'item-46', name: 'Calibrador 12V', locationIds: ['no-carro'], category: 'Ferramentas', status: 'ok', notes: 'Compressor de ar portátil' },
+      { id: 'item-47', name: 'Soprador', locationIds: ['no-carro'], category: 'Ferramentas', status: 'ok', notes: 'Limpeza de filtros e equipamentos' }
+    ];
+
+    /* LOCATION COLOR THEME PROVIDER */
+    function getLocationTheme(loc) {
+      const themes = {
+        'chaveiro': {
+          cardBorder: 'border-amber-500/30 hover:border-amber-500/50',
+          iconBg: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+          badgeBg: 'bg-amber-500/10 text-amber-300 border-amber-500/30',
+          topBar: 'bg-gradient-to-r from-amber-500/60 via-amber-500/30 to-transparent'
+        },
+        'bolsa-preta': {
+          cardBorder: 'border-indigo-500/30 hover:border-indigo-500/50',
+          iconBg: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30',
+          badgeBg: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30',
+          topBar: 'bg-gradient-to-r from-indigo-500/60 via-indigo-500/30 to-transparent'
+        },
+        'mochila': {
+          cardBorder: 'border-emerald-500/30 hover:border-emerald-500/50',
+          iconBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+          badgeBg: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30',
+          topBar: 'bg-gradient-to-r from-emerald-500/60 via-emerald-500/30 to-transparent'
+        },
+        'no-carro': {
+          cardBorder: 'border-sky-500/30 hover:border-sky-500/50',
+          iconBg: 'bg-sky-500/15 text-sky-400 border-sky-500/30',
+          badgeBg: 'bg-sky-500/10 text-sky-300 border-sky-500/30',
+          topBar: 'bg-gradient-to-r from-sky-500/60 via-sky-500/30 to-transparent'
+        }
+      };
+
+      if (themes[loc.id]) return themes[loc.id];
+
+      // Custom container fallback themes
+      const palette = [
+        {
+          cardBorder: 'border-purple-500/30 hover:border-purple-500/50',
+          iconBg: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
+          badgeBg: 'bg-purple-500/10 text-purple-300 border-purple-500/30',
+          topBar: 'bg-gradient-to-r from-purple-500/60 via-purple-500/30 to-transparent'
+        },
+        {
+          cardBorder: 'border-rose-500/30 hover:border-rose-500/50',
+          iconBg: 'bg-rose-500/15 text-rose-400 border-rose-500/30',
+          badgeBg: 'bg-rose-500/10 text-rose-300 border-rose-500/30',
+          topBar: 'bg-gradient-to-r from-rose-500/60 via-rose-500/30 to-transparent'
+        },
+        {
+          cardBorder: 'border-orange-500/30 hover:border-orange-500/50',
+          iconBg: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
+          badgeBg: 'bg-orange-500/10 text-orange-300 border-orange-500/30',
+          topBar: 'bg-gradient-to-r from-orange-500/60 via-orange-500/30 to-transparent'
+        }
+      ];
+
+      const hash = (loc.id || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      return palette[hash % palette.length];
+    }
+
+    /* UI HELPER FUNCTIONS (ICONS & BADGES) */
+    function getLucideIconForLocation(iconKey) {
+      switch(iconKey) {
+        case 'key': return 'key-round';
+        case 'briefcase': return 'briefcase';
+        case 'backpack': return 'backpack';
+        case 'car': return 'car';
+        case 'box': return 'box';
+        case 'shield': return 'shield';
+        case 'pocket': return 'pocket';
+        case 'archive': return 'archive';
+        default: return 'folder';
+      }
+    }
+
+    function getCategoryBadgeClass(category) {
+      switch(category) {
+        case 'Ferramentas': return 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+        case 'Iluminação': return 'bg-yellow-500/10 text-yellow-300 border-yellow-500/20';
+        case 'Saúde & 1ºs Socorros': return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+        case 'Eletrônicos & Cabos': return 'bg-sky-500/10 text-sky-400 border-sky-500/20';
+        case 'Documentos & Valores': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+        case 'Sobrevivência & Fogo': return 'bg-orange-500/10 text-orange-400 border-orange-500/20';
+        case 'Utilidades & Reparo': return 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20';
+        default: return 'bg-slate-800 text-slate-300 border-slate-700';
+      }
+    }
+
+    function getStatusDot(status) {
+      switch(status) {
+        case 'ok': return '<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block" title="Pronto / Operacional"></span>';
+        case 'repor': return '<span class="w-2 h-2 rounded-full bg-amber-500 inline-block" title="Precisa Repor / Recarregar"></span>';
+        case 'faltando': return '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Faltando!"></span>';
+        default: return '<span class="w-2 h-2 rounded-full bg-slate-600 inline-block"></span>';
+      }
+    }
+
     /* FIREBASE CONFIGURATION */
     const MY_FIREBASE_CONFIG = {
       apiKey: "AIzaSyDB8sJBPQvHlcIOzQtSlM1Cw1gbSqae3MA",
@@ -423,109 +603,7 @@
       measurementId: "G-DGW7WR036X"
     };
 
-    /* APP DATASETS */
-    const EDC_CATEGORIES = ['Todas', 'Ferramentas', 'Iluminação', 'Saúde & 1ºs Socorros', 'Eletrônicos & Cabos', 'Documentos & Valores', 'Sobrevivência & Fogo', 'Utilidades & Reparo', 'Outros'];
-    
-    const TRAVEL_CATEGORIES = ['Todas', 'Crianças', 'Camping', 'Eletrônicos', 'Remédios', 'Pets', 'Alimentação', 'Roupas', 'Praia', 'Outros'];
-
-    const DEFAULT_EDC_LOCATIONS = [
-      { id: 'chaveiro', name: 'Chaveiro', icon: 'key', description: 'Itens de bolso de saque imediato' },
-      { id: 'bolsa-preta', name: 'Bolsa Preta', icon: 'briefcase', description: 'Kit intermediário de viagem e rotina diária' },
-      { id: 'mochila', name: 'Mochila', icon: 'backpack', description: 'Capacidade expandida e ferramentas completas' },
-      { id: 'no-carro', name: 'No Carro', icon: 'car', description: 'Emergência veicular e suporte móvel' }
-    ];
-
-    const DEFAULT_EDC_ITEMS = [
-      { id: 'item-1', name: 'Canivete Nextool', locationIds: ['chaveiro'], category: 'Ferramentas', status: 'ok', notes: 'Multiuso de bolso' },
-      { id: 'item-2', name: 'Lanterna Chaveiro', locationIds: ['chaveiro'], category: 'Iluminação', status: 'ok', notes: 'Recarga USB compacta' },
-      { id: 'item-3', name: 'Lanterna de Cabeça', locationIds: ['bolsa-preta'], category: 'Iluminação', status: 'ok', notes: 'Manos livres' },
-      { id: 'item-4', name: 'Powerbank (da lanterna)', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Bateria recarregável' },
-      { id: 'item-5', name: 'Cabos USB', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Tipo-C / Lightning / Micro' },
-      { id: 'item-6', name: 'Documentos Impressos / Carteirinha Plano', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Cópias plastificadas' },
-      { id: 'item-7', name: 'Dinheiro em espécie fracionado', locationIds: ['bolsa-preta'], category: 'Documentos & Valores', status: 'ok', notes: 'Notas pequenas para emergências' },
-      { id: 'item-8', name: 'Garrafa de Água / Cantil', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Hidratação diária' },
-      { id: 'item-9', name: 'Rolo de Silver Tape compacto', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Enrolado em cartão plástico' },
-      { id: 'item-10', name: 'Apito de emergência sem esfera', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: '100+ dB' },
-      { id: 'item-11', name: 'Capas de chuva', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Descartáveis compactas' },
-      { id: 'item-12', name: 'Caneta + Bloco de notas', locationIds: ['bolsa-preta'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Papel resistente' },
-      { id: 'item-13', name: 'Carregador 120W', locationIds: ['bolsa-preta'], category: 'Eletrônicos & Cabos', status: 'ok', notes: 'Carga ultrarrápida GaN' },
-      { id: 'item-14', name: 'Pastilhas de purificação de água', locationIds: ['bolsa-preta'], category: 'Sobrevivência & Fogo', status: 'ok', notes: 'Clorin' },
-      { id: 'item-15', name: '1os Socorros Básicos', locationIds: ['bolsa-preta'], category: 'Saúde & 1ºs Socorros', status: 'ok', notes: 'Kit rápido' },
-      { id: 'item-16', name: 'Canivete Victorinox', locationIds: ['mochila'], category: 'Ferramentas', status: 'ok', notes: 'Multifunção suíço' },
-      { id: 'item-17', name: 'Kit reparo de Pneus', locationIds: ['no-carro'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Macarrão + aplicador' }
-    ];
-
-    const DEFAULT_TRAVEL_LOCATIONS = [
-      { id: 'mala-principal', name: 'Mala Principal', icon: 'luggage', description: 'Bagagem despachada ou porta-malas' },
-      { id: 'frasqueira', name: 'Frasqueira / Necessaire', icon: 'briefcase', description: 'Higiene e remédios de acesso rápido' },
-      { id: 'mochila-viagem', name: 'Mochila de Mão', icon: 'backpack', description: 'Eletrônicos, documentos e itens pessoais' },
-      { id: 'bolsa-criancas', name: 'Bolsa Infantil', icon: 'box', description: 'Itens específicos dos pequenos' }
-    ];
-
-    const DEFAULT_TRAVEL_ITEMS = [
-      // CRIANÇAS
-      { id: 'tr-1', name: 'documentos /certidão / autorização', locationIds: ['mochila-viagem'], category: 'Crianças', status: 'ok', notes: 'Documentação oficial' },
-      { id: 'tr-2', name: 'remedios e vitaminas', locationIds: ['frasqueira'], category: 'Crianças', status: 'ok', notes: 'Uso diário' },
-      { id: 'tr-3', name: 'canguru / kid carrier', locationIds: ['mala-principal'], category: 'Crianças', status: 'ok', notes: 'Transporte ergonômico' },
-      { id: 'tr-4', name: 'carrinho + capa chuva + tela', locationIds: ['mala-principal'], category: 'Crianças', status: 'ok', notes: 'Mobilidade' },
-      { id: 'tr-5', name: 'fralda / algodão / lenço / pomada', locationIds: ['bolsa-criancas'], category: 'Crianças', status: 'ok', notes: 'Higiene infantil' },
-      { id: 'tr-6', name: 'Leite em Pó / mamadeiras', locationIds: ['bolsa-criancas'], category: 'Crianças', status: 'ok', notes: 'Alimentação' },
-      
-      // CAMPING
-      { id: 'tr-7', name: 'Barraca', locationIds: ['mala-principal'], category: 'Camping', status: 'ok', notes: 'Abrigo completo' },
-      { id: 'tr-8', name: 'Saco de dormir', locationIds: ['mala-principal'], category: 'Camping', status: 'ok', notes: 'Térmico' },
-      { id: 'tr-9', name: 'Colchão / isolante térmico', locationIds: ['mala-principal'], category: 'Camping', status: 'ok', notes: 'Conforto' },
-      { id: 'tr-10', name: 'Fogareiro + gás', locationIds: ['mala-principal'], category: 'Camping', status: 'ok', notes: 'Cozinha portátil' },
-
-      // ELETRÔNICOS
-      { id: 'tr-11', name: 'Bateria externa (Powerbank)', locationIds: ['mochila-viagem'], category: 'Eletrônicos', status: 'ok', notes: 'Alta capacidade' },
-      { id: 'tr-12', name: 'Cabos USB & Carregadores', locationIds: ['mochila-viagem'], category: 'Eletrônicos', status: 'ok', notes: 'Múltiplas saídas' },
-      { id: 'tr-13', name: 'Kindle / Tablet', locationIds: ['mochila-viagem'], category: 'Eletrônicos', status: 'ok', notes: 'Entretenimento' },
-      { id: 'tr-14', name: 'Lanternas & Headlamp', locationIds: ['mala-principal'], category: 'Eletrônicos', status: 'ok', notes: 'Iluminação noturna' },
-
-      // REMÉDIOS
-      { id: 'tr-15', name: 'maleta do plantão (Primeiros socorros)', locationIds: ['frasqueira'], category: 'Remédios', status: 'ok', notes: 'Kit completo' },
-      { id: 'tr-16', name: 'Dipirona / Tylenol / Analgésicos', locationIds: ['frasqueira'], category: 'Remédios', status: 'ok', notes: 'Controle de dor/febre' },
-      { id: 'tr-17', name: 'Protetor solar & Repelente', locationIds: ['frasqueira'], category: 'Remédios', status: 'ok', notes: 'Proteção externa' },
-
-      // PETS
-      { id: 'tr-18', name: 'caminha lilica + potes', locationIds: ['mala-principal'], category: 'Pets', status: 'ok', notes: 'Conforto pet' },
-      { id: 'tr-19', name: 'comida / petiscos / patezinho', locationIds: ['mala-principal'], category: 'Pets', status: 'ok', notes: 'Alimentação pet' },
-
-      // ALIMENTAÇÃO
-      { id: 'tr-20', name: 'café + açucar + cafeteira', locationIds: ['mala-principal'], category: 'Alimentação', status: 'ok', notes: 'Essencial matinal' },
-      { id: 'tr-21', name: 'Comidas & lanchinhos', locationIds: ['mala-principal'], category: 'Alimentação', status: 'ok', notes: 'Viagem' },
-
-      // ROUPAS
-      { id: 'tr-22', name: 'agasalhos & roupas leves', locationIds: ['mala-principal'], category: 'Roupas', status: 'ok', notes: 'Variedade climática' },
-      { id: 'tr-23', name: 'Toalhas & Chinelo', locationIds: ['mala-principal'], category: 'Roupas', status: 'ok', notes: 'Higiene pessoal' },
-
-      // PRAIA
-      { id: 'tr-24', name: 'Frescobol & Snorkel & Boias', locationIds: ['mala-principal'], category: 'Praia', status: 'ok', notes: 'Lazer aquático' }
-    ];
-
-    /* GLOBAL STATE */
-    let currentTab = 'edc'; // 'edc' or 'travel'
-
-    let edcLocations = JSON.parse(JSON.stringify(DEFAULT_EDC_LOCATIONS));
-    let edcItems = JSON.parse(JSON.stringify(DEFAULT_EDC_ITEMS));
-
-    let travelLocations = JSON.parse(JSON.stringify(DEFAULT_TRAVEL_LOCATIONS));
-    let travelItems = JSON.parse(JSON.stringify(DEFAULT_TRAVEL_ITEMS));
-
-    let selectedCategory = 'Todas';
-    let searchQuery = '';
-    let draggedItemId = null;
-    let draggedFromLocId = null;
-    let checkedItems = new Set();
-
-    /* FIREBASE GLOBALS */
-    let db = null;
-    let auth = null;
-    let isCloudAvailable = false;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'edc-travel-pro';
-
-    /* UPDATE CLOUD STATUS */
+    /* UPDATE CLOUD STATUS BADGE IN HEADER */
     function updateCloudStatus(status, text) {
       const badge = document.getElementById('cloud-status-badge');
       const dot = document.getElementById('cloud-status-dot');
@@ -547,182 +625,154 @@
       }
     }
 
-    /* FIREBASE INITIALIZATION */
+    /* FIREBASE AUTH & FIRESTORE SETUP */
     async function initCloudStorage() {
-      try {
-        const app = initializeApp(MY_FIREBASE_CONFIG);
-        auth = getAuth(app);
-        db = getFirestore(app);
+      // Força o uso EXCLUSIVO das suas credenciais configuradas
+      const configToUse = MY_FIREBASE_CONFIG;
 
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
+      if (configToUse && configToUse.apiKey) {
+        try {
+          const app = initializeApp(configToUse);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          try {
+            // Tenta o token do ambiente, mas com fallback seguro para login anônimo
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+              await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+              await signInAnonymously(auth);
+            }
+          } catch (authErr) {
+            console.warn("Utilizando login anônimo para o projeto próprio...", authErr);
+            await signInAnonymously(auth);
+          }
+
+          userId = auth.currentUser?.uid || 'edc-user';
+          isCloudAvailable = true;
+          updateCloudStatus('online', 'Salvo na Nuvem');
+
+          setupFirestoreRealtimeListener();
+        } catch (e) {
+          console.warn("Erro ao conectar com Firebase:", e);
+          isCloudAvailable = false;
+          updateCloudStatus('local', 'Salvo Localmente');
         }
-
-        isCloudAvailable = true;
-        updateCloudStatus('online', 'Salvo na Nuvem');
-        setupFirestoreRealtimeListener();
-      } catch (e) {
-        console.warn("Cloud storage unavailable, using offline mode", e);
-        isCloudAvailable = false;
+      } else {
         updateCloudStatus('local', 'Salvo Localmente');
-        renderApp();
       }
+
+      await loadData();
     }
 
-    /* REALTIME LISTENER */
+    /* REALTIME LISTENERS */
     function setupFirestoreRealtimeListener() {
       if (!db || !isCloudAvailable) return;
 
       try {
-        const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'master');
+        const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'main');
         onSnapshot(publicDocRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
-            if (data) {
-              if (data.edcLocations) edcLocations = data.edcLocations;
-              if (data.edcItems) edcItems = normalizeItems(data.edcItems);
-              if (data.travelLocations) travelLocations = data.travelLocations;
-              if (data.travelItems) travelItems = normalizeItems(data.travelItems);
+            if (data && data.locations && data.items) {
+              locations = data.locations;
+              items = normalizeItems(data.items);
               renderApp();
+              updateStats();
             }
           } else {
+            // Se o documento não existe na nuvem (primeiro acesso), salva os dados locais atuais lá!
             saveData();
           }
         }, (error) => {
           console.warn("Snapshot notice:", error);
         });
       } catch (err) {
-        console.warn("Failed to listen to firestore:", err);
+        console.warn("Falha ao registrar listener em tempo real:", err);
       }
     }
 
-    /* SAVE DATA */
+    /* DATA PERSISTENCE ROUTINE */
     async function saveData() {
       updateCloudStatus('saving', 'Gravando...');
-      const payload = {
-        edcLocations,
-        edcItems,
-        travelLocations,
-        travelItems,
+      const serializedData = {
+        locations: locations,
+        items: items,
         updatedAt: new Date().toISOString()
       };
 
       if (db && isCloudAvailable) {
         try {
-          const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'master');
-          await setDoc(publicDocRef, payload);
+          const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'main');
+          await setDoc(publicDocRef, serializedData);
           updateCloudStatus('online', 'Salvo na Nuvem');
-        } catch (err) {
-          console.error("Save error:", err);
-          updateCloudStatus('local', 'Salvo Localmente');
+        } catch (error) {
+          console.error("Erro ao salvar no Firebase:", error);
+          updateCloudStatus('local', 'Salvo no Cache');
         }
       } else {
-        updateCloudStatus('local', 'Salvo Localmente');
+        updateCloudStatus('local', 'Salvo no Cache');
       }
+
       updateStats();
     }
 
+    /* NORMALIZE ITEMS TO MULTI-LOCATION FORMAT */
     function normalizeItems(rawItems) {
       if (!Array.isArray(rawItems)) return [];
-      return rawItems.map(item => ({
-        id: item.id || 'item-' + Math.random().toString(36).substr(2, 9),
-        name: item.name || 'Sem Nome',
-        locationIds: Array.isArray(item.locationIds) ? item.locationIds : [item.locationId || 'default'],
-        category: item.category || 'Outros',
-        status: item.status || 'ok',
-        notes: item.notes || ''
-      }));
+      return rawItems.map(item => {
+        let locIds = [];
+        if (Array.isArray(item.locationIds)) {
+          locIds = item.locationIds;
+        } else if (item.locationId) {
+          locIds = [item.locationId];
+        } else {
+          locIds = ['bolsa-preta'];
+        }
+        return {
+          id: item.id || 'item-' + Math.random().toString(36).substr(2, 9),
+          name: item.name || 'Sem Nome',
+          locationIds: locIds,
+          category: item.category || 'Outros',
+          status: item.status || 'ok',
+          notes: item.notes || ''
+        };
+      });
     }
 
-    /* THEME PROVIDERS */
-    function getLocationTheme(locId) {
-      const themes = {
-        'chaveiro': { cardBorder: 'border-amber-500/30 hover:border-amber-500/50', iconBg: 'bg-amber-500/15 text-amber-400 border-amber-500/30', badgeBg: 'bg-amber-500/10 text-amber-300 border-amber-500/30', topBar: 'bg-gradient-to-r from-amber-500/60 via-amber-500/30 to-transparent' },
-        'bolsa-preta': { cardBorder: 'border-indigo-500/30 hover:border-indigo-500/50', iconBg: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30', badgeBg: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30', topBar: 'bg-gradient-to-r from-indigo-500/60 via-indigo-500/30 to-transparent' },
-        'mochila': { cardBorder: 'border-emerald-500/30 hover:border-emerald-500/50', iconBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', badgeBg: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30', topBar: 'bg-gradient-to-r from-emerald-500/60 via-emerald-500/30 to-transparent' },
-        'no-carro': { cardBorder: 'border-sky-500/30 hover:border-sky-500/50', iconBg: 'bg-sky-500/15 text-sky-400 border-sky-500/30', badgeBg: 'bg-sky-500/10 text-sky-300 border-sky-500/30', topBar: 'bg-gradient-to-r from-sky-500/60 via-sky-500/30 to-transparent' },
-        'mala-principal': { cardBorder: 'border-blue-500/30 hover:border-blue-500/50', iconBg: 'bg-blue-500/15 text-blue-400 border-blue-500/30', badgeBg: 'bg-blue-500/10 text-blue-300 border-blue-500/30', topBar: 'bg-gradient-to-r from-blue-500/60 via-blue-500/30 to-transparent' },
-        'frasqueira': { cardBorder: 'border-rose-500/30 hover:border-rose-500/50', iconBg: 'bg-rose-500/15 text-rose-400 border-rose-500/30', badgeBg: 'bg-rose-500/10 text-rose-300 border-rose-500/30', topBar: 'bg-gradient-to-r from-rose-500/60 via-rose-500/30 to-transparent' },
-        'mochila-viagem': { cardBorder: 'border-purple-500/30 hover:border-purple-500/50', iconBg: 'bg-purple-500/15 text-purple-400 border-purple-500/30', badgeBg: 'bg-purple-500/10 text-purple-300 border-purple-500/30', topBar: 'bg-gradient-to-r from-purple-500/60 via-purple-500/30 to-transparent' },
-        'bolsa-criancas': { cardBorder: 'border-teal-500/30 hover:border-teal-500/50', iconBg: 'bg-teal-500/15 text-teal-400 border-teal-500/30', badgeBg: 'bg-teal-500/10 text-teal-300 border-teal-500/30', topBar: 'bg-gradient-to-r from-teal-500/60 via-teal-500/30 to-transparent' }
-      };
-
-      if (themes[locId]) return themes[locId];
-
-      const palette = [
-        { cardBorder: 'border-orange-500/30 hover:border-orange-500/50', iconBg: 'bg-orange-500/15 text-orange-400 border-orange-500/30', badgeBg: 'bg-orange-500/10 text-orange-300 border-orange-500/30', topBar: 'bg-gradient-to-r from-orange-500/60 via-orange-500/30 to-transparent' },
-        { cardBorder: 'border-cyan-500/30 hover:border-cyan-500/50', iconBg: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30', badgeBg: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30', topBar: 'bg-gradient-to-r from-cyan-500/60 via-cyan-500/30 to-transparent' }
-      ];
-      const hash = (locId || '').split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-      return palette[hash % palette.length];
+    /* LOAD DATA */
+    async function loadData() {
+      locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+      items = normalizeItems(DEFAULT_ITEMS);
+      renderApp();
+      updateStats();
     }
 
-    function getLucideIcon(iconKey) {
-      switch(iconKey) {
-        case 'key': return 'key-round';
-        case 'briefcase': return 'briefcase';
-        case 'backpack': return 'backpack';
-        case 'car': return 'car';
-        case 'luggage': return 'luggage';
-        case 'box': return 'box';
-        default: return 'folder';
-      }
-    }
-
-    function getCategoryBadgeClass(category) {
-      const map = {
-        'Ferramentas': 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-        'Iluminação': 'bg-yellow-500/10 text-yellow-300 border-yellow-500/20',
-        'Saúde & 1ºs Socorros': 'bg-rose-500/10 text-rose-400 border-rose-500/20',
-        'Eletrônicos & Cabos': 'bg-sky-500/10 text-sky-400 border-sky-500/20',
-        'Documentos & Valores': 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-        'Sobrevivência & Fogo': 'bg-orange-500/10 text-orange-400 border-orange-500/20',
-        'Utilidades & Reparo': 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-        'Crianças': 'bg-teal-500/10 text-teal-300 border-teal-500/20',
-        'Camping': 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
-        'Eletrônicos': 'bg-sky-500/10 text-sky-300 border-sky-500/20',
-        'Remédios': 'bg-rose-500/10 text-rose-300 border-rose-500/20',
-        'Pets': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
-        'Alimentação': 'bg-orange-500/10 text-orange-300 border-orange-500/20',
-        'Roupas': 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
-        'Praia': 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20'
-      };
-      return map[category] || 'bg-slate-800 text-slate-300 border-slate-700';
-    }
-
-    function getStatusDot(status) {
-      if (status === 'ok') return '<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block" title="Pronto"></span>';
-      if (status === 'repor') return '<span class="w-2 h-2 rounded-full bg-amber-500 inline-block" title="Repor"></span>';
-      return '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Faltando"></span>';
-    }
-
-    /* GETTERS FOR ACTIVE TAB */
-    function getActiveLocations() { return currentTab === 'edc' ? edcLocations : travelLocations; }
-    function setActiveLocations(locs) { if (currentTab === 'edc') edcLocations = locs; else travelLocations = locs; }
-    
-    function getActiveItems() { return currentTab === 'edc' ? edcItems : travelItems; }
-    function setActiveItems(items) { if (currentTab === 'edc') edcItems = items; else travelItems = items; }
-    
-    function getActiveCategories() { return currentTab === 'edc' ? EDC_CATEGORIES : TRAVEL_CATEGORIES; }
-
-    /* RENDER CATEGORY PILLS */
+    /* RENDER CATEGORY FILTER PILLS WITH ITEM COUNTS */
     function renderCategoryPills() {
       const container = document.getElementById('category-pills');
       container.innerHTML = '';
-      const categories = getActiveCategories();
-      const items = getActiveItems();
 
-      categories.forEach(cat => {
+      CATEGORIES.forEach(cat => {
         const isSelected = selectedCategory === cat;
-        const count = cat === 'Todas' ? items.length : items.filter(i => i.category === cat).length;
+        const count = cat === 'Todas' 
+          ? items.length 
+          : items.filter(i => i.category === cat).length;
 
         const btn = document.createElement('button');
         btn.className = `px-2.5 py-1 text-xs rounded-lg whitespace-nowrap transition-all flex items-center gap-1.5 ${
-          isSelected ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-900/30' : 'bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800'
+          isSelected 
+            ? 'bg-brand-600 text-white font-medium shadow-md shadow-brand-900/30' 
+            : 'bg-slate-800/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800'
         }`;
-        btn.innerHTML = `<span>${cat}</span><span class="text-[10px] px-1.5 py-0.2 rounded-full font-mono ${isSelected ? 'bg-brand-700/80 text-brand-100' : 'bg-slate-900 text-slate-400 border border-slate-800'}">${count}</span>`;
+        
+        btn.innerHTML = `
+          <span>${cat}</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+            isSelected ? 'bg-brand-700/80 text-brand-100' : 'bg-slate-900 text-slate-400 border border-slate-800'
+          }">${count}</span>
+        `;
+
         btn.onclick = () => {
           selectedCategory = cat;
           renderCategoryPills();
@@ -733,62 +783,62 @@
     }
 
     function updateStats() {
-      const items = getActiveItems();
-      const locs = getActiveLocations();
-      document.getElementById('stat-total-items').textContent = `Itens: ${items.length}`;
-      document.getElementById('stat-total-locations').textContent = `Locais: ${locs.length}`;
+      const totalItemsEl = document.getElementById('stat-total-items');
+      const totalLocsEl = document.getElementById('stat-total-locations');
+      if (totalItemsEl) totalItemsEl.textContent = `Itens: ${items.length}`;
+      if (totalLocsEl) totalLocsEl.textContent = `Locais: ${locations.length}`;
     }
 
-    /* RENDER LOCATIONS GRID */
+    /* RENDER MAIN GRID */
     function renderLocationsGrid() {
       const grid = document.getElementById('locations-grid');
       const emptyState = document.getElementById('empty-state');
       grid.innerHTML = '';
 
-      const locations = getActiveLocations();
-      const items = getActiveItems();
       let anyItemMatched = false;
       const isChecklistMode = !document.getElementById('checklist-banner').classList.contains('hidden');
 
       locations.forEach(loc => {
         const locItems = items.filter(item => {
-          if (!Array.isArray(item.locationIds) || !item.locationIds.includes(loc.id)) return false;
-          if (selectedCategory !== 'Todas' && item.category !== selectedCategory) return false;
+          const inThisLoc = Array.isArray(item.locationIds) && item.locationIds.includes(loc.id);
+          if (!inThisLoc) return false;
+
+          if (selectedCategory !== 'Todas' && item.category !== selectedCategory) {
+            return false;
+          }
+
           if (searchQuery.trim() !== '') {
             const q = searchQuery.toLowerCase();
-            return item.name.toLowerCase().includes(q) || (item.notes && item.notes.toLowerCase().includes(q)) || item.category.toLowerCase().includes(q);
+            const nameMatch = item.name.toLowerCase().includes(q);
+            const notesMatch = item.notes && item.notes.toLowerCase().includes(q);
+            const catMatch = item.category.toLowerCase().includes(q);
+            const locNameMatch = loc.name.toLowerCase().includes(q);
+            return nameMatch || notesMatch || catMatch || locNameMatch;
           }
+
           return true;
         });
 
         if (locItems.length > 0) anyItemMatched = true;
-        const theme = getLocationTheme(loc.id);
+
+        const theme = getLocationTheme(loc);
 
         const col = document.createElement('div');
-        col.className = `flex flex-col bg-slate-900/85 border ${theme.cardBorder} rounded-2xl overflow-hidden shadow-xl transition-all relative`;
+        col.className = `flex flex-col bg-slate-900/85 border ${theme.cardBorder} rounded-2xl overflow-hidden shadow-xl transition-all duration-200 relative`;
         col.dataset.locationId = loc.id;
 
-        col.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; col.classList.add('drag-over'); });
-        col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
-        col.addEventListener('drop', async (e) => {
-          e.preventDefault();
-          col.classList.remove('drag-over');
-          if (!draggedItemId) return;
-          const itemsArr = getActiveItems();
-          const item = itemsArr.find(i => i.id === draggedItemId);
-          if (!item || item.locationIds.includes(loc.id)) return;
-          if (draggedFromLocId) item.locationIds = item.locationIds.filter(id => id !== draggedFromLocId);
-          item.locationIds.push(loc.id);
-          renderLocationsGrid();
-          await saveData();
-          showToast(`Movido para "${loc.name}"`, 'success');
-        });
+        col.addEventListener('dragover', handleDragOver);
+        col.addEventListener('dragleave', handleDragLeave);
+        col.addEventListener('drop', (e) => handleDrop(e, loc.id));
 
-        const iconName = getLucideIcon(loc.icon);
+        const iconName = getLucideIconForLocation(loc.icon);
 
         col.innerHTML = `
+          <!-- Colored Top Accent Line -->
           <div class="h-1 w-full ${theme.topBar}"></div>
-          <div class="p-3.5 bg-slate-900/95 border-b border-slate-800/80 flex items-center justify-between gap-2">
+
+          <!-- Location Header -->
+          <div class="p-3 sm:p-3.5 bg-slate-900/95 border-b border-slate-800/80 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5 min-w-0">
               <div class="p-2 rounded-xl ${theme.iconBg} border shrink-0 shadow-sm">
                 <i data-lucide="${iconName}" class="w-4 h-4"></i>
@@ -796,13 +846,16 @@
               <div class="min-w-0">
                 <h3 class="font-bold text-xs sm:text-sm text-slate-100 truncate flex items-center gap-1.5">
                   <span class="truncate">${loc.name}</span>
-                  <span class="text-[10px] font-mono px-2 py-0.2 rounded-full ${theme.badgeBg} border font-bold shrink-0">${locItems.length}</span>
+                  <span class="text-[10px] font-mono px-2 py-0.2 rounded-full ${theme.badgeBg} border font-bold shrink-0">
+                    ${locItems.length}
+                  </span>
                 </h3>
                 ${loc.description ? `<p class="text-[10px] sm:text-[11px] text-slate-400 truncate mt-0.5">${loc.description}</p>` : ''}
               </div>
             </div>
+
             <div class="flex items-center gap-0.5 shrink-0">
-              <button onclick="openAddItemModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-brand-400 hover:bg-slate-800 rounded-lg transition-colors" title="Adicionar item">
+              <button onclick="openAddItemModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-brand-400 hover:bg-slate-800 rounded-lg transition-colors" title="Adicionar item neste local">
                 <i data-lucide="plus" class="w-4 h-4"></i>
               </button>
               <button onclick="openEditLocationModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors" title="Editar Local">
@@ -810,39 +863,78 @@
               </button>
             </div>
           </div>
-          <div class="p-2.5 space-y-2 min-h-[120px] flex-1">
-            ${locItems.length === 0 ? `<div class="h-24 flex flex-col items-center justify-center text-center p-3 border border-dashed border-slate-800/80 rounded-xl bg-slate-950/40"><i data-lucide="inbox" class="w-5 h-5 text-slate-600 mb-1"></i><span class="text-xs text-slate-500">Nenhum item aqui</span></div>` : ''}
+
+          <!-- Items Container -->
+          <div class="p-2 sm:p-2.5 space-y-2 min-h-[120px] flex-1">
+            ${locItems.length === 0 ? `
+              <div class="h-24 flex flex-col items-center justify-center text-center p-3 border border-dashed border-slate-800/80 rounded-xl bg-slate-950/40">
+                <i data-lucide="inbox" class="w-5 h-5 text-slate-600 mb-1"></i>
+                <span class="text-xs text-slate-500">Nenhum item aqui</span>
+              </div>
+            ` : ''}
+
             ${locItems.map(item => {
               const isChecked = checkedItems.has(item.id);
               const otherLocsCount = (item.locationIds || []).length - 1;
+
               return `
-                <div draggable="true" data-item-id="${item.id}" data-source-loc="${loc.id}" class="item-card touch-card group relative p-2.5 sm:p-3 rounded-xl bg-slate-950/90 border ${isChecked ? 'border-brand-500/40 bg-brand-500/5' : 'border-slate-800/90 hover:border-slate-700'} transition-all cursor-grab active:cursor-grabbing shadow-sm">
+                <div 
+                  draggable="true" 
+                  data-item-id="${item.id}"
+                  data-source-loc="${loc.id}"
+                  class="item-card touch-card group relative p-2.5 sm:p-3 rounded-xl bg-slate-950/90 border ${
+                    isChecked ? 'border-brand-500/40 bg-brand-500/5' : 'border-slate-800/90 hover:border-slate-700'
+                  } transition-all cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md"
+                >
                   <div class="flex items-start justify-between gap-2">
                     <div class="flex items-start gap-2 flex-1 min-w-0">
-                      ${isChecklistMode ? `<input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleItemCheck('${item.id}')" class="mt-0.5 rounded border-slate-700 text-brand-500 bg-slate-900 cursor-pointer shrink-0">` : ''}
+                      ${isChecklistMode ? `
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleItemCheck('${item.id}')" class="mt-0.5 rounded border-slate-700 text-brand-500 focus:ring-0 bg-slate-900 cursor-pointer shrink-0">
+                      ` : ''}
                       <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-1.5 flex-wrap">
                           ${getStatusDot(item.status)}
-                          <span class="text-xs font-semibold text-slate-200 break-words ${isChecked ? 'line-through text-slate-500' : ''}">${item.name}</span>
+                          <span class="text-xs font-semibold text-slate-200 break-words ${isChecked ? 'line-through text-slate-500' : ''}">
+                            ${item.name}
+                          </span>
                         </div>
-                        ${item.notes ? `<p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 leading-tight">${item.notes}</p>` : ''}
+                        ${item.notes ? `
+                          <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 leading-tight">${item.notes}</p>
+                        ` : ''}
                       </div>
                     </div>
+
+                    <!-- Action buttons -->
                     <div class="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-0.5 shrink-0 bg-slate-950/90 rounded-lg p-0.5 border border-slate-800 sm:border-none">
-                      <button onclick="openQuickMoveModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-brand-400" title="Mudar locais"><i data-lucide="layers" class="w-3.5 h-3.5"></i></button>
-                      <button onclick="openEditItemModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200" title="Editar"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
-                      <button onclick="deleteItem('${item.id}', '${loc.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400" title="Remover"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                      <button onclick="openQuickMoveModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-brand-400" title="Mudar local">
+                        <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button onclick="openEditItemModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200" title="Editar">
+                        <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                      </button>
+                      <button onclick="deleteItem('${item.id}', '${loc.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400" title="Remover">
+                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                      </button>
                     </div>
                   </div>
+
+                  <!-- Footer tags -->
                   <div class="mt-2 pt-1.5 border-t border-slate-900 flex items-center justify-between gap-1">
-                    <span class="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full border font-medium ${getCategoryBadgeClass(item.category)}">${item.category}</span>
-                    ${otherLocsCount > 0 ? `<span class="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">+${otherLocsCount} outro</span>` : ''}
+                    <span class="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full border font-medium ${getCategoryBadgeClass(item.category)}">
+                      ${item.category}
+                    </span>
+                    ${otherLocsCount > 0 ? `
+                      <span class="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium" title="Presente em outros locais">
+                        +${otherLocsCount} ${otherLocsCount === 1 ? 'outro' : 'outros'}
+                      </span>
+                    ` : ''}
                   </div>
                 </div>
               `;
             }).join('')}
           </div>
         `;
+
         grid.appendChild(col);
       });
 
@@ -852,73 +944,123 @@
         emptyState.classList.add('hidden');
       }
 
-      if (window.lucide) lucide.createIcons();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
 
       document.querySelectorAll('.item-card').forEach(card => {
-        card.addEventListener('dragstart', (e) => {
-          draggedItemId = card.dataset.itemId;
-          draggedFromLocId = card.dataset.sourceLoc;
-          card.classList.add('opacity-40');
-          e.dataTransfer.effectAllowed = 'move';
-        });
-        card.addEventListener('dragend', () => card.classList.remove('opacity-40'));
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
       });
-      updateStats();
     }
 
+    /* DRAG & DROP LOGIC */
+    function handleDragStart(e) {
+      draggedItemId = this.dataset.itemId;
+      draggedFromLocId = this.dataset.sourceLoc;
+      this.classList.add('opacity-40');
+      e.dataTransfer.effectAllowed = 'move';
+    }
+
+    function handleDragEnd() {
+      this.classList.remove('opacity-40');
+      document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+      draggedItemId = null;
+      draggedFromLocId = null;
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      this.classList.add('drag-over');
+    }
+
+    function handleDragLeave() {
+      this.classList.remove('drag-over');
+    }
+
+    async function handleDrop(e, targetLocationId) {
+      e.preventDefault();
+      this.classList.remove('drag-over');
+
+      if (!draggedItemId || !targetLocationId) return;
+
+      const item = items.find(i => i.id === draggedItemId);
+      if (!item) return;
+
+      if (item.locationIds.includes(targetLocationId)) {
+        showToast('O equipamento já está neste local!', 'info');
+        return;
+      }
+
+      if (draggedFromLocId) {
+        item.locationIds = item.locationIds.filter(id => id !== draggedFromLocId);
+      }
+      item.locationIds.push(targetLocationId);
+
+      renderLocationsGrid();
+      await saveData();
+
+      const targetLoc = locations.find(l => l.id === targetLocationId);
+      showToast(`Movido para "${targetLoc ? targetLoc.name : 'novo local'}"`, 'success');
+    }
+
+    /* CHECKLIST TOGGLE */
     window.toggleItemCheck = function(itemId) {
-      if (checkedItems.has(itemId)) checkedItems.delete(itemId);
-      else checkedItems.add(itemId);
+      if (checkedItems.has(itemId)) {
+        checkedItems.delete(itemId);
+      } else {
+        checkedItems.add(itemId);
+      }
       renderLocationsGrid();
     };
 
-    /* ITEM MODAL */
+    /* ITEM CREATION & EDITING */
     function renderLocationCheckboxes(selectedIds = []) {
       const container = document.getElementById('item-locations-container');
       container.innerHTML = '';
-      getActiveLocations().forEach(loc => {
+
+      locations.forEach(loc => {
         const isChecked = selectedIds.includes(loc.id);
         const label = document.createElement('label');
         label.className = 'flex items-center gap-2 text-xs text-slate-300 hover:text-white cursor-pointer select-none py-0.5';
-        label.innerHTML = `<input type="checkbox" value="${loc.id}" ${isChecked ? 'checked' : ''} class="item-loc-checkbox rounded border-slate-700 text-brand-500 bg-slate-900"><span class="truncate">${loc.name}</span>`;
+        label.innerHTML = `
+          <input type="checkbox" value="${loc.id}" ${isChecked ? 'checked' : ''} class="item-loc-checkbox rounded border-slate-700 text-brand-500 focus:ring-0 bg-slate-900">
+          <span class="truncate">${loc.name}</span>
+        `;
         container.appendChild(label);
       });
     }
 
-    function populateCategoryDropdown(selected = '') {
-      const select = document.getElementById('item-category');
-      select.innerHTML = '';
-      getActiveCategories().filter(c => c !== 'Todas').forEach(cat => {
-        const opt = document.createElement('option');
-        opt.value = cat;
-        opt.textContent = cat;
-        if (cat === selected) opt.selected = true;
-        select.appendChild(opt);
-      });
-    }
-
     window.openAddItemModal = function(preselectedLocId = null) {
-      document.getElementById('item-modal-title').innerHTML = '<i data-lucide="package" class="w-4 h-4 text-brand-500"></i> Adicionar Item';
+      document.getElementById('item-modal-title').innerHTML = '<i data-lucide="package" class="w-4 h-4 text-brand-500"></i> Adicionar Equipamento';
       document.getElementById('item-id').value = '';
       document.getElementById('item-name').value = '';
       document.getElementById('item-notes').value = '';
+      document.getElementById('item-category').value = 'Ferramentas';
       document.getElementById('item-status').value = 'ok';
-      populateCategoryDropdown(selectedCategory !== 'Todas' ? selectedCategory : null);
-      renderLocationCheckboxes(preselectedLocId ? [preselectedLocId] : [getActiveLocations()[0]?.id]);
+
+      const preselected = preselectedLocId ? [preselectedLocId] : [locations[0]?.id || 'chaveiro'];
+      renderLocationCheckboxes(preselected);
+
       document.getElementById('item-modal').classList.remove('hidden');
       if (window.lucide) lucide.createIcons();
+      document.getElementById('item-name').focus();
     };
 
     window.openEditItemModal = function(itemId) {
-      const item = getActiveItems().find(i => i.id === itemId);
+      const item = items.find(i => i.id === itemId);
       if (!item) return;
-      document.getElementById('item-modal-title').innerHTML = '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Item';
+
+      document.getElementById('item-modal-title').innerHTML = '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Equipamento';
       document.getElementById('item-id').value = item.id;
       document.getElementById('item-name').value = item.name;
       document.getElementById('item-notes').value = item.notes || '';
+      document.getElementById('item-category').value = item.category || 'Outros';
       document.getElementById('item-status').value = item.status || 'ok';
-      populateCategoryDropdown(item.category);
+
       renderLocationCheckboxes(item.locationIds || []);
+
       document.getElementById('item-modal').classList.remove('hidden');
       if (window.lucide) lucide.createIcons();
     };
@@ -930,21 +1072,36 @@
       const notes = document.getElementById('item-notes').value.trim();
       const category = document.getElementById('item-category').value;
       const status = document.getElementById('item-status').value;
-      const selectedLocIds = Array.from(document.querySelectorAll('.item-loc-checkbox:checked')).map(cb => cb.value);
+
+      const checkedBoxes = document.querySelectorAll('.item-loc-checkbox:checked');
+      const selectedLocIds = Array.from(checkedBoxes).map(cb => cb.value);
 
       if (selectedLocIds.length === 0) {
-        showToast('Selecione pelo menos 1 local!', 'error');
+        showToast('Selecione ao menos 1 local para o item!', 'info');
         return;
       }
 
-      const items = getActiveItems();
       if (id) {
         const item = items.find(i => i.id === id);
-        if (item) { item.name = name; item.locationIds = selectedLocIds; item.notes = notes; item.category = category; item.status = status; }
-        showToast('Item atualizado!', 'success');
+        if (item) {
+          item.name = name;
+          item.locationIds = selectedLocIds;
+          item.notes = notes;
+          item.category = category;
+          item.status = status;
+        }
+        showToast('Item atualizado com sucesso!', 'success');
       } else {
-        items.push({ id: 'item-' + Date.now(), name, locationIds: selectedLocIds, category, status, notes });
-        showToast('Item criado!', 'success');
+        const newItem = {
+          id: 'item-' + Date.now(),
+          name: name,
+          locationIds: selectedLocIds,
+          category: category,
+          status: status,
+          notes: notes
+        };
+        items.push(newItem);
+        showToast('Novo item cadastrado!', 'success');
       }
 
       document.getElementById('item-modal').classList.add('hidden');
@@ -953,74 +1110,104 @@
     };
 
     window.deleteItem = async function(itemId, fromLocationId) {
-      let items = getActiveItems();
       const item = items.find(i => i.id === itemId);
       if (!item) return;
 
       if ((item.locationIds || []).length > 1) {
         item.locationIds = item.locationIds.filter(id => id !== fromLocationId);
-        showToast('Removido deste local', 'info');
+        showToast(`Removido deste local`, 'info');
       } else {
-        setActiveItems(items.filter(i => i.id !== itemId));
+        items = items.filter(i => i.id !== itemId);
         checkedItems.delete(itemId);
-        showToast('Item excluído', 'info');
+        showToast(`"${item.name}" excluído.`, 'info');
       }
+
       renderLocationsGrid();
       await saveData();
     };
 
     /* QUICK MOVE MODAL */
     let currentQuickMoveItemId = null;
+
     window.openQuickMoveModal = function(itemId) {
-      const item = getActiveItems().find(i => i.id === itemId);
+      const item = items.find(i => i.id === itemId);
       if (!item) return;
+
       currentQuickMoveItemId = itemId;
       document.getElementById('quick-move-item-name').textContent = item.name;
 
-      const container = document.getElementById('quick-move-options');
-      container.innerHTML = '';
-      getActiveLocations().forEach(loc => {
+      const optsContainer = document.getElementById('quick-move-options');
+      optsContainer.innerHTML = '';
+
+      locations.forEach(loc => {
         const isPresent = (item.locationIds || []).includes(loc.id);
+        const iconName = getLucideIconForLocation(loc.icon);
+
         const label = document.createElement('label');
-        label.className = `w-full flex items-center justify-between p-2 rounded-xl border text-xs cursor-pointer transition-all select-none ${isPresent ? 'bg-brand-500/10 border-brand-500/30 text-brand-300 font-semibold' : 'bg-slate-950 border-slate-800 text-slate-300'}`;
-        label.innerHTML = `<span>${loc.name}</span><input type="checkbox" value="${loc.id}" ${isPresent ? 'checked' : ''} class="quick-loc-cb rounded border-slate-700 text-brand-500 bg-slate-900">`;
-        container.appendChild(label);
+        label.className = `w-full flex items-center justify-between p-2 rounded-xl border text-xs cursor-pointer transition-all select-none ${
+          isPresent 
+            ? 'bg-brand-500/10 border-brand-500/30 text-brand-300 font-semibold' 
+            : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
+        }`;
+
+        label.innerHTML = `
+          <div class="flex items-center gap-2">
+            <i data-lucide="${iconName}" class="w-4 h-4 text-slate-400"></i>
+            <span class="truncate">${loc.name}</span>
+          </div>
+          <input type="checkbox" value="${loc.id}" ${isPresent ? 'checked' : ''} class="quick-loc-cb rounded border-slate-700 text-brand-500 focus:ring-0 bg-slate-900">
+        `;
+
+        optsContainer.appendChild(label);
       });
+
       document.getElementById('quick-move-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
     };
 
     document.getElementById('btn-save-quick-move').onclick = async function() {
       if (!currentQuickMoveItemId) return;
-      const item = getActiveItems().find(i => i.id === currentQuickMoveItemId);
+      const item = items.find(i => i.id === currentQuickMoveItemId);
       if (!item) return;
+
       const selected = Array.from(document.querySelectorAll('.quick-loc-cb:checked')).map(cb => cb.value);
-      if (selected.length === 0) { showToast('Selecione ao menos 1 local', 'error'); return; }
+
+      if (selected.length === 0) {
+        showToast('Escolha pelo menos 1 local.', 'info');
+        return;
+      }
+
       item.locationIds = selected;
       document.getElementById('quick-move-modal').classList.add('hidden');
       renderLocationsGrid();
       await saveData();
-      showToast('Locais atualizados', 'success');
+      showToast('Locais atualizados!', 'success');
     };
 
-    /* LOCATION MODAL */
+    /* LOCATION CREATION & EDITING */
     window.openEditLocationModal = function(locId) {
-      const loc = getActiveLocations().find(l => l.id === locId);
+      const loc = locations.find(l => l.id === locId);
       if (!loc) return;
-      document.getElementById('loc-modal-title').innerHTML = '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Local';
+
+      document.getElementById('loc-modal-title').innerHTML = '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Compartimento';
       document.getElementById('loc-id').value = loc.id;
       document.getElementById('loc-name').value = loc.name;
       document.getElementById('loc-icon').value = loc.icon || 'box';
       document.getElementById('loc-desc').value = loc.description || '';
+
       document.getElementById('loc-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
     };
 
     document.getElementById('btn-add-location').onclick = function() {
       document.getElementById('loc-modal-title').innerHTML = '<i data-lucide="folder-plus" class="w-4 h-4 text-brand-500"></i> Novo Compartimento';
       document.getElementById('loc-id').value = '';
       document.getElementById('loc-name').value = '';
-      document.getElementById('loc-icon').value = 'luggage';
+      document.getElementById('loc-icon').value = 'box';
       document.getElementById('loc-desc').value = '';
+
       document.getElementById('loc-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
     };
 
     document.getElementById('loc-form').onsubmit = async function(e) {
@@ -1030,45 +1217,31 @@
       const icon = document.getElementById('loc-icon').value;
       const desc = document.getElementById('loc-desc').value.trim();
 
-      let locs = getActiveLocations();
       if (id) {
-        const loc = locs.find(l => l.id === id);
-        if (loc) { loc.name = name; loc.icon = icon; loc.description = desc; }
-        showToast('Local atualizado', 'success');
+        const loc = locations.find(l => l.id === id);
+        if (loc) {
+          loc.name = name;
+          loc.icon = icon;
+          loc.description = desc;
+        }
+        showToast('Local atualizado!', 'success');
       } else {
-        const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now().toString().slice(-4);
-        locs.push({ id: newId, name, icon, description: desc });
-        showToast('Local criado', 'success');
+        const newLocId = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now().toString().slice(-4);
+        locations.push({
+          id: newLocId,
+          name: name,
+          icon: icon,
+          description: desc
+        });
+        showToast('Novo local criado!', 'success');
       }
+
       document.getElementById('loc-modal').classList.add('hidden');
       renderLocationsGrid();
       await saveData();
     };
 
-    /* TAB SWITCHING */
-    document.getElementById('tab-edc').onclick = function() {
-      currentTab = 'edc';
-      document.getElementById('tab-edc').className = 'flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 bg-brand-600 text-white shadow';
-      document.getElementById('tab-travel').className = 'flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-slate-200';
-      document.getElementById('app-title-header').textContent = 'EDC Manager';
-      document.getElementById('app-subtitle-header').textContent = 'Inventário Tático, Localização e Prontidão';
-      selectedCategory = 'Todas';
-      renderCategoryPills();
-      renderLocationsGrid();
-    };
-
-    document.getElementById('tab-travel').onclick = function() {
-      currentTab = 'travel';
-      document.getElementById('tab-travel').className = 'flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 bg-brand-600 text-white shadow';
-      document.getElementById('tab-edc').className = 'flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-slate-200';
-      document.getElementById('app-title-header').textContent = 'Travel Gear Manager';
-      document.getElementById('app-subtitle-header').textContent = 'Organização de Malas, Crianças, Camping e Viagens';
-      selectedCategory = 'Todas';
-      renderCategoryPills();
-      renderLocationsGrid();
-    };
-
-    /* TOOLS & JSON */
+    /* EXPORT & TOOLS MODAL LOGIC */
     const toolsModal = document.getElementById('tools-modal');
     const tabBtnTools = document.getElementById('tab-btn-tools');
     const tabBtnJson = document.getElementById('tab-btn-json-editor');
@@ -1087,130 +1260,222 @@
         tabBtnTools.className = 'py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none';
         tabContentJson.classList.remove('hidden');
         tabContentTools.classList.add('hidden');
-        jsonTextarea.value = JSON.stringify({ edcLocations, edcItems, travelLocations, travelItems }, null, 2);
+
+        const currentData = { locations: locations, items: items };
+        jsonTextarea.value = JSON.stringify(currentData, null, 2);
       }
     }
 
     tabBtnTools.onclick = () => switchToolsTab('tools');
     tabBtnJson.onclick = () => switchToolsTab('json');
-    document.getElementById('btn-open-tools').onclick = () => { switchToolsTab('tools'); toolsModal.classList.remove('hidden'); };
+
+    document.getElementById('btn-open-tools').onclick = () => {
+      switchToolsTab('tools');
+      toolsModal.classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
 
     document.getElementById('btn-format-json').onclick = () => {
-      try { jsonTextarea.value = JSON.stringify(JSON.parse(jsonTextarea.value), null, 2); showToast('JSON formatado', 'info'); }
-      catch(e) { showToast('Erro de sintaxe', 'error'); }
+      try {
+        const parsed = JSON.parse(jsonTextarea.value);
+        jsonTextarea.value = JSON.stringify(parsed, null, 2);
+        showToast('JSON formatado!', 'info');
+      } catch (err) {
+        showToast('Erro de sintaxe no JSON', 'error');
+      }
     };
 
     document.getElementById('btn-save-json-editor').onclick = async () => {
       try {
         const parsed = JSON.parse(jsonTextarea.value);
-        if (parsed.edcLocations) edcLocations = parsed.edcLocations;
-        if (parsed.edcItems) edcItems = normalizeItems(parsed.edcItems);
-        if (parsed.travelLocations) travelLocations = parsed.travelLocations;
-        if (parsed.travelItems) travelItems = normalizeItems(parsed.travelItems);
+        if (!parsed.locations || !parsed.items) {
+          throw new Error('JSON precisa ter "locations" e "items"');
+        }
+
+        locations = parsed.locations;
+        items = normalizeItems(parsed.items);
+
         renderLocationsGrid();
         await saveData();
         toolsModal.classList.add('hidden');
-        showToast('Dados salvos com sucesso!', 'success');
-      } catch(e) { showToast('Erro no JSON: ' + e.message, 'error'); }
+        showToast(`Salvo! ${items.length} itens ativos.`, 'success');
+      } catch (err) {
+        showToast('JSON Inválido: ' + err.message, 'error');
+      }
     };
 
     document.getElementById('btn-copy-text').onclick = () => {
-      let output = `=== ${(currentTab === 'edc' ? 'EDC' : 'VIAGEM').toUpperCase()} REPORT ===\n\n`;
-      getActiveLocations().forEach(loc => {
-        const locItems = getActiveItems().filter(i => (i.locationIds || []).includes(loc.id));
-        output += `[ ${loc.name.toUpperCase()} ] (${locItems.length})\n`;
-        locItems.forEach(i => output += `  • ${i.name} [${i.category}]${i.notes ? ' - ' + i.notes : ''}\n`);
-        output += '\n';
+      let output = `=== EDC INVENTORY REPORT ===\nData: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+
+      locations.forEach(loc => {
+        const locItems = items.filter(i => (i.locationIds || []).includes(loc.id));
+        output += `[ ${loc.name.toUpperCase()} ] (${locItems.length} itens)\n`;
+        if (locItems.length === 0) {
+          output += `  (vazio)\n`;
+        } else {
+          locItems.forEach(i => {
+            output += `  • ${i.name} [${i.category}]`;
+            if (i.notes) output += ` - ${i.notes}`;
+            output += `\n`;
+          });
+        }
+        output += `\n`;
       });
-      const ta = document.createElement('textarea');
-      ta.value = output;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      ta.remove();
-      showToast('Copiado para a área de transferência', 'success');
+
+      const tempTextarea = document.createElement('textarea');
+      tempTextarea.value = output;
+      document.body.appendChild(tempTextarea);
+      tempTextarea.select();
+      try {
+        document.execCommand('copy');
+        showToast('Lista copiada com sucesso!', 'success');
+      } catch (e) {
+        showToast('Erro ao copiar texto', 'error');
+      }
+      document.body.removeChild(tempTextarea);
     };
 
     document.getElementById('btn-download-json').onclick = () => {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ edcLocations, edcItems, travelLocations, travelItems }, null, 2));
-      const a = document.createElement('a');
-      a.href = dataStr;
-      a.download = `EDC_Travel_Backup_${new Date().toISOString().slice(0,10)}.json`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      showToast('Download iniciado', 'success');
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ locations, items }, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `EDC_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Download do JSON iniciado!', 'success');
     };
 
     document.getElementById('import-json-file').onchange = function(e) {
       const file = e.target.files[0];
       if (!file) return;
+
       const reader = new FileReader();
-      reader.onload = async (ev) => {
+      reader.onload = async (event) => {
         try {
-          const imported = JSON.parse(ev.target.result);
-          if (imported.edcLocations) edcLocations = imported.edcLocations;
-          if (imported.edcItems) edcItems = normalizeItems(imported.edcItems);
-          if (imported.travelLocations) travelLocations = imported.travelLocations;
-          if (imported.travelItems) travelItems = normalizeItems(imported.travelItems);
-          renderLocationsGrid();
-          await saveData();
-          toolsModal.classList.add('hidden');
-          showToast('Importado com sucesso!', 'success');
-        } catch(err) { showToast('Arquivo inválido', 'error'); }
+          const imported = JSON.parse(event.target.result);
+          if (imported.locations && imported.items) {
+            locations = imported.locations;
+            items = normalizeItems(imported.items);
+            renderLocationsGrid();
+            await saveData();
+            toolsModal.classList.add('hidden');
+            showToast(`Restaurado (${items.length} itens, ${locations.length} locais)`, 'success');
+          } else {
+            showToast('Formato de JSON incompatível.', 'error');
+          }
+        } catch (err) {
+          showToast('Erro no arquivo JSON', 'error');
+        }
         e.target.value = '';
       };
       reader.readAsText(file);
     };
 
     document.getElementById('btn-reset-default').onclick = async () => {
-      edcLocations = JSON.parse(JSON.stringify(DEFAULT_EDC_LOCATIONS));
-      edcItems = JSON.parse(JSON.stringify(DEFAULT_EDC_ITEMS));
-      travelLocations = JSON.parse(JSON.stringify(DEFAULT_TRAVEL_LOCATIONS));
-      travelItems = JSON.parse(JSON.stringify(DEFAULT_TRAVEL_ITEMS));
+      locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+      items = normalizeItems(DEFAULT_ITEMS);
       renderLocationsGrid();
       await saveData();
       toolsModal.classList.add('hidden');
-      showToast('Padrões originais restaurados', 'info');
+      showToast('Lista padrão restaurada!', 'info');
     };
 
-    /* SEARCH & FILTER */
+    /* SEARCH & FILTER LISTENERS */
     const searchInput = document.getElementById('search-input');
     const clearSearchBtn = document.getElementById('clear-search-btn');
+
     searchInput.oninput = (e) => {
       searchQuery = e.target.value;
-      if (searchQuery.trim() !== '') clearSearchBtn.classList.remove('hidden');
-      else clearSearchBtn.classList.add('hidden');
+      if (searchQuery.trim() !== '') {
+        clearSearchBtn.classList.remove('hidden');
+      } else {
+        clearSearchBtn.classList.add('hidden');
+      }
       renderLocationsGrid();
     };
-    clearSearchBtn.onclick = () => { searchInput.value = ''; searchQuery = ''; clearSearchBtn.classList.add('hidden'); renderLocationsGrid(); };
-    window.resetFilters = function() { searchInput.value = ''; searchQuery = ''; selectedCategory = 'Todas'; clearSearchBtn.classList.add('hidden'); renderCategoryPills(); renderLocationsGrid(); };
 
-    /* CHECKLIST TOGGLE */
-    document.getElementById('btn-checklist-mode').onclick = () => { document.getElementById('checklist-banner').classList.toggle('hidden'); renderLocationsGrid(); };
-    document.getElementById('btn-exit-checklist').onclick = () => { document.getElementById('checklist-banner').classList.add('hidden'); renderLocationsGrid(); };
-    document.getElementById('btn-uncheck-all').onclick = () => { checkedItems.clear(); renderLocationsGrid(); showToast('Desmarcado', 'info'); };
+    clearSearchBtn.onclick = () => {
+      searchInput.value = '';
+      searchQuery = '';
+      clearSearchBtn.classList.add('hidden');
+      renderLocationsGrid();
+    };
 
-    /* MODAL CLOSE */
+    window.resetFilters = function() {
+      searchInput.value = '';
+      searchQuery = '';
+      selectedCategory = 'Todas';
+      clearSearchBtn.classList.add('hidden');
+      renderCategoryPills();
+      renderLocationsGrid();
+    };
+
+    /* CHECKLIST MODE TOGGLE */
+    const checklistBanner = document.getElementById('checklist-banner');
+    const btnChecklistMode = document.getElementById('btn-checklist-mode');
+
+    btnChecklistMode.onclick = () => {
+      checklistBanner.classList.toggle('hidden');
+      renderLocationsGrid();
+    };
+
+    document.getElementById('btn-exit-checklist').onclick = () => {
+      checklistBanner.classList.add('hidden');
+      renderLocationsGrid();
+    };
+
+    document.getElementById('btn-uncheck-all').onclick = () => {
+      checkedItems.clear();
+      renderLocationsGrid();
+      showToast('Itens desmarcados.', 'info');
+    };
+
+    /* MODAL CLOSE HANDLERS */
+    document.getElementById('btn-add-item').onclick = () => openAddItemModal();
     document.getElementById('item-modal-close').onclick = () => document.getElementById('item-modal').classList.add('hidden');
     document.getElementById('item-modal-cancel').onclick = () => document.getElementById('item-modal').classList.add('hidden');
+
     document.getElementById('loc-modal-close').onclick = () => document.getElementById('loc-modal').classList.add('hidden');
     document.getElementById('loc-modal-cancel').onclick = () => document.getElementById('loc-modal').classList.add('hidden');
+
     document.getElementById('quick-move-close').onclick = () => document.getElementById('quick-move-modal').classList.add('hidden');
     document.getElementById('tools-modal-close').onclick = () => toolsModal.classList.add('hidden');
 
+    /* TOAST NOTIFICATION HELPER */
     function showToast(message, type = 'success') {
       const toast = document.getElementById('toast');
-      document.getElementById('toast-message').textContent = message;
+      const toastMsg = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.textContent = message;
+
+      if (type === 'success') {
+        toastIcon.className = 'text-brand-500 shrink-0';
+        toastIcon.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i>';
+      } else if (type === 'error') {
+        toastIcon.className = 'text-rose-500 shrink-0';
+        toastIcon.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4"></i>';
+      } else {
+        toastIcon.className = 'text-sky-400 shrink-0';
+        toastIcon.innerHTML = '<i data-lucide="info" class="w-4 h-4"></i>';
+      }
+
+      if (window.lucide) lucide.createIcons();
+
       toast.classList.remove('translate-y-24', 'opacity-0');
-      setTimeout(() => toast.classList.add('translate-y-24', 'opacity-0'), 3000);
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3000);
     }
 
+    /* RENDER ALL APP COMPONENTS */
     function renderApp() {
       renderCategoryPills();
       renderLocationsGrid();
     }
 
+    /* BOOTSTRAP APP ON LOAD */
     window.onload = async function() {
       await initCloudStorage();
     };
