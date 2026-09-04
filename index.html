@@ -538,7 +538,154 @@
       return palette[hash % palette.length];
     }
 
+    /* FIREBASE CONFIGURATION */
+    const MY_FIREBASE_CONFIG = {
+      apiKey: "AIzaSyDB8sJBPQvHlcIOzQtSlM1Cw1gbSqae3MA",
+      authDomain: "equipedc-99ff9.firebaseapp.com",
+      projectId: "equipedc-99ff9",
+      storageBucket: "equipedc-99ff9.firebasestorage.app",
+      messagingSenderId: "501675097684",
+      appId: "1:501675097684:web:cc809e4e931b9020b777c1",
+      measurementId: "G-DGW7WR036X"
+    };
+
+    /* UPDATE CLOUD STATUS BADGE IN HEADER */
+    function updateCloudStatus(status, text) {
+      const badge = document.getElementById('cloud-status-badge');
+      const dot = document.getElementById('cloud-status-dot');
+      const label = document.getElementById('cloud-status-text');
+      if (!badge) return;
+
+      badge.classList.remove('hidden');
+      label.textContent = text;
+
+      if (status === 'online') {
+        dot.className = 'w-2 h-2 rounded-full bg-brand-500';
+        badge.className = 'flex items-center gap-1.5 px-2 py-1 rounded-lg bg-brand-500/10 border border-brand-500/20 text-[11px] sm:text-xs text-brand-300';
+      } else if (status === 'saving') {
+        dot.className = 'w-2 h-2 rounded-full bg-blue-400 animate-spin';
+        badge.className = 'flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[11px] sm:text-xs text-blue-300';
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+        badge.className = 'flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] sm:text-xs text-amber-300';
+      }
+    }
+
+    /* FIREBASE AUTH & FIRESTORE SETUP */
     async function initCloudStorage() {
+      const configToUse = typeof __firebase_config !== 'undefined' 
+        ? JSON.parse(__firebase_config) 
+        : MY_FIREBASE_CONFIG;
+
+      if (configToUse && configToUse.apiKey) {
+        try {
+          const app = initializeApp(configToUse);
+          auth = getAuth(app);
+          db = getFirestore(app);
+
+          if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+            await signInWithCustomToken(auth, __initial_auth_token);
+          } else {
+            await signInAnonymously(auth);
+          }
+
+          userId = auth.currentUser?.uid || 'edc-user';
+          isCloudAvailable = true;
+          updateCloudStatus('online', 'Salvo na Nuvem');
+
+          setupFirestoreRealtimeListener();
+        } catch (e) {
+          console.warn("Firebase offline ou inicializando localmente", e);
+          isCloudAvailable = false;
+          updateCloudStatus('local', 'Salvo Localmente');
+        }
+      } else {
+        updateCloudStatus('local', 'Salvo Localmente');
+      }
+
+      await loadData();
+    }
+
+    /* REALTIME LISTENERS */
+    function setupFirestoreRealtimeListener() {
+      if (!db || !isCloudAvailable) return;
+
+      try {
+        const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'main');
+        onSnapshot(publicDocRef, (docSnap) => {
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if (data && data.locations && data.items) {
+              locations = data.locations;
+              items = normalizeItems(data.items);
+              renderApp();
+              updateStats();
+            }
+          }
+        }, (error) => {
+          console.warn("Snapshot notice:", error);
+        });
+      } catch (err) {
+        console.warn("Falha ao registrar listener em tempo real:", err);
+      }
+    }
+
+    /* DATA PERSISTENCE ROUTINE */
+    async function saveData() {
+      updateCloudStatus('saving', 'Gravando...');
+      const serializedData = {
+        locations: locations,
+        items: items,
+        updatedAt: new Date().toISOString()
+      };
+
+      if (db && isCloudAvailable) {
+        try {
+          const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'main');
+          await setDoc(publicDocRef, serializedData);
+          updateCloudStatus('online', 'Salvo na Nuvem');
+        } catch (error) {
+          console.error("Erro ao salvar no Firebase:", error);
+          updateCloudStatus('local', 'Salvo no Cache');
+        }
+      } else {
+        updateCloudStatus('local', 'Salvo no Cache');
+      }
+
+      updateStats();
+    }
+
+    /* NORMALIZE ITEMS TO MULTI-LOCATION FORMAT */
+    function normalizeItems(rawItems) {
+      if (!Array.isArray(rawItems)) return [];
+      return rawItems.map(item => {
+        let locIds = [];
+        if (Array.isArray(item.locationIds)) {
+          locIds = item.locationIds;
+        } else if (item.locationId) {
+          locIds = [item.locationId];
+        } else {
+          locIds = ['bolsa-preta'];
+        }
+        return {
+          id: item.id || 'item-' + Math.random().toString(36).substr(2, 9),
+          name: item.name || 'Sem Nome',
+          locationIds: locIds,
+          category: item.category || 'Outros',
+          status: item.status || 'ok',
+          notes: item.notes || ''
+        };
+      });
+    }
+
+    /* LOAD DATA */
+    async function loadData() {
+      locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+      items = normalizeItems(DEFAULT_ITEMS);
+      renderApp();
+      updateStats();
+    }
+
     /* RENDER CATEGORY FILTER PILLS WITH ITEM COUNTS */
     function renderCategoryPills() {
       const container = document.getElementById('category-pills');
