@@ -70,7 +70,7 @@
         <div class="min-w-0">
           <h1 class="text-sm sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5 truncate">
             <span class="truncate" id="app-title-header">EDC Manager</span>
-            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700 shrink-0">v5.0</span>
+            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700 shrink-0">v5.2</span>
           </h1>
           <p class="text-[11px] text-slate-400 hidden sm:block truncate" id="app-subtitle-header">Inventário Tático e Equipamentos de Viagem</p>
         </div>
@@ -177,6 +177,7 @@
     </div>
   </main>
 
+  <!-- ITEM MODAL -->
   <div id="item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-auto max-h-[88vh] flex flex-col">
       <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
@@ -205,9 +206,9 @@
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="item-category-wrapper">
-          <div>
+          <div id="edc-category-field">
             <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria *</label>
-            <select id="item-category" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+            <select id="item-category" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-200 focus:outline-none focus:border-brand-500">
               <!-- Dynamically populated -->
             </select>
           </div>
@@ -234,6 +235,7 @@
     </div>
   </div>
 
+  <!-- LOCATION / CATEGORY MODAL -->
   <div id="loc-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto max-h-[88vh] flex flex-col">
       <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
@@ -249,7 +251,7 @@
         <input type="hidden" id="loc-id">
 
         <div>
-          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1" id="loc-name-label">Nome do Compartimento *</label>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1" id="loc-name-label">Nome *</label>
           <input type="text" id="loc-name" required placeholder="Ex: Mala, Nécessaire..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
@@ -281,12 +283,13 @@
 
         <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800 shrink-0">
           <button type="button" id="loc-modal-cancel" class="px-3.5 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">Cancelar</button>
-          <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Grupo</button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar</button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- QUICK MOVE MODAL -->
   <div id="quick-move-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm shadow-2xl p-4 sm:p-5 my-auto">
       <div class="flex items-center justify-between mb-2.5">
@@ -309,6 +312,22 @@
     </div>
   </div>
 
+  <!-- DELETE CONFIRMATION MODAL -->
+  <div id="delete-confirm-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm shadow-2xl p-5 text-center my-auto">
+      <div class="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/30 flex items-center justify-center mx-auto text-rose-400 mb-3">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <h3 class="text-sm sm:text-base font-bold text-white mb-1">Confirmar Exclusão</h3>
+      <p id="delete-confirm-text" class="text-xs text-slate-400 mb-4">Tem certeza que deseja remover este item?</p>
+      <div class="flex items-center gap-2">
+        <button id="btn-cancel-delete" class="flex-1 px-3.5 py-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Cancelar</button>
+        <button id="btn-confirm-delete" class="flex-1 px-3.5 py-2 text-xs font-semibold rounded-lg bg-rose-600 hover:bg-rose-500 text-white shadow-lg shadow-rose-900/30">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLS & BACKUP MODAL -->
   <div id="tools-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
@@ -527,7 +546,7 @@
       { id: 'tr-41', name: 'Cadeiras', category: 'Camping', status: 'ok', notes: 'Conforto' },
       { id: 'tr-42', name: 'Canecas', category: 'Camping', status: 'ok', notes: 'Bebidas' },
       { id: 'tr-43', name: 'Canivete', category: 'Camping', status: 'ok', notes: 'Ferramenta' },
-      { id: 'tr-44', name: 'chuveiro solar', category: 'Cell', status: 'ok', notes: 'Banho de campo' },
+      { id: 'tr-44', name: 'chuveiro solar', category: 'Camping', status: 'ok', notes: 'Banho de campo' },
       { id: 'tr-45', name: 'Colchão', category: 'Camping', status: 'ok', notes: 'Sono' },
       { id: 'tr-46', name: 'engasga gato', category: 'Camping', status: 'ok', notes: 'Abraçadeiras' },
       { id: 'tr-47', name: 'Esticadores', category: 'Camping', status: 'ok', notes: 'Fixação' },
@@ -704,12 +723,13 @@
     let draggedItemId = null;
     let draggedFromLocId = null;
     let checkedItems = new Set();
+    let pendingDeleteAction = null;
 
     /* FIREBASE GLOBALS */
     let db = null;
     let auth = null;
     let isCloudAvailable = false;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'edc-travel-pro-v5';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'edc-travel-pro-v52';
 
     /* CLOUD STATUS */
     function updateCloudStatus(status, text) {
@@ -1057,7 +1077,7 @@
                     <div class="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-0.5 shrink-0 bg-slate-950/90 rounded-lg p-0.5 border border-slate-800 sm:border-none">
                       ${currentTab === 'edc' ? `<button onclick="openQuickMoveModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-brand-400" title="Mudar locais"><i data-lucide="layers" class="w-3.5 h-3.5"></i></button>` : ''}
                       <button onclick="openEditItemModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200" title="Editar"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
-                      <button onclick="deleteItem('${item.id}', '${loc.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400" title="Remover"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                      <button onclick="confirmDeleteItem('${item.id}', '${loc.id}', '${item.name}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400" title="Remover"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                     </div>
                   </div>
                   <div class="mt-2 pt-1.5 border-t border-slate-900 flex items-center justify-between gap-1">
@@ -1102,11 +1122,12 @@
     function renderLocationCheckboxes(selectedIdsOrCat = []) {
       const container = document.getElementById('item-locations-container');
       container.innerHTML = '';
+      const edcCategoryField = document.getElementById('edc-category-field');
 
       if (currentTab === 'edc') {
         document.getElementById('item-locations-label').textContent = 'Locais Onde Fica Guardado *';
         document.getElementById('item-locations-desc').textContent = 'Marque um ou mais locais simultâneos para este item:';
-        document.getElementById('item-category-wrapper').style.display = 'grid';
+        if (edcCategoryField) edcCategoryField.style.display = 'block';
 
         getActiveLocations().forEach(loc => {
           const isChecked = selectedIdsOrCat.includes(loc.id);
@@ -1118,7 +1139,7 @@
       } else {
         document.getElementById('item-locations-label').textContent = 'Categoria de Viagem *';
         document.getElementById('item-locations-desc').textContent = 'Selecione a categoria principal para este item:';
-        document.getElementById('item-category-wrapper').style.display = 'none'; // category is the location itself
+        if (edcCategoryField) edcCategoryField.style.display = 'none'; // category is the location itself in travel mode
 
         getActiveLocations().forEach(loc => {
           const isSelected = selectedIdsOrCat === loc.name;
@@ -1133,7 +1154,7 @@
     function populateCategoryDropdown(selected = '') {
       const select = document.getElementById('item-category');
       select.innerHTML = '';
-      getActiveCategories().filter(c => c !== 'Todas').forEach(cat => {
+      EDC_CATEGORIES.filter(c => c !== 'Todas').forEach(cat => {
         const opt = document.createElement('option');
         opt.value = cat;
         opt.textContent = cat;
@@ -1150,11 +1171,12 @@
       document.getElementById('item-status').value = 'ok';
 
       if (currentTab === 'edc') {
-        populateCategoryDropdown(selectedCategory !== 'Todas' ? selectedCategory : null);
+        populateCategoryDropdown(selectedCategory !== 'Todas' ? selectedCategory : EDC_CATEGORIES[1]);
         renderLocationCheckboxes(preselectedLocIdOrCat ? [preselectedLocIdOrCat] : [getActiveLocations()[0]?.id]);
       } else {
-        const targetCat = preselectedLocIdOrCat ? getActiveLocations().find(l => l.id === preselectedLocIdOrCat)?.name || getActiveLocations()[0]?.name : getActiveLocations()[0]?.name;
-        renderLocationCheckboxes(targetCat);
+        const targetLoc = getActiveLocations().find(l => l.id === preselectedLocIdOrCat || l.name === preselectedLocIdOrCat);
+        const targetCatName = targetLoc ? targetLoc.name : getActiveLocations()[0]?.name;
+        renderLocationCheckboxes(targetCatName);
       }
 
       document.getElementById('item-modal').classList.remove('hidden');
@@ -1177,7 +1199,6 @@
         renderLocationCheckboxes(item.category);
       }
 
-      document.getElementById('item-modal').classList.add('hidden');
       document.getElementById('item-modal').classList.remove('hidden');
       if (window.lucide) lucide.createIcons();
     };
@@ -1232,7 +1253,25 @@
       await saveData();
     };
 
-    window.deleteItem = async function(itemId, fromLocationId) {
+    /* DELETE WITH CONFIRMATION MODAL */
+    window.confirmDeleteItem = function(itemId, fromLocationId, itemName) {
+      pendingDeleteAction = { itemId, fromLocationId };
+      document.getElementById('delete-confirm-text').textContent = `Deseja realmente remover "${itemName}"?`;
+      document.getElementById('delete-confirm-modal').classList.remove('hidden');
+      if (window.lucide) lucide.createIcons();
+    };
+
+    document.getElementById('btn-cancel-delete').onclick = () => {
+      pendingDeleteAction = null;
+      document.getElementById('delete-confirm-modal').classList.add('hidden');
+    };
+
+    document.getElementById('btn-confirm-delete').onclick = async () => {
+      if (!pendingDeleteAction) return;
+      const { itemId, fromLocationId } = pendingDeleteAction;
+      pendingDeleteAction = null;
+      document.getElementById('delete-confirm-modal').classList.add('hidden');
+
       let items = getActiveItems();
       const item = items.find(i => i.id === itemId);
       if (!item) return;
@@ -1328,7 +1367,6 @@
           loc.icon = icon; 
           loc.description = desc; 
 
-          // If travel category name changed, update items matching old category name
           if (currentTab === 'travel' && oldName !== name) {
             travelItems.forEach(i => {
               if (i.category === oldName) i.category = name;
