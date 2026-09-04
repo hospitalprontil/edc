@@ -2,7 +2,7 @@
 <html lang="pt-BR" class="h-full bg-slate-950 text-slate-100">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>EDC Manager Pro - Controle de Equipamentos</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -16,6 +16,7 @@
           colors: {
             brand: {
               50: '#f0fdf4',
+              400: '#4ade80',
               500: '#22c55e',
               600: '#16a34a',
               700: '#15803d',
@@ -26,10 +27,10 @@
     }
   </script>
   <style>
-    /* Custom scrollbars */
+    /* Custom Scrollbars & Touch Utilities */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
       background: #090d16;
@@ -41,78 +42,92 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #334155;
     }
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
     .drag-over {
       outline: 2px dashed #22c55e !important;
       outline-offset: -2px;
-      background-color: rgba(34, 197, 94, 0.05) !important;
+      background-color: rgba(34, 197, 94, 0.08) !important;
+    }
+    /* Disable text selection on interactive cards on touch */
+    .touch-card {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
     }
   </style>
 </head>
-<body class="min-h-full flex flex-col font-sans selection:bg-brand-500 selection:text-white pb-12">
+<body class="min-h-full flex flex-col font-sans selection:bg-brand-500 selection:text-white pb-12 bg-slate-950 text-slate-100 antialiased">
 
   <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div class="p-2 bg-brand-500/10 text-brand-500 border border-brand-500/20 rounded-xl">
-          <i data-lucide="shield-check" class="w-6 h-6"></i>
+  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800/90 shadow-md">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
+      <!-- Logo & Title -->
+      <div class="flex items-center gap-2.5 min-w-0">
+        <div class="p-2 bg-brand-500/10 text-brand-500 border border-brand-500/20 rounded-xl shrink-0">
+          <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6"></i>
         </div>
-        <div>
-          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center gap-2">
-            EDC Manager Pro
-            <span class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700">v2.5</span>
+        <div class="min-w-0">
+          <h1 class="text-sm sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5 truncate">
+            <span class="truncate">EDC Manager</span>
+            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700 shrink-0">v2.6</span>
           </h1>
-          <p class="text-xs text-slate-400 hidden sm:block">Inventário Tático, Localização e Prontidão</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block truncate">Inventário Tático, Localização e Prontidão</p>
         </div>
       </div>
 
-      <!-- Quick actions -->
-      <div class="flex items-center gap-2 sm:gap-3">
+      <!-- Header Action Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <!-- Cloud Storage Status Badge -->
-        <div id="cloud-status-badge" class="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-300 transition-all">
-          <span id="cloud-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span id="cloud-status-text">Conectando...</span>
+        <div id="cloud-status-badge" class="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800/90 border border-slate-700 text-[11px] sm:text-xs text-slate-300 transition-all">
+          <span id="cloud-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0"></span>
+          <span id="cloud-status-text" class="hidden md:inline">Conectando...</span>
         </div>
 
-        <button id="btn-checklist-mode" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors flex items-center gap-1.5" title="Modo Conferência / Saída de Campo">
-          <i data-lucide="check-square" class="w-4 h-4 text-brand-500"></i>
-          <span class="hidden md:inline">Modo</span> Conferência
+        <button id="btn-checklist-mode" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors flex items-center gap-1.5" title="Modo Conferência / Saída de Campo">
+          <i data-lucide="check-square" class="w-4 h-4 text-brand-500 shrink-0"></i>
+          <span class="hidden sm:inline">Conferência</span>
         </button>
 
-        <button id="btn-add-item" class="px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors flex items-center gap-1.5 shadow-lg shadow-brand-900/30">
-          <i data-lucide="plus" class="w-4 h-4"></i>
-          <span>Novo Item</span>
+        <button id="btn-add-item" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 active:scale-95 text-white transition-all flex items-center gap-1 shadow-lg shadow-brand-900/30">
+          <i data-lucide="plus" class="w-4 h-4 shrink-0"></i>
+          <span class="hidden sm:inline">Novo Item</span>
         </button>
 
-        <button id="btn-add-location" class="p-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Criar Novo Compartimento / Local">
+        <button id="btn-add-location" class="p-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Criar Novo Compartimento">
           <i data-lucide="folder-plus" class="w-4 h-4"></i>
         </button>
 
-        <button id="btn-open-tools" class="p-1.5 text-xs sm:text-sm font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Exportar, Importar ou Copiar Lista">
+        <button id="btn-open-tools" class="p-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Exportar, Importar ou Editar JSON">
           <i data-lucide="share-2" class="w-4 h-4"></i>
         </button>
       </div>
     </div>
 
     <!-- FILTER & SEARCH BAR -->
-    <div class="border-t border-slate-800/80 bg-slate-900/50 py-2.5">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-3">
+    <div class="border-t border-slate-800/80 bg-slate-900/60 py-2">
+      <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-2.5">
         <!-- Search Input -->
         <div class="relative w-full md:w-80">
           <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
-          <input type="text" id="search-input" placeholder="Buscar por item, notas ou local..." class="w-full bg-slate-950/80 border border-slate-800 rounded-lg pl-9 pr-8 py-1.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
-          <button id="clear-search-btn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
+          <input type="text" id="search-input" placeholder="Buscar por item, notas ou local..." class="w-full bg-slate-950/90 border border-slate-800 rounded-lg pl-9 pr-8 py-1.5 text-base sm:text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+          <button id="clear-search-btn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-1">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
         </div>
 
-        <!-- Category Filter Pills -->
+        <!-- Category Filter Pills (Horizontal Touch Swipe) -->
         <div class="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto pb-1 md:pb-0 scrollbar-none" id="category-pills">
           <!-- Dynamic Pills Injected via JS -->
         </div>
 
         <!-- Stats summary -->
-        <div class="hidden lg:flex items-center gap-3 text-xs text-slate-400 font-mono">
+        <div class="hidden lg:flex items-center gap-3 text-xs text-slate-400 font-mono shrink-0">
           <span id="stat-total-items">Itens: 0</span>
           <span class="text-slate-700">|</span>
           <span id="stat-total-locations">Locais: 0</span>
@@ -122,45 +137,45 @@
   </header>
 
   <!-- MAIN VIEW CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-6 flex-1 w-full">
     <!-- Notice Banner for Checklist Mode -->
-    <div id="checklist-banner" class="hidden mb-6 p-4 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-between gap-4 animate-fade-in">
-      <div class="flex items-center gap-3">
-        <div class="p-2 rounded-lg bg-brand-500/20 text-brand-400">
+    <div id="checklist-banner" class="hidden mb-4 sm:mb-6 p-3.5 sm:p-4 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-between gap-3 animate-fade-in">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="p-2 rounded-lg bg-brand-500/20 text-brand-400 shrink-0">
           <i data-lucide="clipboard-check" class="w-5 h-5"></i>
         </div>
-        <div>
-          <p class="text-sm font-semibold text-brand-300">Modo de Conferência Ativado</p>
-          <p class="text-xs text-slate-400">Clique nas caixas de seleção de cada item para confirmar sua presença antes de partir.</p>
+        <div class="min-w-0">
+          <p class="text-xs sm:text-sm font-semibold text-brand-300">Modo de Conferência Ativado</p>
+          <p class="text-[11px] sm:text-xs text-slate-400 truncate sm:whitespace-normal">Marque as caixas dos itens para confirmar sua presença antes de sair.</p>
         </div>
       </div>
-      <div class="flex items-center gap-2">
-        <button id="btn-uncheck-all" class="px-2.5 py-1 text-xs rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">Desmarcar Todos</button>
-        <button id="btn-exit-checklist" class="px-2.5 py-1 text-xs rounded-md bg-brand-600 hover:bg-brand-500 text-white">Concluir</button>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button id="btn-uncheck-all" class="px-2 py-1 text-[11px] sm:text-xs rounded-md bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 whitespace-nowrap">Desmarcar</button>
+        <button id="btn-exit-checklist" class="px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-md bg-brand-600 hover:bg-brand-500 text-white whitespace-nowrap">Concluir</button>
       </div>
     </div>
 
     <!-- Empty search result notice -->
-    <div id="empty-state" class="hidden text-center py-16">
-      <div class="w-16 h-16 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500 mb-4">
-        <i data-lucide="inbox" class="w-8 h-8"></i>
+    <div id="empty-state" class="hidden text-center py-12 sm:py-16">
+      <div class="w-14 h-14 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-500 mb-3">
+        <i data-lucide="inbox" class="w-7 h-7"></i>
       </div>
-      <h3 class="text-base font-semibold text-slate-300">Nenhum equipamento localizado</h3>
-      <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Tente ajustar seus termos de busca ou mudar a categoria selecionada.</p>
+      <h3 class="text-sm sm:text-base font-semibold text-slate-300">Nenhum equipamento localizado</h3>
+      <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">Tente ajustar seus termos de busca ou mudar a categoria selecionada.</p>
       <button onclick="resetFilters()" class="mt-4 px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-brand-400 rounded-lg border border-slate-700">Limpar Filtros</button>
     </div>
 
     <!-- LOCATIONS GRID (KANBAN / CONTAINERS) -->
-    <div id="locations-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 items-start">
+    <div id="locations-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 items-start">
       <!-- Injected Dynamically by JS -->
     </div>
   </main>
 
   <!-- MODAL: ADD / EDIT ITEM -->
-  <div id="item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-scale-in">
-      <div class="flex items-center justify-between p-4 border-b border-slate-800">
-        <h3 id="item-modal-title" class="text-base font-bold text-white flex items-center gap-2">
+  <div id="item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-auto max-h-[88vh] flex flex-col">
+      <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
+        <h3 id="item-modal-title" class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
           <i data-lucide="package" class="w-4 h-4 text-brand-500"></i>
           Adicionar Equipamento
         </h3>
@@ -168,26 +183,26 @@
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <form id="item-form" class="p-5 space-y-4">
+      <form id="item-form" class="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
         <input type="hidden" id="item-id">
 
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Item *</label>
-          <input type="text" id="item-name" required placeholder="Ex: Canivete Victorinox, Lanterna USB..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Item *</label>
+          <input type="text" id="item-name" required placeholder="Ex: Canivete Victorinox, Lanterna USB..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Locais Onde Fica Guardado *</label>
-          <p class="text-[11px] text-slate-500 mb-2">Marque um ou mais locais simultâneos onde este item é mantido:</p>
-          <div id="item-locations-container" class="grid grid-cols-2 gap-2 bg-slate-950 border border-slate-800 rounded-lg p-3 max-h-40 overflow-y-auto">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Locais Onde Fica Guardado *</label>
+          <p class="text-[11px] text-slate-500 mb-1.5">Marque um ou mais locais simultâneos para este item:</p>
+          <div id="item-locations-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-950 border border-slate-800 rounded-lg p-2.5 max-h-36 overflow-y-auto">
             <!-- Injected dynamically: checkboxes for locations -->
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria *</label>
-            <select id="item-category" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria *</label>
+            <select id="item-category" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-200 focus:outline-none focus:border-brand-500">
               <option value="Ferramentas">Ferramentas</option>
               <option value="Iluminação">Iluminação</option>
               <option value="Saúde & 1ºs Socorros">Saúde & 1ºs Socorros</option>
@@ -199,8 +214,8 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Status de Prontidão</label>
-            <select id="item-status" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+            <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Status de Prontidão</label>
+            <select id="item-status" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-200 focus:outline-none focus:border-brand-500">
               <option value="ok">🟢 Operacional / Pronto</option>
               <option value="repor">🟡 Precisa Recarregar / Repor</option>
               <option value="faltando">🔴 Faltando / Crítico</option>
@@ -209,23 +224,23 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Notas / Detalhes (Opcional)</label>
-          <input type="text" id="item-notes" placeholder="Ex: 100+ dB, pilhas extras, validade 12/2026..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Notas / Detalhes (Opcional)</label>
+          <input type="text" id="item-notes" placeholder="Ex: 100+ dB, pilhas extras, validade 12/2026..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
-          <button type="button" id="item-modal-cancel" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">Cancelar</button>
-          <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Equipamento</button>
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800 shrink-0">
+          <button type="button" id="item-modal-cancel" class="px-3.5 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Equipamento</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- MODAL: ADD / EDIT LOCATION -->
-  <div id="loc-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
-      <div class="flex items-center justify-between p-4 border-b border-slate-800">
-        <h3 id="loc-modal-title" class="text-base font-bold text-white flex items-center gap-2">
+  <div id="loc-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto max-h-[88vh] flex flex-col">
+      <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
+        <h3 id="loc-modal-title" class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
           <i data-lucide="folder-plus" class="w-4 h-4 text-brand-500"></i>
           Novo Compartimento / Local
         </h3>
@@ -233,17 +248,17 @@
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <form id="loc-form" class="p-5 space-y-4">
+      <form id="loc-form" class="p-4 sm:p-5 space-y-3.5 overflow-y-auto flex-1">
         <input type="hidden" id="loc-id">
 
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Compartimento *</label>
-          <input type="text" id="loc-name" required placeholder="Ex: Chaveiro, Mochila Tática, Bolso..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Compartimento *</label>
+          <input type="text" id="loc-name" required placeholder="Ex: Chaveiro, Mochila Tática, Bolso..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Ícone</label>
-          <select id="loc-icon" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-brand-500">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Ícone</label>
+          <select id="loc-icon" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-200 focus:outline-none focus:border-brand-500">
             <option value="key">🔑 Chaveiro / Chaves</option>
             <option value="briefcase">💼 Bolsa / Pasta</option>
             <option value="backpack">🎒 Mochila</option>
@@ -256,23 +271,23 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição Curta</label>
-          <input type="text" id="loc-desc" placeholder="Ex: Transporte diário (bolso frontal)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição Curta</label>
+          <input type="text" id="loc-desc" placeholder="Ex: Transporte diário (bolso frontal)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
-          <button type="button" id="loc-modal-cancel" class="px-4 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">Cancelar</button>
-          <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Local</button>
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800 shrink-0">
+          <button type="button" id="loc-modal-cancel" class="px-3.5 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">Cancelar</button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Local</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: QUICK MOVE (Convenient for mobile or multiple containers) -->
-  <div id="quick-move-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm shadow-2xl p-5">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+  <!-- MODAL: QUICK MOVE (MULTI-LOCATION SELECTION) -->
+  <div id="quick-move-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm shadow-2xl p-4 sm:p-5 my-auto">
+      <div class="flex items-center justify-between mb-2.5">
+        <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
           <i data-lucide="layers" class="w-4 h-4 text-brand-500"></i>
           Locais do Equipamento
         </h3>
@@ -280,22 +295,22 @@
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
-      <p id="quick-move-item-name" class="text-xs text-slate-300 font-medium mb-3 p-2 rounded bg-slate-950 border border-slate-800"></p>
+      <p id="quick-move-item-name" class="text-xs text-slate-300 font-medium mb-2.5 p-2 rounded-lg bg-slate-950 border border-slate-800 truncate"></p>
       <p class="text-[11px] text-slate-400 mb-2">Marque os compartimentos onde deseja alocar este item:</p>
-      <div id="quick-move-options" class="space-y-1.5 max-h-60 overflow-y-auto pr-1">
+      <div id="quick-move-options" class="space-y-1.5 max-h-52 overflow-y-auto pr-1">
         <!-- Injected via JS -->
       </div>
-      <div class="flex justify-end gap-2 mt-4 pt-3 border-t border-slate-800">
-        <button id="btn-save-quick-move" class="px-4 py-1.5 text-xs font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white w-full">Salvar Locais</button>
+      <div class="flex justify-end gap-2 mt-3.5 pt-3 border-t border-slate-800">
+        <button id="btn-save-quick-move" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white w-full">Salvar Locais</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL: TOOLS, EXPORT, BACKUP & JSON EDITOR -->
-  <div id="tools-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="flex items-center justify-between p-4 border-b border-slate-800">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
+  <div id="tools-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
+        <h3 class="text-xs sm:text-base font-bold text-white flex items-center gap-2">
           <i data-lucide="settings" class="w-4 h-4 text-brand-500"></i>
           Gerenciamento e Backup de Dados
         </h3>
@@ -305,84 +320,84 @@
       </div>
 
       <!-- Navigation Tabs -->
-      <div class="flex border-b border-slate-800 bg-slate-950/60 px-4 gap-4 text-xs font-semibold">
-        <button id="tab-btn-tools" class="py-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none">Opções & Arquivos</button>
-        <button id="tab-btn-json-editor" class="py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none flex items-center gap-1.5">
-          <span>Editar JSON Diretamente</span>
+      <div class="flex border-b border-slate-800 bg-slate-950/60 px-3 sm:px-4 gap-3 text-xs font-semibold shrink-0">
+        <button id="tab-btn-tools" class="py-2.5 text-brand-500 border-b-2 border-brand-500 focus:outline-none">Opções & Arquivos</button>
+        <button id="tab-btn-json-editor" class="py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none flex items-center gap-1.5">
+          <span>Editar JSON Direto</span>
           <span class="px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-400 text-[10px]">Avançado</span>
         </button>
       </div>
 
       <!-- TAB 1: Standard Tools & Actions -->
-      <div id="tab-content-tools" class="p-5 space-y-4 overflow-y-auto">
+      <div id="tab-content-tools" class="p-3.5 sm:p-5 space-y-3 sm:space-y-4 overflow-y-auto flex-1">
         <!-- Copy Plain Text List -->
-        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+        <div class="p-3 sm:p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
           <div>
-            <h4 class="text-sm font-semibold text-slate-200">Copiar Lista em Texto</h4>
-            <p class="text-xs text-slate-400">Gera uma lista formatada e pronta para enviar no WhatsApp ou salvar no bloco de notas.</p>
+            <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Copiar Lista em Texto</h4>
+            <p class="text-[11px] text-slate-400">Gera lista formatada para enviar no WhatsApp ou notas.</p>
           </div>
-          <button id="btn-copy-text" class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
+          <button id="btn-copy-text" class="shrink-0 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-            Copiar Lista
+            <span class="hidden sm:inline">Copiar</span>
           </button>
         </div>
 
         <!-- Download JSON Backup -->
-        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-4">
+        <div class="p-3 sm:p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
           <div>
-            <h4 class="text-sm font-semibold text-slate-200">Baixar Arquivo JSON de Backup</h4>
-            <p class="text-xs text-slate-400">Faça o download do arquivo .json contendo todos os seus compartimentos e itens.</p>
+            <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Baixar Backup JSON</h4>
+            <p class="text-[11px] text-slate-400">Download do arquivo .json completo dos seus itens.</p>
           </div>
-          <button id="btn-download-json" class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
+          <button id="btn-download-json" class="shrink-0 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            Baixar JSON
+            <span class="hidden sm:inline">Baixar</span>
           </button>
         </div>
 
         <!-- Restore from File -->
-        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
-          <div class="flex items-center justify-between gap-4">
+        <div class="p-3 sm:p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+          <div class="flex items-center justify-between gap-3">
             <div>
-              <h4 class="text-sm font-semibold text-slate-200">Restaurar de arquivo JSON</h4>
-              <p class="text-xs text-slate-400">Importe um arquivo de backup (.json) para atualizar a sua lista.</p>
+              <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Restaurar de arquivo JSON</h4>
+              <p class="text-[11px] text-slate-400">Importe um arquivo .json para atualizar sua lista.</p>
             </div>
-            <label class="shrink-0 cursor-pointer px-3 py-1.5 text-xs font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 transition-colors">
+            <label class="shrink-0 cursor-pointer px-2.5 py-1.5 text-xs font-medium rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 transition-colors">
               <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-              <span>Selecionar arquivo JSON...</span>
+              <span>Importar</span>
               <input type="file" id="import-json-file" accept=".json,application/json" class="hidden">
             </label>
           </div>
         </div>
 
         <!-- Reset to Default Data -->
-        <div class="p-3.5 rounded-xl bg-red-950/20 border border-red-900/30 flex items-center justify-between gap-4">
+        <div class="p-3 sm:p-3.5 rounded-xl bg-red-950/20 border border-red-900/30 flex items-center justify-between gap-3">
           <div>
-            <h4 class="text-sm font-semibold text-red-300">Restaurar Lista Padrão Original</h4>
-            <p class="text-xs text-slate-400">Recarrega a lista pré-configurada inicial com todos os itens do seu EDC.</p>
+            <h4 class="text-xs sm:text-sm font-semibold text-red-300">Restaurar Padrão Original</h4>
+            <p class="text-[11px] text-slate-400">Recarrega a lista pré-configurada inicial.</p>
           </div>
-          <button id="btn-reset-default" class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-800/60 flex items-center gap-1.5">
+          <button id="btn-reset-default" class="shrink-0 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-800/60 flex items-center gap-1.5">
             <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-            Restaurar Original
+            <span class="hidden sm:inline">Restaurar</span>
           </button>
         </div>
       </div>
 
       <!-- TAB 2: In-App Interactive JSON Editor -->
-      <div id="tab-content-json-editor" class="p-5 hidden space-y-3 flex-1 flex flex-col overflow-hidden">
+      <div id="tab-content-json-editor" class="p-3.5 sm:p-5 hidden space-y-3 flex-1 flex flex-col overflow-hidden">
         <div>
-          <p class="text-xs text-slate-400 mb-1">
-            Modifique, adicione ou cole qualquer configuração JSON completa no campo abaixo. Ao salvar, ela se tornará a nova lista ativa do seu aplicativo.
+          <p class="text-[11px] sm:text-xs text-slate-400">
+            Cole ou modifique qualquer estrutura JSON completa. Ao salvar, ela se tornará a nova lista ativa do seu aplicativo.
           </p>
         </div>
-        <div class="relative flex-1 min-h-[220px]">
-          <textarea id="json-editor-textarea" spellcheck="false" class="w-full h-full p-3 font-mono text-xs bg-slate-950 text-slate-200 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 resize-none"></textarea>
+        <div class="relative flex-1 min-h-[180px]">
+          <textarea id="json-editor-textarea" spellcheck="false" class="w-full h-full p-2.5 font-mono text-xs bg-slate-950 text-slate-200 border border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 resize-none"></textarea>
         </div>
-        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
-          <button id="btn-format-json" type="button" class="px-3 py-1.5 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1">
-            <i data-lucide="align-left" class="w-3.5 h-3.5"></i> Formatar / Indentar
+        <div class="flex items-center justify-between pt-2 border-t border-slate-800 shrink-0 gap-2">
+          <button id="btn-format-json" type="button" class="px-2.5 py-1.5 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 flex items-center gap-1">
+            <i data-lucide="align-left" class="w-3.5 h-3.5"></i> Formatar
           </button>
-          <button id="btn-save-json-editor" type="button" class="px-4 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 shadow-lg shadow-brand-900/40">
-            <i data-lucide="check" class="w-4 h-4"></i> Salvar e Aplicar Esta Configuração
+          <button id="btn-save-json-editor" type="button" class="px-3.5 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white flex items-center gap-1.5 shadow-lg shadow-brand-900/40">
+            <i data-lucide="check" class="w-4 h-4"></i> Salvar e Aplicar
           </button>
         </div>
       </div>
@@ -390,15 +405,15 @@
   </div>
 
   <!-- TOAST NOTIFICATION CONTAINER -->
-  <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl text-xs sm:text-sm text-slate-200">
-    <div id="toast-icon" class="text-brand-500"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
-    <span id="toast-message">Notificação</span>
+  <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 z-50 transform translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl text-xs sm:text-sm text-slate-200 max-w-[90vw] whitespace-nowrap">
+    <div id="toast-icon" class="text-brand-500 shrink-0"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
+    <span id="toast-message" class="truncate">Notificação</span>
   </div>
 
-  <!-- FIREBASE SCRIPTS (MODULAR SDK via script type module) -->
+  <!-- FIREBASE SCRIPTS (MODULAR SDK) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     /* DEFAULT EDC DATA DEFINITIONS */
@@ -478,22 +493,20 @@
     ];
 
     /* APP STATE MANAGEMENT */
-    let locations = [];
-    let items = [];
+    let locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
+    let items = normalizeItems(DEFAULT_ITEMS);
     let selectedCategory = 'Todas';
     let searchQuery = '';
     let draggedItemId = null;
     let draggedFromLocId = null;
-    let checkedItems = new Set(); // For checklist mode
+    let checkedItems = new Set();
 
     /* FIREBASE & DATA PERSISTENCE INITIALIZATION */
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'equipedc-app';
     let db = null;
     let auth = null;
-    let userId = null;
     let isCloudAvailable = false;
 
-    // Configuração oficial do seu projeto Firebase
     const MY_FIREBASE_CONFIG = {
       apiKey: "AIzaSyDB8sJBPQvHlcIOzQtSlM1Cw1gbSqae3MA",
       authDomain: "equipedc-99ff9.firebaseapp.com",
@@ -504,31 +517,27 @@
       measurementId: "G-DGW7WR036X"
     };
 
-    /* UPDATE CLOUD STATUS BADGE IN HEADER */
     function updateCloudStatus(status, text) {
       const badge = document.getElementById('cloud-status-badge');
       const dot = document.getElementById('cloud-status-dot');
       const label = document.getElementById('cloud-status-text');
       if (!badge) return;
 
-      badge.classList.remove('hidden');
       label.textContent = text;
 
       if (status === 'online') {
-        dot.className = 'w-2 h-2 rounded-full bg-brand-500';
-        badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-brand-500/10 border border-brand-500/20 text-xs text-brand-300';
+        dot.className = 'w-2 h-2 rounded-full bg-brand-500 shrink-0';
+        badge.className = 'flex items-center gap-1.5 px-2 py-1 rounded-lg bg-brand-500/10 border border-brand-500/20 text-[11px] sm:text-xs text-brand-300';
       } else if (status === 'saving') {
-        dot.className = 'w-2 h-2 rounded-full bg-blue-400 animate-spin';
-        badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300';
+        dot.className = 'w-2 h-2 rounded-full bg-blue-400 animate-spin shrink-0';
+        badge.className = 'flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[11px] sm:text-xs text-blue-300';
       } else {
-        dot.className = 'w-2 h-2 rounded-full bg-amber-400';
-        badge.className = 'hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300';
+        dot.className = 'flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] sm:text-xs text-amber-300';
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400 shrink-0';
       }
     }
 
-    /* FIREBASE AUTH & FIRESTORE SETUP */
     async function initCloudStorage() {
-      // Prioriza a configuração injetada se existir, senão usa as suas credenciais
       const configToUse = typeof __firebase_config !== 'undefined' 
         ? JSON.parse(__firebase_config) 
         : MY_FIREBASE_CONFIG;
@@ -545,25 +554,22 @@
             await signInAnonymously(auth);
           }
 
-          userId = auth.currentUser?.uid || 'edc-user';
           isCloudAvailable = true;
-          updateCloudStatus('online', 'Salvo na Nuvem');
+          updateCloudStatus('online', 'Nuvem Conectada');
 
-          // Assina listener em tempo real do Firestore
           setupFirestoreRealtimeListener();
         } catch (e) {
-          console.warn("Firebase offline ou inicializando localmente", e);
+          console.warn("Modo offline ativado:", e);
           isCloudAvailable = false;
-          updateCloudStatus('local', 'Salvo Localmente');
+          updateCloudStatus('local', 'Local');
+          renderApp();
         }
       } else {
-        updateCloudStatus('local', 'Salvo Localmente');
+        updateCloudStatus('local', 'Local');
+        renderApp();
       }
-
-      await loadData();
     }
 
-    /* REALTIME LISTENERS */
     function setupFirestoreRealtimeListener() {
       if (!db || !isCloudAvailable) return;
 
@@ -577,17 +583,21 @@
               items = normalizeItems(data.items);
               renderApp();
               updateStats();
+              updateCloudStatus('online', 'Sincronizado');
             }
+          } else {
+            // Document doesn't exist yet in cloud, save defaults
+            saveData();
           }
         }, (error) => {
-          console.warn("Snapshot notice:", error);
+          console.warn("Erro no listener de nuvem:", error);
+          updateCloudStatus('local', 'Local');
         });
       } catch (err) {
-        console.warn("Falha ao registrar listener em tempo real:", err);
+        console.warn("Erro ao iniciar snapshot:", err);
       }
     }
 
-    /* DATA PERSISTENCE ROUTINE */
     async function saveData() {
       updateCloudStatus('saving', 'Gravando...');
       const serializedData = {
@@ -596,24 +606,22 @@
         updatedAt: new Date().toISOString()
       };
 
-      // 1. Sempre grava no Firestore se disponível
       if (db && isCloudAvailable) {
         try {
           const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'main');
           await setDoc(publicDocRef, serializedData);
           updateCloudStatus('online', 'Salvo na Nuvem');
         } catch (error) {
-          console.error("Erro ao salvar no Firebase:", error);
-          updateCloudStatus('local', 'Salvo no Cache');
+          console.error("Erro ao salvar no Firestore:", error);
+          updateCloudStatus('local', 'Erro na Nuvem');
         }
       } else {
-        updateCloudStatus('local', 'Salvo no Cache');
+        updateCloudStatus('local', 'Salvo');
       }
 
       updateStats();
     }
 
-    /* NORMALIZE ITEMS TO MULTI-LOCATION FORMAT */
     function normalizeItems(rawItems) {
       if (!Array.isArray(rawItems)) return [];
       return rawItems.map(item => {
@@ -634,14 +642,6 @@
           notes: item.notes || ''
         };
       });
-    }
-
-    /* LOAD DATA */
-    async function loadData() {
-      locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
-      items = normalizeItems(DEFAULT_ITEMS);
-      renderApp();
-      updateStats();
     }
 
     /* ICONS MAPPING */
@@ -674,10 +674,10 @@
 
     function getStatusDot(status) {
       switch(status) {
-        case 'ok': return '<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block" title="Pronto / Operacional"></span>';
-        case 'repor': return '<span class="w-2 h-2 rounded-full bg-amber-500 inline-block" title="Precisa Repor / Recarregar"></span>';
-        case 'faltando': return '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block" title="Faltando!"></span>';
-        default: return '<span class="w-2 h-2 rounded-full bg-slate-600 inline-block"></span>';
+        case 'ok': return '<span class="w-2 h-2 rounded-full bg-emerald-500 inline-block shrink-0" title="Pronto / Operacional"></span>';
+        case 'repor': return '<span class="w-2 h-2 rounded-full bg-amber-500 inline-block shrink-0" title="Precisa Repor"></span>';
+        case 'faltando': return '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block shrink-0" title="Faltando!"></span>';
+        default: return '<span class="w-2 h-2 rounded-full bg-slate-600 inline-block shrink-0"></span>';
       }
     }
 
@@ -704,7 +704,6 @@
       });
     }
 
-    /* STATS UPDATE */
     function updateStats() {
       const totalItemsEl = document.getElementById('stat-total-items');
       const totalLocsEl = document.getElementById('stat-total-locations');
@@ -722,17 +721,14 @@
       const isChecklistMode = !document.getElementById('checklist-banner').classList.contains('hidden');
 
       locations.forEach(loc => {
-        // Obter itens alocados para este container
         const locItems = items.filter(item => {
           const inThisLoc = Array.isArray(item.locationIds) && item.locationIds.includes(loc.id);
           if (!inThisLoc) return false;
 
-          // Filtro por Categoria
           if (selectedCategory !== 'Todas' && item.category !== selectedCategory) {
             return false;
           }
 
-          // Filtro por Busca
           if (searchQuery.trim() !== '') {
             const q = searchQuery.toLowerCase();
             const nameMatch = item.name.toLowerCase().includes(q);
@@ -747,12 +743,10 @@
 
         if (locItems.length > 0) anyItemMatched = true;
 
-        // Montar Coluna do Local
         const col = document.createElement('div');
-        col.className = 'flex flex-col bg-slate-900/70 border border-slate-800/80 rounded-2xl overflow-hidden transition-all duration-200 shadow-lg';
+        col.className = 'flex flex-col bg-slate-900/80 border border-slate-800/80 rounded-2xl overflow-hidden shadow-lg transition-all';
         col.dataset.locationId = loc.id;
 
-        // Drag & Drop listeners
         col.addEventListener('dragover', handleDragOver);
         col.addEventListener('dragleave', handleDragLeave);
         col.addEventListener('drop', (e) => handleDrop(e, loc.id));
@@ -761,24 +755,23 @@
 
         col.innerHTML = `
           <!-- Location Header -->
-          <div class="p-3.5 bg-slate-900 border-b border-slate-800/90 flex items-center justify-between gap-2">
+          <div class="p-3 sm:p-3.5 bg-slate-900 border-b border-slate-800/90 flex items-center justify-between gap-2">
             <div class="flex items-center gap-2.5 min-w-0">
               <div class="p-2 rounded-xl bg-slate-800 text-brand-400 border border-slate-700/60 shrink-0">
                 <i data-lucide="${iconName}" class="w-4 h-4"></i>
               </div>
               <div class="min-w-0">
-                <h3 class="font-bold text-sm text-slate-200 truncate flex items-center gap-2">
-                  ${loc.name}
-                  <span class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-normal">
+                <h3 class="font-bold text-xs sm:text-sm text-slate-200 truncate flex items-center gap-1.5">
+                  <span class="truncate">${loc.name}</span>
+                  <span class="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-slate-800 text-slate-400 border border-slate-700 shrink-0">
                     ${locItems.length}
                   </span>
                 </h3>
-                ${loc.description ? `<p class="text-[11px] text-slate-500 truncate">${loc.description}</p>` : ''}
+                ${loc.description ? `<p class="text-[10px] sm:text-[11px] text-slate-500 truncate">${loc.description}</p>` : ''}
               </div>
             </div>
 
-            <!-- Actions -->
-            <div class="flex items-center gap-1 shrink-0">
+            <div class="flex items-center gap-0.5 shrink-0">
               <button onclick="openAddItemModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-brand-400 hover:bg-slate-800 rounded-lg transition-colors" title="Adicionar item neste local">
                 <i data-lucide="plus" class="w-4 h-4"></i>
               </button>
@@ -789,12 +782,11 @@
           </div>
 
           <!-- Items Container -->
-          <div class="p-2.5 space-y-2 min-h-[140px] flex-1">
+          <div class="p-2 sm:p-2.5 space-y-2 min-h-[120px] flex-1">
             ${locItems.length === 0 ? `
-              <div class="h-28 flex flex-col items-center justify-center text-center p-4 border border-dashed border-slate-800 rounded-xl">
+              <div class="h-24 flex flex-col items-center justify-center text-center p-3 border border-dashed border-slate-800 rounded-xl">
                 <i data-lucide="inbox" class="w-5 h-5 text-slate-600 mb-1"></i>
                 <span class="text-xs text-slate-500">Nenhum item aqui</span>
-                <span class="text-[10px] text-slate-600">Arraste ou adicione</span>
               </div>
             ` : ''}
 
@@ -807,50 +799,50 @@
                   draggable="true" 
                   data-item-id="${item.id}"
                   data-source-loc="${loc.id}"
-                  class="item-card group relative p-3 rounded-xl bg-slate-950/90 border ${
+                  class="item-card touch-card group relative p-2.5 sm:p-3 rounded-xl bg-slate-950/90 border ${
                     isChecked ? 'border-brand-500/40 bg-brand-500/5' : 'border-slate-800/90 hover:border-slate-700'
-                  } transition-all duration-150 cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md"
+                  } transition-all cursor-grab active:cursor-grabbing shadow-sm"
                 >
                   <div class="flex items-start justify-between gap-2">
-                    <div class="flex items-start gap-2.5 flex-1 min-w-0">
+                    <div class="flex items-start gap-2 flex-1 min-w-0">
                       ${isChecklistMode ? `
-                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleItemCheck('${item.id}')" class="mt-0.5 rounded border-slate-700 text-brand-500 focus:ring-0 focus:ring-offset-0 bg-slate-900 cursor-pointer">
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleItemCheck('${item.id}')" class="mt-0.5 rounded border-slate-700 text-brand-500 focus:ring-0 bg-slate-900 cursor-pointer shrink-0">
                       ` : ''}
                       <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-1.5 flex-wrap">
                           ${getStatusDot(item.status)}
-                          <span class="text-xs font-semibold text-slate-200 group-hover:text-white break-words ${isChecked ? 'line-through text-slate-500' : ''}">
+                          <span class="text-xs font-semibold text-slate-200 break-words ${isChecked ? 'line-through text-slate-500' : ''}">
                             ${item.name}
                           </span>
                         </div>
                         ${item.notes ? `
-                          <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">${item.notes}</p>
+                          <p class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 leading-tight">${item.notes}</p>
                         ` : ''}
                       </div>
                     </div>
 
-                    <!-- Quick buttons -->
-                    <div class="opacity-0 group-hover:opacity-100 sm:transition-opacity flex items-center gap-0.5 shrink-0">
-                      <button onclick="openQuickMoveModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-brand-400" title="Alocar em outros compartimentos">
+                    <!-- Action buttons (Visible on touch devices, hover on desktop) -->
+                    <div class="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-0.5 shrink-0 bg-slate-950/90 rounded-lg p-0.5 border border-slate-800 sm:border-none">
+                      <button onclick="openQuickMoveModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-brand-400" title="Mudar local">
                         <i data-lucide="layers" class="w-3.5 h-3.5"></i>
                       </button>
-                      <button onclick="openEditItemModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200" title="Editar item">
+                      <button onclick="openEditItemModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200" title="Editar">
                         <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                       </button>
-                      <button onclick="deleteItem('${item.id}', '${loc.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400" title="Remover deste local">
+                      <button onclick="deleteItem('${item.id}', '${loc.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400" title="Remover">
                         <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                       </button>
                     </div>
                   </div>
 
                   <!-- Footer tags -->
-                  <div class="mt-2.5 pt-2 border-t border-slate-900 flex items-center justify-between gap-1">
-                    <span class="text-[10px] px-2 py-0.5 rounded-full border font-medium ${getCategoryBadgeClass(item.category)}">
+                  <div class="mt-2 pt-1.5 border-t border-slate-900 flex items-center justify-between gap-1">
+                    <span class="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full border font-medium ${getCategoryBadgeClass(item.category)}">
                       ${item.category}
                     </span>
                     ${otherLocsCount > 0 ? `
-                      <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium" title="Este equipamento também está presente em outros compartimentos">
-                        +${otherLocsCount} ${otherLocsCount === 1 ? 'outro local' : 'outros locais'}
+                      <span class="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium" title="Presente em outros locais">
+                        +${otherLocsCount} ${otherLocsCount === 1 ? 'outro' : 'outros'}
                       </span>
                     ` : ''}
                   </div>
@@ -863,19 +855,16 @@
         grid.appendChild(col);
       });
 
-      // Show or hide empty search feedback
       if (!anyItemMatched && (searchQuery.trim() !== '' || selectedCategory !== 'Todas')) {
         emptyState.classList.remove('hidden');
       } else {
         emptyState.classList.add('hidden');
       }
 
-      // Re-initialize Lucide Icons
       if (window.lucide) {
         lucide.createIcons();
       }
 
-      // Bind drag start & end
       document.querySelectorAll('.item-card').forEach(card => {
         card.addEventListener('dragstart', handleDragStart);
         card.addEventListener('dragend', handleDragEnd);
@@ -916,13 +905,11 @@
       const item = items.find(i => i.id === draggedItemId);
       if (!item) return;
 
-      // Se já pertencer ao local, ignora
       if (item.locationIds.includes(targetLocationId)) {
         showToast('O equipamento já está neste local!', 'info');
         return;
       }
 
-      // Atualiza: substitui o local de origem pelo novo local
       if (draggedFromLocId) {
         item.locationIds = item.locationIds.filter(id => id !== draggedFromLocId);
       }
@@ -953,7 +940,7 @@
       locations.forEach(loc => {
         const isChecked = selectedIds.includes(loc.id);
         const label = document.createElement('label');
-        label.className = 'flex items-center gap-2 text-xs text-slate-300 hover:text-white cursor-pointer select-none';
+        label.className = 'flex items-center gap-2 text-xs text-slate-300 hover:text-white cursor-pointer select-none py-0.5';
         label.innerHTML = `
           <input type="checkbox" value="${loc.id}" ${isChecked ? 'checked' : ''} class="item-loc-checkbox rounded border-slate-700 text-brand-500 focus:ring-0 bg-slate-900">
           <span class="truncate">${loc.name}</span>
@@ -1003,17 +990,15 @@
       const category = document.getElementById('item-category').value;
       const status = document.getElementById('item-status').value;
 
-      // Obter checkboxes de locais marcados
       const checkedBoxes = document.querySelectorAll('.item-loc-checkbox:checked');
       const selectedLocIds = Array.from(checkedBoxes).map(cb => cb.value);
 
       if (selectedLocIds.length === 0) {
-        showToast('Selecione ao menos 1 local para guardar o item!', 'info');
+        showToast('Selecione ao menos 1 local para o item!', 'info');
         return;
       }
 
       if (id) {
-        // Atualizar item existente
         const item = items.find(i => i.id === id);
         if (item) {
           item.name = name;
@@ -1024,7 +1009,6 @@
         }
         showToast('Item atualizado com sucesso!', 'success');
       } else {
-        // Criar novo item
         const newItem = {
           id: 'item-' + Date.now(),
           name: name,
@@ -1047,11 +1031,9 @@
       if (!item) return;
 
       if ((item.locationIds || []).length > 1) {
-        // Se estiver em múltiplos locais, remove apenas deste container
         item.locationIds = item.locationIds.filter(id => id !== fromLocationId);
-        showToast(`Removido deste local (continua nos outros)`, 'info');
+        showToast(`Removido deste local`, 'info');
       } else {
-        // Se estiver em apenas um local, exclui da lista
         items = items.filter(i => i.id !== itemId);
         checkedItems.delete(itemId);
         showToast(`"${item.name}" excluído.`, 'info');
@@ -1061,7 +1043,7 @@
       await saveData();
     };
 
-    /* QUICK MOVE MODAL (MULTI-LOCATION ASSIGNMENT) */
+    /* QUICK MOVE MODAL */
     let currentQuickMoveItemId = null;
 
     window.openQuickMoveModal = function(itemId) {
@@ -1079,16 +1061,16 @@
         const iconName = getLucideIconForLocation(loc.icon);
 
         const label = document.createElement('label');
-        label.className = `w-full flex items-center justify-between p-2.5 rounded-xl border text-xs cursor-pointer transition-all select-none ${
+        label.className = `w-full flex items-center justify-between p-2 rounded-xl border text-xs cursor-pointer transition-all select-none ${
           isPresent 
             ? 'bg-brand-500/10 border-brand-500/30 text-brand-300 font-semibold' 
             : 'bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700'
         }`;
 
         label.innerHTML = `
-          <div class="flex items-center gap-2.5">
+          <div class="flex items-center gap-2">
             <i data-lucide="${iconName}" class="w-4 h-4 text-slate-400"></i>
-            <span>${loc.name}</span>
+            <span class="truncate">${loc.name}</span>
           </div>
           <input type="checkbox" value="${loc.id}" ${isPresent ? 'checked' : ''} class="quick-loc-cb rounded border-slate-700 text-brand-500 focus:ring-0 bg-slate-900">
         `;
@@ -1108,7 +1090,7 @@
       const selected = Array.from(document.querySelectorAll('.quick-loc-cb:checked')).map(cb => cb.value);
 
       if (selected.length === 0) {
-        showToast('O equipamento precisa ficar em pelo menos 1 local.', 'info');
+        showToast('Escolha pelo menos 1 local.', 'info');
         return;
       }
 
@@ -1116,7 +1098,7 @@
       document.getElementById('quick-move-modal').classList.add('hidden');
       renderLocationsGrid();
       await saveData();
-      showToast('Locais do item atualizados!', 'success');
+      showToast('Locais atualizados!', 'success');
     };
 
     /* LOCATION CREATION & EDITING */
@@ -1159,7 +1141,7 @@
           loc.icon = icon;
           loc.description = desc;
         }
-        showToast('Local atualizado com sucesso!', 'success');
+        showToast('Local atualizado!', 'success');
       } else {
         const newLocId = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now().toString().slice(-4);
         locations.push({
@@ -1186,17 +1168,16 @@
 
     function switchToolsTab(tab) {
       if (tab === 'tools') {
-        tabBtnTools.className = 'py-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none';
-        tabBtnJson.className = 'py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none flex items-center gap-1.5';
+        tabBtnTools.className = 'py-2.5 text-brand-500 border-b-2 border-brand-500 focus:outline-none';
+        tabBtnJson.className = 'py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none flex items-center gap-1.5';
         tabContentTools.classList.remove('hidden');
         tabContentJson.classList.add('hidden');
       } else {
-        tabBtnJson.className = 'py-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none flex items-center gap-1.5';
-        tabBtnTools.className = 'py-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none';
+        tabBtnJson.className = 'py-2.5 text-brand-500 border-b-2 border-brand-500 focus:outline-none flex items-center gap-1.5';
+        tabBtnTools.className = 'py-2.5 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none';
         tabContentJson.classList.remove('hidden');
         tabContentTools.classList.add('hidden');
 
-        // Populate JSON editor with current full state
         const currentData = { locations: locations, items: items };
         jsonTextarea.value = JSON.stringify(currentData, null, 2);
       }
@@ -1211,23 +1192,21 @@
       if (window.lucide) lucide.createIcons();
     };
 
-    // Format JSON in Textarea
     document.getElementById('btn-format-json').onclick = () => {
       try {
         const parsed = JSON.parse(jsonTextarea.value);
         jsonTextarea.value = JSON.stringify(parsed, null, 2);
-        showToast('JSON formatado com sucesso!', 'info');
+        showToast('JSON formatado!', 'info');
       } catch (err) {
-        showToast('Erro de sintaxe no JSON: ' + err.message, 'error');
+        showToast('Erro de sintaxe no JSON', 'error');
       }
     };
 
-    // Save JSON directly from Textarea
     document.getElementById('btn-save-json-editor').onclick = async () => {
       try {
         const parsed = JSON.parse(jsonTextarea.value);
         if (!parsed.locations || !parsed.items) {
-          throw new Error('O JSON precisa conter as chaves "locations" e "items".');
+          throw new Error('JSON precisa ter "locations" e "items"');
         }
 
         locations = parsed.locations;
@@ -1236,13 +1215,12 @@
         renderLocationsGrid();
         await saveData();
         toolsModal.classList.add('hidden');
-        showToast(`Salvo! ${items.length} itens e ${locations.length} compartimentos ativos.`, 'success');
+        showToast(`Salvo! ${items.length} itens ativos.`, 'success');
       } catch (err) {
         showToast('JSON Inválido: ' + err.message, 'error');
       }
     };
 
-    // Copy Plain Text List
     document.getElementById('btn-copy-text').onclick = () => {
       let output = `=== EDC INVENTORY REPORT ===\nData: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
 
@@ -1261,21 +1239,19 @@
         output += `\n`;
       });
 
-      // ExecCommand fallback for iframe clipboard support
       const tempTextarea = document.createElement('textarea');
       tempTextarea.value = output;
       document.body.appendChild(tempTextarea);
       tempTextarea.select();
       try {
         document.execCommand('copy');
-        showToast('Lista copiada para a área de transferência!', 'success');
+        showToast('Lista copiada com sucesso!', 'success');
       } catch (e) {
-        showToast('Não foi possível copiar o texto.', 'error');
+        showToast('Erro ao copiar texto', 'error');
       }
       document.body.removeChild(tempTextarea);
     };
 
-    // Download Backup JSON
     document.getElementById('btn-download-json').onclick = () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ locations, items }, null, 2));
       const downloadAnchor = document.createElement('a');
@@ -1284,10 +1260,9 @@
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
-      showToast('Download do backup JSON iniciado!', 'success');
+      showToast('Download do JSON iniciado!', 'success');
     };
 
-    // Import Backup JSON from File
     document.getElementById('import-json-file').onchange = function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -1302,20 +1277,18 @@
             renderLocationsGrid();
             await saveData();
             toolsModal.classList.add('hidden');
-            showToast(`Restaurado com sucesso! (${items.length} itens, ${locations.length} locais)`, 'success');
+            showToast(`Restaurado (${items.length} itens, ${locations.length} locais)`, 'success');
           } else {
-            showToast('Estrutura JSON inválida para este aplicativo.', 'error');
+            showToast('Formato de JSON incompatível.', 'error');
           }
         } catch (err) {
-          showToast('Erro ao processar arquivo JSON: ' + err.message, 'error');
+          showToast('Erro no arquivo JSON', 'error');
         }
-        // Reseta o input para permitir importar o mesmo arquivo se reeditado
         e.target.value = '';
       };
       reader.readAsText(file);
     };
 
-    // Reset to initial default data
     document.getElementById('btn-reset-default').onclick = async () => {
       locations = JSON.parse(JSON.stringify(DEFAULT_LOCATIONS));
       items = normalizeItems(DEFAULT_ITEMS);
@@ -1372,10 +1345,10 @@
     document.getElementById('btn-uncheck-all').onclick = () => {
       checkedItems.clear();
       renderLocationsGrid();
-      showToast('Todos os itens foram desmarcados.', 'info');
+      showToast('Itens desmarcados.', 'info');
     };
 
-    /* MODAL CLOSE BUTTON HANDLERS */
+    /* MODAL CLOSE HANDLERS */
     document.getElementById('btn-add-item').onclick = () => openAddItemModal();
     document.getElementById('item-modal-close').onclick = () => document.getElementById('item-modal').classList.add('hidden');
     document.getElementById('item-modal-cancel').onclick = () => document.getElementById('item-modal').classList.add('hidden');
@@ -1395,22 +1368,22 @@
       toastMsg.textContent = message;
 
       if (type === 'success') {
-        toastIcon.className = 'text-brand-500';
+        toastIcon.className = 'text-brand-500 shrink-0';
         toastIcon.innerHTML = '<i data-lucide="check-circle" class="w-4 h-4"></i>';
       } else if (type === 'error') {
-        toastIcon.className = 'text-rose-500';
+        toastIcon.className = 'text-rose-500 shrink-0';
         toastIcon.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4"></i>';
       } else {
-        toastIcon.className = 'text-sky-400';
+        toastIcon.className = 'text-sky-400 shrink-0';
         toastIcon.innerHTML = '<i data-lucide="info" class="w-4 h-4"></i>';
       }
 
       if (window.lucide) lucide.createIcons();
 
-      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.remove('translate-y-24', 'opacity-0');
       setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3200);
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 3000);
     }
 
     /* RENDER ALL APP COMPONENTS */
