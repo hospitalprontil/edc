@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>EDC & Travel Manager Pro</title>
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
@@ -62,7 +60,6 @@
 </head>
 <body class="min-h-full flex flex-col font-sans selection:bg-brand-500 selection:text-white pb-12 bg-slate-950 text-slate-100 antialiased">
 
-  <!-- TOP HEADER -->
   <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800/90 shadow-md">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2">
       <!-- Logo & Title -->
@@ -73,9 +70,9 @@
         <div class="min-w-0">
           <h1 class="text-sm sm:text-lg font-bold tracking-tight text-white flex items-center gap-1.5 truncate">
             <span class="truncate" id="app-title-header">EDC Manager</span>
-            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700 shrink-0">v4.0</span>
+            <span class="text-[10px] sm:text-xs px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 font-normal border border-slate-700 shrink-0">v5.0</span>
           </h1>
-          <p class="text-[11px] text-slate-400 hidden sm:block truncate" id="app-subtitle-header">Inventário Tático, Localização e Prontidão</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block truncate" id="app-subtitle-header">Inventário Tático e Equipamentos de Viagem</p>
         </div>
       </div>
 
@@ -97,17 +94,16 @@
           <span class="hidden sm:inline">Novo Item</span>
         </button>
 
-        <button id="btn-add-location" class="p-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Criar Novo Compartimento">
+        <button id="btn-add-location" class="p-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Criar Novo Compartimento / Grupo">
           <i data-lucide="folder-plus" class="w-4 h-4"></i>
         </button>
 
-        <button id="btn-open-tools" class="p-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Backups, Exportação e JSON">
+        <button id="btn-open-tools" class="p-2 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 transition-colors" title="Backups Separados, Exportação e JSON">
           <i data-lucide="share-2" class="w-4 h-4"></i>
         </button>
       </div>
     </div>
 
-    <!-- MAIN APP TABS & FILTER BAR -->
     <div class="border-t border-slate-800/80 bg-slate-900/60 py-2">
       <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-2.5">
         
@@ -115,18 +111,18 @@
         <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 shrink-0 w-full md:w-auto">
           <button id="tab-edc" class="flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 bg-brand-600 text-white shadow">
             <i data-lucide="shield" class="w-3.5 h-3.5"></i>
-            <span>EDC Diário</span>
+            <span>EDC Diário (Compartimentos)</span>
           </button>
           <button id="tab-travel" class="flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-slate-200">
             <i data-lucide="luggage" class="w-3.5 h-3.5"></i>
-            <span>Itens de Viagem</span>
+            <span>Itens de Viagem (Por Categoria)</span>
           </button>
         </div>
 
         <!-- Search Input -->
         <div class="relative w-full md:w-64">
           <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
-          <input type="text" id="search-input" placeholder="Buscar por item, notas ou local..." class="w-full bg-slate-950/90 border border-slate-800 rounded-lg pl-9 pr-8 py-1.5 text-base sm:text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
+          <input type="text" id="search-input" placeholder="Buscar por item, notas ou categoria..." class="w-full bg-slate-950/90 border border-slate-800 rounded-lg pl-9 pr-8 py-1.5 text-base sm:text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all">
           <button id="clear-search-btn" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 p-1">
             <i data-lucide="x" class="w-3.5 h-3.5"></i>
           </button>
@@ -141,13 +137,12 @@
         <div class="hidden lg:flex items-center gap-3 text-xs text-slate-400 font-mono shrink-0">
           <span id="stat-total-items">Itens: 0</span>
           <span class="text-slate-700">|</span>
-          <span id="stat-total-locations">Locais: 0</span>
+          <span id="stat-total-locations">Grupos: 0</span>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- MAIN VIEW CONTAINER -->
   <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:mt-6 flex-1 w-full">
     <!-- Notice Banner for Checklist Mode -->
     <div id="checklist-banner" class="hidden mb-4 sm:mb-6 p-3.5 sm:p-4 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-between gap-3 animate-fade-in">
@@ -176,13 +171,12 @@
       <button onclick="resetFilters()" class="mt-4 px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-brand-400 rounded-lg border border-slate-700">Limpar Filtros</button>
     </div>
 
-    <!-- LOCATIONS GRID (KANBAN / CONTAINERS) -->
+    <!-- LOCATIONS / CATEGORIES GRID (KANBAN BOARD) -->
     <div id="locations-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 items-start">
       <!-- Injected Dynamically by JS -->
     </div>
   </main>
 
-  <!-- MODAL: ADD / EDIT ITEM -->
   <div id="item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-auto max-h-[88vh] flex flex-col">
       <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
@@ -199,18 +193,18 @@
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Item *</label>
-          <input type="text" id="item-name" required placeholder="Ex: Lanterna, Protetor Solar..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
+          <input type="text" id="item-name" required placeholder="Ex: Barraca, Protetor Solar..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div>
-          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Locais Onde Fica Guardado *</label>
-          <p class="text-[11px] text-slate-500 mb-1.5">Marque um ou mais locais simultâneos para este item:</p>
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1" id="item-locations-label">Locais / Compartimentos *</label>
+          <p class="text-[11px] text-slate-500 mb-1.5" id="item-locations-desc">Marque um ou mais locais simultâneos para este item:</p>
           <div id="item-locations-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-950 border border-slate-800 rounded-lg p-2.5 max-h-36 overflow-y-auto">
             <!-- Injected dynamically -->
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="item-category-wrapper">
           <div>
             <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Categoria *</label>
             <select id="item-category" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-200 focus:outline-none focus:border-brand-500">
@@ -240,13 +234,12 @@
     </div>
   </div>
 
-  <!-- MODAL: ADD / EDIT LOCATION -->
   <div id="loc-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto max-h-[88vh] flex flex-col">
       <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
         <h3 id="loc-modal-title" class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
           <i data-lucide="folder-plus" class="w-4 h-4 text-brand-500"></i>
-          Novo Compartimento / Local
+          Novo Compartimento / Categoria
         </h3>
         <button id="loc-modal-close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -256,8 +249,8 @@
         <input type="hidden" id="loc-id">
 
         <div>
-          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Nome do Compartimento *</label>
-          <input type="text" id="loc-name" required placeholder="Ex: Mala Principal, Frasqueira, Bolsa..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
+          <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1" id="loc-name-label">Nome do Compartimento *</label>
+          <input type="text" id="loc-name" required placeholder="Ex: Mala, Nécessaire..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div>
@@ -269,28 +262,35 @@
             <option value="box">📦 Caixa / Organizador</option>
             <option value="car">🚗 No Carro / Veículo</option>
             <option value="key">🔑 Chaves / Pequenos</option>
-            <option value="archive">🗄️ Gaveta / Casa</option>
+            <option value="baby">👶 Crianças</option>
+            <option value="tent">⛺ Camping</option>
+            <option value="zap">⚡ Eletrônicos</option>
+            <option value="pill">💊 Remédios</option>
+            <option value="paw-print">🐾 Pets</option>
+            <option value="utensils">🍽️ Alimentação</option>
+            <option value="shirt">👕 Roupas</option>
+            <option value="sun">☀️ Praia</option>
+            <option value="archive">🗄️ Gaveta / Outros</option>
           </select>
         </div>
 
         <div>
           <label class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">Descrição Curta</label>
-          <input type="text" id="loc-desc" placeholder="Ex: Compartimento superior..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
+          <input type="text" id="loc-desc" placeholder="Ex: Categoria principal..." class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-base sm:text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:border-brand-500">
         </div>
 
         <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800 shrink-0">
           <button type="button" id="loc-modal-cancel" class="px-3.5 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors">Cancelar</button>
-          <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Local</button>
+          <button type="submit" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white transition-colors">Salvar Grupo</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: QUICK MOVE -->
   <div id="quick-move-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm shadow-2xl p-4 sm:p-5 my-auto">
       <div class="flex items-center justify-between mb-2.5">
-        <h3 class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+        <h3 id="quick-move-title" class="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
           <i data-lucide="layers" class="w-4 h-4 text-brand-500"></i>
           Locais do Equipamento
         </h3>
@@ -299,23 +299,22 @@
         </button>
       </div>
       <p id="quick-move-item-name" class="text-xs text-slate-300 font-medium mb-2.5 p-2 rounded-lg bg-slate-950 border border-slate-800 truncate"></p>
-      <p class="text-[11px] text-slate-400 mb-2">Marque os compartimentos onde deseja alocar este item:</p>
+      <p class="text-[11px] text-slate-400 mb-2" id="quick-move-subtitle">Marque os compartimentos onde deseja alocar este item:</p>
       <div id="quick-move-options" class="space-y-1.5 max-h-52 overflow-y-auto pr-1">
         <!-- Injected via JS -->
       </div>
       <div class="flex justify-end gap-2 mt-3.5 pt-3 border-t border-slate-800">
-        <button id="btn-save-quick-move" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white w-full">Salvar Locais</button>
+        <button id="btn-save-quick-move" class="px-4 py-2 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white w-full">Salvar Atribuição</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: TOOLS & BACKUP (SEPARATED TABS FOR EDC & TRAVEL) -->
   <div id="tools-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden my-auto max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-800 shrink-0">
         <h3 class="text-xs sm:text-base font-bold text-white flex items-center gap-2">
           <i data-lucide="settings" class="w-4 h-4 text-brand-500"></i>
-          Gerenciamento e Backups Separados
+          Gerenciamento e Backups Separados (EDC & Viagem)
         </h3>
         <button id="tools-modal-close" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -324,8 +323,8 @@
 
       <!-- Navigation Tabs for Backups -->
       <div class="flex border-b border-slate-800 bg-slate-950/60 px-3 sm:px-4 gap-2 text-xs font-semibold shrink-0 overflow-x-auto">
-        <button id="tools-tab-edc" class="py-2.5 px-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none whitespace-nowrap">Backup EDC</button>
-        <button id="tools-tab-travel" class="py-2.5 px-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none whitespace-nowrap">Backup Viagem</button>
+        <button id="tools-tab-edc" class="py-2.5 px-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none whitespace-nowrap">Backup EDC Diário</button>
+        <button id="tools-tab-travel" class="py-2.5 px-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none whitespace-nowrap">Backup Itens de Viagem</button>
         <button id="tools-tab-json" class="py-2.5 px-3 text-slate-400 hover:text-slate-200 border-b-2 border-transparent focus:outline-none whitespace-nowrap">Editor JSON Geral</button>
       </div>
 
@@ -344,7 +343,7 @@
         <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
           <div>
             <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Baixar Backup .JSON (EDC)</h4>
-            <p class="text-[11px] text-slate-400">Baixe apenas os itens e locais do seu EDC.</p>
+            <p class="text-[11px] text-slate-400">Baixe apenas os itens e locais do seu EDC diário.</p>
           </div>
           <button id="btn-download-edc-json" class="shrink-0 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
             <i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar EDC
@@ -378,7 +377,7 @@
         <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
           <div>
             <h4 class="text-xs sm:text-sm font-semibold text-slate-200">Baixar Backup .JSON (Viagem)</h4>
-            <p class="text-[11px] text-slate-400">Baixe apenas os itens e compartimentos de viagem.</p>
+            <p class="text-[11px] text-slate-400">Baixe apenas as categorias e itens de viagem.</p>
           </div>
           <button id="btn-download-travel-json" class="shrink-0 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 flex items-center gap-1.5">
             <i data-lucide="download" class="w-3.5 h-3.5"></i> Baixar Viagem
@@ -417,13 +416,11 @@
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
   <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:right-4 sm:translate-x-0 z-50 transform translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl text-xs sm:text-sm text-slate-200 max-w-[90vw] whitespace-nowrap">
     <div id="toast-icon" class="text-brand-500 shrink-0"><i data-lucide="check-circle" class="w-4 h-4"></i></div>
     <span id="toast-message" class="truncate">Notificação</span>
   </div>
 
-  <!-- FIREBASE SCRIPTS & APPLICATION LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -471,53 +468,226 @@
       { id: 'item-17', name: 'Kit reparo de Pneus', locationIds: ['no-carro'], category: 'Utilidades & Reparo', status: 'ok', notes: 'Macarrão + aplicador' }
     ];
 
-    const DEFAULT_TRAVEL_LOCATIONS = [
-      { id: 'mala-principal', name: 'Mala Principal', icon: 'luggage', description: 'Bagagem despachada ou porta-malas' },
-      { id: 'frasqueira', name: 'Frasqueira / Necessaire', icon: 'briefcase', description: 'Higiene e remédios de acesso rápido' },
-      { id: 'mochila-viagem', name: 'Mochila de Mão', icon: 'backpack', description: 'Eletrônicos, documentos e itens pessoais' },
-      { id: 'bolsa-criancas', name: 'Bolsa Infantil', icon: 'box', description: 'Itens específicos dos pequenos' }
+    /* TRAVEL CATEGORIES AS GROUPS (COLUMNS) */
+    const DEFAULT_TRAVEL_CATEGORIES_LIST = [
+      { id: 'criancas', name: 'Crianças', icon: 'baby', description: 'Itens essenciais dos pequenos' },
+      { id: 'camping', name: 'Camping', icon: 'tent', description: 'Abrigo, cozinha e montagem' },
+      { id: 'eletronicos', name: 'Eletrônicos', icon: 'zap', description: 'Carregadores, câmeras e gadgets' },
+      { id: 'remedios', name: 'Remédios', icon: 'pill', description: 'Primeiros socorros e farmetinha' },
+      { id: 'pets', name: 'Pets', icon: 'paw-print', description: 'Conforto e alimentação animal' },
+      { id: 'alimentacao', name: 'Alimentação', icon: 'utensils', description: 'Alimentos e utensílios' },
+      { id: 'roupas', name: 'Roupas', icon: 'shirt', description: 'Vestuário e calçados' },
+      { id: 'praia', name: 'Praia', icon: 'sun', description: 'Lazer e acessórios de água' }
     ];
 
     const DEFAULT_TRAVEL_ITEMS = [
       // CRIANÇAS
-      { id: 'tr-1', name: 'documentos /certidão / autorização', locationIds: ['mochila-viagem'], category: 'Crianças', status: 'ok', notes: 'Documentação oficial' },
-      { id: 'tr-2', name: 'remedios e vitaminas', locationIds: ['frasqueira'], category: 'Crianças', status: 'ok', notes: 'Uso diário' },
-      { id: 'tr-3', name: 'canguru / kid carrier', locationIds: ['mala-principal'], category: 'Crianças', status: 'ok', notes: 'Transporte ergonômico' },
-      { id: 'tr-4', name: 'carrinho + capa chuva + tela', locationIds: ['mala-principal'], category: 'Crianças', status: 'ok', notes: 'Mobilidade' },
-      { id: 'tr-5', name: 'fralda / algodão / lenço / pomada', locationIds: ['bolsa-criancas'], category: 'Crianças', status: 'ok', notes: 'Higiene infantil' },
-      { id: 'tr-6', name: 'Leite em Pó / mamadeiras', locationIds: ['bolsa-criancas'], category: 'Crianças', status: 'ok', notes: 'Alimentação' },
-      
+      { id: 'tr-1', name: 'documentos /certidão / autorização', category: 'Crianças', status: 'ok', notes: 'Documentação oficial' },
+      { id: 'tr-2', name: 'mochila preta', category: 'Crianças', status: 'ok', notes: 'Apoio diário' },
+      { id: 'tr-3', name: 'remedios e vitaminas', category: 'Crianças', status: 'ok', notes: 'Uso diário' },
+      { id: 'tr-4', name: 'canguru / kid carrier', category: 'Crianças', status: 'ok', notes: 'Transporte ergonômico' },
+      { id: 'tr-5', name: 'trocador para trilha', category: 'Crianças', status: 'ok', notes: 'Higiene portátil' },
+      { id: 'tr-6', name: 'carrinho + capa chuva + tela', category: 'Crianças', status: 'ok', notes: 'Mobilidade' },
+      { id: 'tr-7', name: 'fralda/algodão/lenço/pomada', category: 'Crianças', status: 'ok', notes: 'Higiene infantil' },
+      { id: 'tr-8', name: 'paninho/cueiro/mantas', category: 'Crianças', status: 'ok', notes: 'Conforto' },
+      { id: 'tr-9', name: 'Roupa de Cama/Travesseiro', category: 'Crianças', status: 'ok', notes: 'Descanso' },
+      { id: 'tr-10', name: 'toalhas/shampoo/cotonete', category: 'Crianças', status: 'ok', notes: 'Banho' },
+      { id: 'tr-11', name: 'escova/pasta/fio dental', category: 'Crianças', status: 'ok', notes: 'Higiene bucal' },
+      { id: 'tr-12', name: 'Prato/Pote/Talhere/Bolsa Termica', category: 'Crianças', status: 'ok', notes: 'Alimentação' },
+      { id: 'tr-13', name: 'Leite em Pó', category: 'Crianças', status: 'ok', notes: 'Nutrição' },
+      { id: 'tr-14', name: 'copinho dosador', category: 'Crianças', status: 'ok', notes: 'Medição' },
+      { id: 'tr-15', name: 'agua mineral', category: 'Crianças', status: 'ok', notes: 'Hidratação' },
+      { id: 'tr-16', name: 'chupeta/mamadeira', category: 'Crianças', status: 'ok', notes: 'Acalanto' },
+      { id: 'tr-17', name: 'escova mamadeira', category: 'Crianças', status: 'ok', notes: 'Limpeza' },
+      { id: 'tr-18', name: 'bucha e detergente', category: 'Crianças', status: 'ok', notes: 'Higienização' },
+      { id: 'tr-19', name: 'banheira inflável', category: 'Crianças', status: 'ok', notes: 'Banho portátil' },
+      { id: 'tr-20', name: 'brinquedos/livros', category: 'Crianças', status: 'ok', notes: 'Entretenimento' },
+      { id: 'tr-21', name: 'caixinha som', category: 'Crianças', status: 'ok', notes: 'Músicas e historinhas' },
+      { id: 'tr-22', name: 'Boia de Piscina', category: 'Crianças', status: 'ok', notes: 'Lazer aquático' },
+      { id: 'tr-23', name: 'colete salva vidas', category: 'Crianças', status: 'ok', notes: 'Segurança' },
+      { id: 'tr-24', name: 'guarda chuva ou sombrinha', category: 'Crianças', status: 'ok', notes: 'Proteção sol/chuva' },
+      { id: 'tr-25', name: 'protetor solar', category: 'Crianças', status: 'ok', notes: 'FPS infantil' },
+      { id: 'tr-26', name: 'repelente', category: 'Crianças', status: 'ok', notes: 'Proteção contra insetos' },
+      { id: 'tr-27', name: 'repelente de tomada', category: 'Crianças', status: 'ok', notes: 'Quarto' },
+      { id: 'tr-28', name: 'vela citronela', category: 'Crianças', status: 'ok', notes: 'Afastar pernilongos' },
+      { id: 'tr-29', name: 'roupas de frio e calor', category: 'Crianças', status: 'ok', notes: 'Variedade climática' },
+      { id: 'tr-30', name: 'cadeirinha de alimentação', category: 'Crianças', status: 'ok', notes: 'Portátil' },
+      { id: 'tr-31', name: 'lava roupas', category: 'Crianças', status: 'ok', notes: 'Sabão neutro' },
+      { id: 'tr-32', name: 'Saco de roupa suja', category: 'Crianças', status: 'ok', notes: 'Organização' },
+      { id: 'tr-33', name: 'saco de lixo', category: 'Crianças', status: 'ok', notes: 'Descarte' },
+      { id: 'tr-34', name: 'chinelo /tenis/boné', category: 'Crianças', status: 'ok', notes: 'Calçados e acessórios' },
+      { id: 'tr-35', name: 'bike e capacete', category: 'Crianças', status: 'ok', notes: 'Passeio' },
+
       // CAMPING
-      { id: 'tr-7', name: 'Barraca', locationIds: ['mala-principal'], category: 'Camping', status: 'ok', notes: 'Abrigo completo' },
-      { id: 'tr-8', name: 'Saco de dormir', locationIds: ['mala-principal'], category: 'Camping', status: 'ok', notes: 'Térmico' },
-      { id: 'tr-9', name: 'Colchão / isolante térmico', locationIds: ['mala-principal'], category: 'Camping', status: 'ok', notes: 'Conforto' },
-      { id: 'tr-10', name: 'Fogareiro + gás', locationIds: ['mala-principal'], category: 'Camping', status: 'ok', notes: 'Cozinha portátil' },
+      { id: 'tr-36', name: 'Banquetas', category: 'Camping', status: 'ok', notes: 'Assentos portáteis' },
+      { id: 'tr-37', name: 'Barraca', category: 'Camping', status: 'ok', notes: 'Abrigo completo' },
+      { id: 'tr-38', name: 'Bomba colchão', category: 'Camping', status: 'ok', notes: 'Inflar' },
+      { id: 'tr-39', name: 'Bucha e detergente', category: 'Camping', status: 'ok', notes: 'Limpeza de louças' },
+      { id: 'tr-40', name: 'Cadeado', category: 'Camping', status: 'ok', notes: 'Segurança' },
+      { id: 'tr-41', name: 'Cadeiras', category: 'Camping', status: 'ok', notes: 'Conforto' },
+      { id: 'tr-42', name: 'Canecas', category: 'Camping', status: 'ok', notes: 'Bebidas' },
+      { id: 'tr-43', name: 'Canivete', category: 'Camping', status: 'ok', notes: 'Ferramenta' },
+      { id: 'tr-44', name: 'chuveiro solar', category: 'Cell', status: 'ok', notes: 'Banho de campo' },
+      { id: 'tr-45', name: 'Colchão', category: 'Camping', status: 'ok', notes: 'Sono' },
+      { id: 'tr-46', name: 'engasga gato', category: 'Camping', status: 'ok', notes: 'Abraçadeiras' },
+      { id: 'tr-47', name: 'Esticadores', category: 'Camping', status: 'ok', notes: 'Fixação' },
+      { id: 'tr-48', name: 'Ferramentas', category: 'Camping', status: 'ok', notes: 'Manutenção' },
+      { id: 'tr-49', name: 'Fio Varal', category: 'Camping', status: 'ok', notes: 'Secar roupas' },
+      { id: 'tr-50', name: 'Fios e presilhas', category: 'Camping', status: 'ok', notes: 'Ajustes' },
+      { id: 'tr-51', name: 'fita isolante', category: 'Camping', status: 'ok', notes: 'Elétrica' },
+      { id: 'tr-52', name: 'Fogareiro', category: 'Camping', status: 'ok', notes: 'Cozinha' },
+      { id: 'tr-53', name: 'Fósforos / isqueiro', category: 'Camping', status: 'ok', notes: 'Fogo' },
+      { id: 'tr-54', name: 'gás', category: 'Camping', status: 'ok', notes: 'Combustível' },
+      { id: 'tr-55', name: 'Grampos', category: 'Camping', status: 'ok', notes: 'Fixar' },
+      { id: 'tr-56', name: 'Guarda-chuva', category: 'Camping', status: 'ok', notes: 'Proteção' },
+      { id: 'tr-57', name: 'Inflador a pilha', category: 'Camping', status: 'ok', notes: 'Automático' },
+      { id: 'tr-58', name: 'isolante térmico', category: 'Camping', status: 'ok', notes: 'Base' },
+      { id: 'tr-59', name: 'colchonete amarelo peq', category: 'Camping', status: 'ok', notes: 'Extra' },
+      { id: 'tr-60', name: 'Jornal', category: 'Camping', status: 'ok', notes: 'Acender fogo' },
+      { id: 'tr-61', name: 'Kit reparador de Colchão', category: 'Camping', status: 'ok', notes: 'Remendos' },
+      { id: 'tr-62', name: 'Lençol', category: 'Camping', status: 'ok', notes: 'Cama' },
+      { id: 'tr-63', name: 'Lona amarela de cima', category: 'Camping', status: 'ok', notes: 'Teto tático' },
+      { id: 'tr-64', name: 'Lona de baixo', category: 'Camping', status: 'ok', notes: 'Proteção solo' },
+      { id: 'tr-65', name: 'Martelo', category: 'Camping', status: 'ok', notes: 'Estacas' },
+      { id: 'tr-66', name: 'Mesa', category: 'Camping', status: 'ok', notes: 'Apoio' },
+      { id: 'tr-67', name: 'Panelas, garfos, canecas', category: 'Camping', status: 'ok', notes: 'Cozinha' },
+      { id: 'tr-68', name: 'Panos', category: 'Camping', status: 'ok', notes: 'Limpeza' },
+      { id: 'tr-69', name: 'Papel higiênico', category: 'Camping', status: 'ok', notes: 'Higiene' },
+      { id: 'tr-70', name: 'Papelão', category: 'Camping', status: 'ok', notes: 'Isolamento' },
+      { id: 'tr-71', name: 'Pires', category: 'Camping', status: 'ok', notes: 'Louça' },
+      { id: 'tr-72', name: 'Pratos copos talheres', category: 'Camping', status: 'ok', notes: 'Refeição' },
+      { id: 'tr-73', name: 'Prendedores', category: 'Camping', status: 'ok', notes: 'Varal' },
+      { id: 'tr-74', name: 'Presilha lonas', category: 'Camping', status: 'ok', notes: 'Fixação' },
+      { id: 'tr-75', name: 'Rede', category: 'Camping', status: 'ok', notes: 'Descanso' },
+      { id: 'tr-76', name: 'Saco de dormir', category: 'Camping', status: 'ok', notes: 'Térmico' },
+      { id: 'tr-77', name: 'Saco de lixo', category: 'Camping', status: 'ok', notes: 'Resíduos' },
+      { id: 'tr-78', name: 'Saco para banho', category: 'Camping', status: 'ok', notes: 'Água' },
+      { id: 'tr-79', name: 'saco roupa suja', category: 'Camping', status: 'ok', notes: 'Organização' },
+      { id: 'tr-80', name: 'Silver tape', category: 'Camping', status: 'ok', notes: 'Reparos' },
+      { id: 'tr-81', name: 'Tabua', category: 'Camping', status: 'ok', notes: 'Corte' },
+      { id: 'tr-82', name: 'Talher', category: 'Camping', status: 'ok', notes: 'Refeição' },
+      { id: 'tr-83', name: 'Tesoura', category: 'Camping', status: 'ok', notes: 'Corte' },
+      { id: 'tr-84', name: 'Travesseiro inflavel', category: 'Camping', status: 'ok', notes: 'Conforto' },
 
       // ELETRÔNICOS
-      { id: 'tr-11', name: 'Bateria externa (Powerbank)', locationIds: ['mochila-viagem'], category: 'Eletrônicos', status: 'ok', notes: 'Alta capacidade' },
-      { id: 'tr-12', name: 'Cabos USB & Carregadores', locationIds: ['mochila-viagem'], category: 'Eletrônicos', status: 'ok', notes: 'Múltiplas saídas' },
-      { id: 'tr-13', name: 'Kindle / Tablet', locationIds: ['mochila-viagem'], category: 'Eletrônicos', status: 'ok', notes: 'Entretenimento' },
-      { id: 'tr-14', name: 'Lanternas & Headlamp', locationIds: ['mala-principal'], category: 'Eletrônicos', status: 'ok', notes: 'Iluminação noturna' },
+      { id: 'tr-85', name: 'Bateria externa', category: 'Eletrônicos', status: 'ok', notes: 'Powerbank' },
+      { id: 'tr-86', name: 'Benjamin', category: 'Eletrônicos', status: 'ok', notes: 'T (benjamim)' },
+      { id: 'tr-87', name: 'Cabos USB', category: 'Eletrônicos', status: 'ok', notes: 'Conexões' },
+      { id: 'tr-88', name: 'Carr. cel p carro', category: 'Eletrônicos', status: 'ok', notes: '12V' },
+      { id: 'tr-89', name: 'carr. de pilhas USB', category: 'Eletrônicos', status: 'ok', notes: 'Recarga' },
+      { id: 'tr-90', name: 'Carr. solar', category: 'Eletrônicos', status: 'ok', notes: 'Painel' },
+      { id: 'tr-91', name: 'Carr. camera, radio', category: 'Eletrônicos', status: 'ok', notes: 'Baterias' },
+      { id: 'tr-92', name: 'Camera', category: 'Eletrônicos', status: 'ok', notes: 'Fotos' },
+      { id: 'tr-93', name: 'osmo', category: 'Eletrônicos', status: 'ok', notes: 'Estabilizador' },
+      { id: 'tr-94', name: 'Kindle', category: 'Eletrônicos', status: 'ok', notes: 'Leitura' },
+      { id: 'tr-95', name: 'Lâmpada', category: 'Eletrônicos', status: 'ok', notes: 'Iluminação' },
+      { id: 'tr-96', name: 'Lanternas', category: 'Eletrônicos', status: 'ok', notes: 'Luz' },
+      { id: 'tr-97', name: 'Pen drives', category: 'Eletrônicos', status: 'ok', notes: 'Dados' },
+      { id: 'tr-98', name: 'Pilhas', category: 'Eletrônicos', status: 'ok', notes: 'Alimentação' },
+      { id: 'tr-99', name: 'Caixinha Som', category: 'Eletrônicos', status: 'ok', notes: 'Áudio' },
+      { id: 'tr-100', name: 'fone de ouvido', category: 'Eletrônicos', status: 'ok', notes: 'Som pessoal' },
+      { id: 'tr-101', name: 'tablet/carreg/mouse', category: 'Eletrônicos', status: 'ok', notes: 'Produtividade' },
+      { id: 'tr-102', name: 'headlamp', category: 'Eletrônicos', status: 'ok', notes: 'Lanterna de cabeça' },
 
       // REMÉDIOS
-      { id: 'tr-15', name: 'maleta do plantão (Primeiros socorros)', locationIds: ['frasqueira'], category: 'Remédios', status: 'ok', notes: 'Kit completo' },
-      { id: 'tr-16', name: 'Dipirona / Tylenol / Analgésicos', locationIds: ['frasqueira'], category: 'Remédios', status: 'ok', notes: 'Controle de dor/febre' },
-      { id: 'tr-17', name: 'Protetor solar & Repelente', locationIds: ['frasqueira'], category: 'Remédios', status: 'ok', notes: 'Proteção externa' },
+      { id: 'tr-103', name: 'maleta do plantão', category: 'Remédios', status: 'ok', notes: 'Socorros' },
+      { id: 'tr-104', name: 'Micropore/atadura/gaze', category: 'Remédios', status: 'ok', notes: 'Curativos' },
+      { id: 'tr-105', name: 'Curativos/Bandaid', category: 'Remédios', status: 'ok', notes: 'Proteção' },
+      { id: 'tr-106', name: 'dersani/hidratante', category: 'Remédios', status: 'ok', notes: 'Pele' },
+      { id: 'tr-107', name: 'desonida/trok', category: 'Remédios', status: 'ok', notes: 'Pomada' },
+      { id: 'tr-108', name: 'inseticida de queimar', category: 'Remédios', status: 'ok', notes: 'Espiral' },
+      { id: 'tr-109', name: 'Inseticida spray', category: 'Remédios', status: 'ok', notes: 'Aerossol' },
+      { id: 'tr-110', name: 'inseticida tomada', category: 'Remédios', status: 'ok', notes: 'Líquido' },
+      { id: 'tr-111', name: 'vela de citronela', category: 'Remédios', status: 'ok', notes: 'Repelente' },
+      { id: 'tr-112', name: 'repelente granado', category: 'Remédios', status: 'ok', notes: 'Uso tópico' },
+      { id: 'tr-113', name: 'Protetor solar', category: 'Remédios', status: 'ok', notes: 'FPS' },
+      { id: 'tr-114', name: 'allegra/esalerg', category: 'Remédios', status: 'ok', notes: 'Antialérgico' },
+      { id: 'tr-115', name: 'digesan/domperidona', category: 'Remédios', status: 'ok', notes: 'Estômago' },
+      { id: 'tr-116', name: 'dipirona/tylenool', category: 'Remédios', status: 'ok', notes: 'Dor e febre' },
+      { id: 'tr-117', name: 'otociriax', category: 'Remédios', status: 'ok', notes: 'Ouvido' },
+      { id: 'tr-118', name: 'simbioflora', category: 'Remédios', status: 'ok', notes: 'Probiótico' },
+      { id: 'tr-119', name: 'luftal', category: 'Remédios', status: 'ok', notes: 'Gases' },
+      { id: 'tr-120', name: 'salsep', category: 'Remédios', status: 'ok', notes: 'Nasal' },
+      { id: 'tr-121', name: 'soro oral', category: 'Remédios', status: 'ok', notes: 'Hidratação' },
+      { id: 'tr-122', name: 'predsim gotas', category: 'Remédios', status: 'ok', notes: 'Corticoide' },
+      { id: 'tr-123', name: 'amox/clav e keflex', category: 'Remédios', status: 'ok', notes: 'Antibiótico' },
+      { id: 'tr-124', name: 'dramin/Nausedron', category: 'Remédios', status: 'ok', notes: 'Enjoo' },
+      { id: 'tr-125', name: 'dipirona', category: 'Remédios', status: 'ok', notes: 'Anal Gésico' },
+      { id: 'tr-126', name: 'adrenalina', category: 'Remédios', status: 'ok', notes: 'Emergência' },
+      { id: 'tr-127', name: 'benadryl', category: 'Remédios', status: 'ok', notes: 'Antialérgico' },
+      { id: 'tr-128', name: 'aerolin spray', category: 'Remédios', status: 'ok', notes: 'Asma' },
+      { id: 'tr-129', name: 'espaçador', category: 'Remédios', status: 'ok', notes: 'Inalador' },
+      { id: 'tr-130', name: 'pantoprazol', category: 'Remédios', status: 'ok', notes: 'Gastrite' },
+      { id: 'tr-131', name: 'Allegra cp', category: 'Remédios', status: 'ok', notes: 'Comprimido' },
+      { id: 'tr-132', name: 'vonau', category: 'Remédios', status: 'ok', notes: 'Náusea' },
+      { id: 'tr-133', name: 'tiorfan', category: 'Remédios', status: 'ok', notes: 'Intestinal' },
+      { id: 'tr-134', name: 'bactrim cp', category: 'Remédios', status: 'ok', notes: 'Antibiótico' },
+      { id: 'tr-135', name: 'levofloxacino cp', category: 'Remédios', status: 'ok', notes: 'Antibiótico' },
+      { id: 'tr-136', name: 'Predsim 20mg', category: 'Remédios', status: 'ok', notes: 'Anti-inflamatório' },
+      { id: 'tr-137', name: 'aturgyl', category: 'Remédios', status: 'ok', notes: 'Descongestionante' },
+      { id: 'tr-138', name: 'creme labial', category: 'Remédios', status: 'ok', notes: 'Lábios' },
+      { id: 'tr-139', name: 'antiinflamatório', category: 'Remédios', status: 'ok', notes: 'Dor geral' },
 
       // PETS
-      { id: 'tr-18', name: 'caminha lilica + potes', locationIds: ['mala-principal'], category: 'Pets', status: 'ok', notes: 'Conforto pet' },
-      { id: 'tr-19', name: 'comida / petiscos / patezinho', locationIds: ['mala-principal'], category: 'Pets', status: 'ok', notes: 'Alimentação pet' },
+      { id: 'tr-140', name: 'caminha lilica', category: 'Pets', status: 'ok', notes: 'Conforto' },
+      { id: 'tr-141', name: 'lenco umedecido', category: 'Pets', status: 'ok', notes: 'Higiene' },
+      { id: 'tr-142', name: 'almofadinha', category: 'Pets', status: 'ok', notes: 'Descanso' },
+      { id: 'tr-143', name: 'fraldinha', category: 'Pets', status: 'ok', notes: 'Higiene' },
+      { id: 'tr-144', name: 'comida', category: 'Pets', status: 'ok', notes: 'Ração' },
+      { id: 'tr-145', name: 'petiscos', category: 'Pets', status: 'ok', notes: 'Agrossuportes' },
+      { id: 'tr-146', name: 'patezinho', category: 'Pets', status: 'ok', notes: 'Alimentação úmida' },
+      { id: 'tr-147', name: 'desinfetante', category: 'Pets', status: 'ok', notes: 'Limpeza' },
+      { id: 'tr-148', name: 'panos', category: 'Pets', status: 'ok', notes: 'Limpeza' },
+      { id: 'tr-149', name: 'potes', category: 'Pets', status: 'ok', notes: 'Água e comida' },
 
       // ALIMENTAÇÃO
-      { id: 'tr-20', name: 'café + açucar + cafeteira', locationIds: ['mala-principal'], category: 'Alimentação', status: 'ok', notes: 'Essencial matinal' },
-      { id: 'tr-21', name: 'Comidas & lanchinhos', locationIds: ['mala-principal'], category: 'Alimentação', status: 'ok', notes: 'Viagem' },
+      { id: 'tr-150', name: 'Abridor', category: 'Alimentação', status: 'ok', notes: 'Utensílio' },
+      { id: 'tr-151', name: 'açúcar', category: 'Alimentação', status: 'ok', notes: 'Adoçante' },
+      { id: 'tr-152', name: 'azeite', category: 'Alimentação', status: 'ok', notes: 'Tempero' },
+      { id: 'tr-153', name: 'café', category: 'Alimentação', status: 'ok', notes: 'Matinal' },
+      { id: 'tr-154', name: 'Comidas', category: 'Alimentação', status: 'ok', notes: 'Mantimentos' },
+      { id: 'tr-155', name: 'lanchinhos', category: 'Alimentação', status: 'ok', notes: 'Snacks' },
+      { id: 'tr-156', name: 'chá', category: 'Alimentação', status: 'ok', notes: 'Bebida' },
+      { id: 'tr-157', name: 'nescau', category: 'Alimentação', status: 'ok', notes: 'Achocolatado' },
+      { id: 'tr-158', name: 'Oleo', category: 'Alimentação', status: 'ok', notes: 'Cozinha' },
+      { id: 'tr-159', name: 'Sal', category: 'Alimentação', status: 'ok', notes: 'Tempero' },
+      { id: 'tr-160', name: 'Tempeiros', category: 'Alimentação', status: 'ok', notes: 'Variados' },
+      { id: 'tr-161', name: 'Vinho', category: 'Alimentação', status: 'ok', notes: 'Bebida' },
+      { id: 'tr-162', name: 'cafeteira', category: 'Alimentação', status: 'ok', notes: 'Preparo' },
+      { id: 'tr-163', name: 'sabão de coco', category: 'Alimentação', status: 'ok', notes: 'Lavagem' },
+      { id: 'tr-164', name: 'pano prato', category: 'Alimentação', status: 'ok', notes: 'Secagem' },
+      { id: 'tr-165', name: 'fogareiro', category: 'Alimentação', status: 'ok', notes: 'Portátil' },
+      { id: 'tr-166', name: 'gas', category: 'Alimentação', status: 'ok', notes: 'Cozinha' },
+      { id: 'tr-167', name: 'barrinhas', category: 'Alimentação', status: 'ok', notes: 'Energia' },
 
       // ROUPAS
-      { id: 'tr-22', name: 'agasalhos & roupas leves', locationIds: ['mala-principal'], category: 'Roupas', status: 'ok', notes: 'Variedade climática' },
-      { id: 'tr-23', name: 'Toalhas & Chinelo', locationIds: ['mala-principal'], category: 'Roupas', status: 'ok', notes: 'Higiene pessoal' },
+      { id: 'tr-168', name: 'agasalhos', category: 'Roupas', status: 'ok', notes: 'Frio' },
+      { id: 'tr-169', name: 'Boné', category: 'Roupas', status: 'ok', notes: 'Sol' },
+      { id: 'tr-170', name: 'Bota', category: 'Roupas', status: 'ok', notes: 'Trilha' },
+      { id: 'tr-171', name: 'Canga', category: 'Roupas', status: 'ok', notes: 'Praia/descanso' },
+      { id: 'tr-172', name: 'Capa de chuva', category: 'Roupas', status: 'ok', notes: 'Impermeável' },
+      { id: 'tr-173', name: 'Capa mochila', category: 'Roupas', status: 'ok', notes: 'Proteção' },
+      { id: 'tr-174', name: 'Chinelo', category: 'Roupas', status: 'ok', notes: 'Descanso' },
+      { id: 'tr-175', name: 'gorro', category: 'Roupas', status: 'ok', notes: 'Frio' },
+      { id: 'tr-176', name: 'Luva', category: 'Roupas', status: 'ok', notes: 'Inverno' },
+      { id: 'tr-177', name: 'tênis bruto', category: 'Roupas', status: 'ok', notes: 'Uso diário' },
+      { id: 'tr-178', name: 'Toalhas', category: 'Roupas', status: 'ok', notes: 'Banho' },
+      { id: 'tr-179', name: 'Travesseiro', category: 'Roupas', status: 'ok', notes: 'Conforto' },
+      { id: 'tr-180', name: 'roupas leves', category: 'Roupas', status: 'ok', notes: 'Calor' },
+      { id: 'tr-181', name: 'cuio', category: 'Roupas', status: 'ok', notes: 'Acessório' },
+      { id: 'tr-182', name: 'compressor', category: 'Roupas', status: 'ok', notes: 'Sacos a vácuo' },
+      { id: 'tr-183', name: 'sunga', category: 'Roupas', status: 'ok', notes: 'Banho' },
+      { id: 'tr-184', name: 'vendinha', category: 'Roupas', status: 'ok', notes: 'Olhos' },
+      { id: 'tr-185', name: 'protetor ouvido', category: 'Roupas', status: 'ok', notes: 'Silêncio' },
 
       // PRAIA
-      { id: 'tr-24', name: 'Frescobol & Snorkel & Boias', locationIds: ['mala-principal'], category: 'Praia', status: 'ok', notes: 'Lazer aquático' }
+      { id: 'tr-186', name: 'Frescobol', category: 'Praia', status: 'ok', notes: 'Esporte' },
+      { id: 'tr-187', name: 'Snorkel', category: 'Praia', status: 'ok', notes: 'Mergulho' },
+      { id: 'tr-188', name: 'Boias', category: 'Praia', status: 'ok', notes: 'Água' },
+      { id: 'tr-189', name: 'Brinquedinhos', category: 'Praia', status: 'ok', notes: 'Areia' },
+      { id: 'tr-190', name: 'Colete', category: 'Praia', status: 'ok', notes: 'Segurança' },
+      { id: 'tr-191', name: 'bola', category: 'Praia', status: 'ok', notes: 'Lazer' },
+      { id: 'tr-192', name: 'óculos de natação', category: 'Praia', status: 'ok', notes: 'Mergulho' }
     ];
 
     /* GLOBAL STATE */
@@ -526,7 +696,7 @@
     let edcLocations = JSON.parse(JSON.stringify(DEFAULT_EDC_LOCATIONS));
     let edcItems = JSON.parse(JSON.stringify(DEFAULT_EDC_ITEMS));
 
-    let travelLocations = JSON.parse(JSON.stringify(DEFAULT_TRAVEL_LOCATIONS));
+    let travelCategories = JSON.parse(JSON.stringify(DEFAULT_TRAVEL_CATEGORIES_LIST));
     let travelItems = JSON.parse(JSON.stringify(DEFAULT_TRAVEL_ITEMS));
 
     let selectedCategory = 'Todas';
@@ -539,7 +709,7 @@
     let db = null;
     let auth = null;
     let isCloudAvailable = false;
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'edc-travel-pro';
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'edc-travel-pro-v5';
 
     /* CLOUD STATUS */
     function updateCloudStatus(status, text) {
@@ -591,15 +761,15 @@
     function setupFirestoreRealtimeListener() {
       if (!db || !isCloudAvailable) return;
       try {
-        const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'master');
+        const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'master-v5');
         onSnapshot(publicDocRef, (docSnap) => {
           if (docSnap.exists()) {
             const data = docSnap.data();
             if (data) {
               if (data.edcLocations) edcLocations = data.edcLocations;
-              if (data.edcItems) edcItems = normalizeItems(data.edcItems);
-              if (data.travelLocations) travelLocations = data.travelLocations;
-              if (data.travelItems) travelItems = normalizeItems(data.travelItems);
+              if (data.edcItems) edcItems = normalizeEdcItems(data.edcItems);
+              if (data.travelCategories) travelCategories = data.travelCategories;
+              if (data.travelItems) travelItems = normalizeTravelItems(data.travelItems);
               renderApp();
             }
           } else {
@@ -619,14 +789,14 @@
       const payload = {
         edcLocations,
         edcItems,
-        travelLocations,
+        travelCategories,
         travelItems,
         updatedAt: new Date().toISOString()
       };
 
       if (db && isCloudAvailable) {
         try {
-          const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'master');
+          const publicDocRef = doc(db, 'artifacts', appId, 'public', 'data', 'inventory', 'master-v5');
           await setDoc(publicDocRef, payload);
           updateCloudStatus('online', 'Salvo na Nuvem');
         } catch (err) {
@@ -639,13 +809,24 @@
       updateStats();
     }
 
-    function normalizeItems(rawItems) {
+    function normalizeEdcItems(rawItems) {
       if (!Array.isArray(rawItems)) return [];
       return rawItems.map(item => ({
         id: item.id || 'item-' + Math.random().toString(36).substr(2, 9),
         name: item.name || 'Sem Nome',
         locationIds: Array.isArray(item.locationIds) ? item.locationIds : [item.locationId || 'default'],
         category: item.category || 'Outros',
+        status: item.status || 'ok',
+        notes: item.notes || ''
+      }));
+    }
+
+    function normalizeTravelItems(rawItems) {
+      if (!Array.isArray(rawItems)) return [];
+      return rawItems.map(item => ({
+        id: item.id || 'tr-' + Math.random().toString(36).substr(2, 9),
+        name: item.name || 'Sem Nome',
+        category: item.category || 'Crianças',
         status: item.status || 'ok',
         notes: item.notes || ''
       }));
@@ -658,10 +839,14 @@
         'bolsa-preta': { cardBorder: 'border-indigo-500/30 hover:border-indigo-500/50', iconBg: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30', badgeBg: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/30', topBar: 'bg-gradient-to-r from-indigo-500/60 via-indigo-500/30 to-transparent' },
         'mochila': { cardBorder: 'border-emerald-500/30 hover:border-emerald-500/50', iconBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', badgeBg: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30', topBar: 'bg-gradient-to-r from-emerald-500/60 via-emerald-500/30 to-transparent' },
         'no-carro': { cardBorder: 'border-sky-500/30 hover:border-sky-500/50', iconBg: 'bg-sky-500/15 text-sky-400 border-sky-500/30', badgeBg: 'bg-sky-500/10 text-sky-300 border-sky-500/30', topBar: 'bg-gradient-to-r from-sky-500/60 via-sky-500/30 to-transparent' },
-        'mala-principal': { cardBorder: 'border-blue-500/30 hover:border-blue-500/50', iconBg: 'bg-blue-500/15 text-blue-400 border-blue-500/30', badgeBg: 'bg-blue-500/10 text-blue-300 border-blue-500/30', topBar: 'bg-gradient-to-r from-blue-500/60 via-blue-500/30 to-transparent' },
-        'frasqueira': { cardBorder: 'border-rose-500/30 hover:border-rose-500/50', iconBg: 'bg-rose-500/15 text-rose-400 border-rose-500/30', badgeBg: 'bg-rose-500/10 text-rose-300 border-rose-500/30', topBar: 'bg-gradient-to-r from-rose-500/60 via-rose-500/30 to-transparent' },
-        'mochila-viagem': { cardBorder: 'border-purple-500/30 hover:border-purple-500/50', iconBg: 'bg-purple-500/15 text-purple-400 border-purple-500/30', badgeBg: 'bg-purple-500/10 text-purple-300 border-purple-500/30', topBar: 'bg-gradient-to-r from-purple-500/60 via-purple-500/30 to-transparent' },
-        'bolsa-criancas': { cardBorder: 'border-teal-500/30 hover:border-teal-500/50', iconBg: 'bg-teal-500/15 text-teal-400 border-teal-500/30', badgeBg: 'bg-teal-500/10 text-teal-300 border-teal-500/30', topBar: 'bg-gradient-to-r from-teal-500/60 via-teal-500/30 to-transparent' }
+        'criancas': { cardBorder: 'border-teal-500/30 hover:border-teal-500/50', iconBg: 'bg-teal-500/15 text-teal-400 border-teal-500/30', badgeBg: 'bg-teal-500/10 text-teal-300 border-teal-500/30', topBar: 'bg-gradient-to-r from-teal-500/60 via-teal-500/30 to-transparent' },
+        'camping': { cardBorder: 'border-emerald-500/30 hover:border-emerald-500/50', iconBg: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', badgeBg: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30', topBar: 'bg-gradient-to-r from-emerald-500/60 via-emerald-500/30 to-transparent' },
+        'eletronicos': { cardBorder: 'border-sky-500/30 hover:border-sky-500/50', iconBg: 'bg-sky-500/15 text-sky-400 border-sky-500/30', badgeBg: 'bg-sky-500/10 text-sky-300 border-sky-500/30', topBar: 'bg-gradient-to-r from-sky-500/60 via-sky-500/30 to-transparent' },
+        'remedios': { cardBorder: 'border-rose-500/30 hover:border-rose-500/50', iconBg: 'bg-rose-500/15 text-rose-400 border-rose-500/30', badgeBg: 'bg-rose-500/10 text-rose-300 border-rose-500/30', topBar: 'bg-gradient-to-r from-rose-500/60 via-rose-500/30 to-transparent' },
+        'pets': { cardBorder: 'border-amber-500/30 hover:border-amber-500/50', iconBg: 'bg-amber-500/15 text-amber-400 border-amber-500/30', badgeBg: 'bg-amber-500/10 text-amber-300 border-amber-500/30', topBar: 'bg-gradient-to-r from-amber-500/60 via-amber-500/30 to-transparent' },
+        'alimentacao': { cardBorder: 'border-orange-500/30 hover:border-orange-500/50', iconBg: 'bg-orange-500/15 text-orange-400 border-orange-500/30', badgeBg: 'bg-orange-500/10 text-orange-300 border-orange-500/30', topBar: 'bg-gradient-to-r from-orange-500/60 via-orange-500/30 to-transparent' },
+        'roupas': { cardBorder: 'border-purple-500/30 hover:border-purple-500/50', iconBg: 'bg-purple-500/15 text-purple-400 border-purple-500/30', badgeBg: 'bg-purple-500/10 text-purple-300 border-purple-500/30', topBar: 'bg-gradient-to-r from-purple-500/60 via-purple-500/30 to-transparent' },
+        'praia': { cardBorder: 'border-cyan-500/30 hover:border-cyan-500/50', iconBg: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/30', badgeBg: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30', topBar: 'bg-gradient-to-r from-cyan-500/60 via-cyan-500/30 to-transparent' }
       };
 
       if (themes[locId]) return themes[locId];
@@ -682,6 +867,14 @@
         case 'car': return 'car';
         case 'luggage': return 'luggage';
         case 'box': return 'box';
+        case 'baby': return 'baby';
+        case 'tent': return 'tent';
+        case 'zap': return 'zap';
+        case 'pill': return 'pill';
+        case 'paw-print': return 'paw-print';
+        case 'utensils': return 'utensils';
+        case 'shirt': return 'shirt';
+        case 'sun': return 'sun';
         default: return 'folder';
       }
     }
@@ -701,7 +894,7 @@
         'Remédios': 'bg-rose-500/10 text-rose-300 border-rose-500/20',
         'Pets': 'bg-amber-500/10 text-amber-300 border-amber-500/20',
         'Alimentação': 'bg-orange-500/10 text-orange-300 border-orange-500/20',
-        'Roupas': 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
+        'Roupas': 'bg-purple-500/10 text-purple-300 border-purple-500/20',
         'Praia': 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20'
       };
       return map[category] || 'bg-slate-800 text-slate-300 border-slate-700';
@@ -714,8 +907,8 @@
     }
 
     /* GETTERS FOR ACTIVE TAB */
-    function getActiveLocations() { return currentTab === 'edc' ? edcLocations : travelLocations; }
-    function setActiveLocations(locs) { if (currentTab === 'edc') edcLocations = locs; else travelLocations = locs; }
+    function getActiveLocations() { return currentTab === 'edc' ? edcLocations : travelCategories; }
+    function setActiveLocations(locs) { if (currentTab === 'edc') edcLocations = locs; else travelCategories = locs; }
     
     function getActiveItems() { return currentTab === 'edc' ? edcItems : travelItems; }
     function setActiveItems(items) { if (currentTab === 'edc') edcItems = items; else travelItems = items; }
@@ -731,7 +924,9 @@
 
       categories.forEach(cat => {
         const isSelected = selectedCategory === cat;
-        const count = cat === 'Todas' ? items.length : items.filter(i => i.category === cat).length;
+        const count = cat === 'Todas' 
+          ? items.length 
+          : (currentTab === 'edc' ? items.filter(i => i.category === cat).length : items.filter(i => i.category === cat).length);
 
         const btn = document.createElement('button');
         btn.className = `px-2.5 py-1 text-xs rounded-lg whitespace-nowrap transition-all flex items-center gap-1.5 ${
@@ -751,10 +946,10 @@
       const items = getActiveItems();
       const locs = getActiveLocations();
       document.getElementById('stat-total-items').textContent = `Itens: ${items.length}`;
-      document.getElementById('stat-total-locations').textContent = `Locais: ${locs.length}`;
+      document.getElementById('stat-total-locations').textContent = currentTab === 'edc' ? `Locais: ${locs.length}` : `Categorias: ${locs.length}`;
     }
 
-    /* RENDER LOCATIONS GRID */
+    /* RENDER LOCATIONS GRID (KANBAN) */
     function renderLocationsGrid() {
       const grid = document.getElementById('locations-grid');
       const emptyState = document.getElementById('empty-state');
@@ -767,8 +962,15 @@
 
       locations.forEach(loc => {
         const locItems = items.filter(item => {
-          if (!Array.isArray(item.locationIds) || !item.locationIds.includes(loc.id)) return false;
-          if (selectedCategory !== 'Todas' && item.category !== selectedCategory) return false;
+          if (currentTab === 'edc') {
+            if (!Array.isArray(item.locationIds) || !item.locationIds.includes(loc.id)) return false;
+            if (selectedCategory !== 'Todas' && item.category !== selectedCategory) return false;
+          } else {
+            // For Travel, each column is a category name (loc.name)
+            if (item.category !== loc.name) return false;
+            if (selectedCategory !== 'Todas' && item.category !== selectedCategory) return false;
+          }
+
           if (searchQuery.trim() !== '') {
             const q = searchQuery.toLowerCase();
             return item.name.toLowerCase().includes(q) || (item.notes && item.notes.toLowerCase().includes(q)) || item.category.toLowerCase().includes(q);
@@ -791,12 +993,21 @@
           if (!draggedItemId) return;
           const itemsArr = getActiveItems();
           const item = itemsArr.find(i => i.id === draggedItemId);
-          if (!item || item.locationIds.includes(loc.id)) return;
-          if (draggedFromLocId) item.locationIds = item.locationIds.filter(id => id !== draggedFromLocId);
-          item.locationIds.push(loc.id);
+          if (!item) return;
+
+          if (currentTab === 'edc') {
+            if (item.locationIds.includes(loc.id)) return;
+            if (draggedFromLocId) item.locationIds = item.locationIds.filter(id => id !== draggedFromLocId);
+            item.locationIds.push(loc.id);
+            showToast(`Movido para "${loc.name}"`, 'success');
+          } else {
+            // Travel tab: drop updates item category
+            item.category = loc.name;
+            showToast(`Movido para categoria "${loc.name}"`, 'success');
+          }
+
           renderLocationsGrid();
           await saveData();
-          showToast(`Movido para "${loc.name}"`, 'success');
         });
 
         const iconName = getLucideIcon(loc.icon);
@@ -820,7 +1031,7 @@
               <button onclick="openAddItemModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-brand-400 hover:bg-slate-800 rounded-lg transition-colors" title="Adicionar item">
                 <i data-lucide="plus" class="w-4 h-4"></i>
               </button>
-              <button onclick="openEditLocationModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors" title="Editar Local">
+              <button onclick="openEditLocationModal('${loc.id}')" class="p-1.5 text-slate-400 hover:text-slate-200 hover:bg-slate-800 rounded-lg transition-colors" title="Editar Grupo">
                 <i data-lucide="more-vertical" class="w-4 h-4"></i>
               </button>
             </div>
@@ -829,7 +1040,7 @@
             ${locItems.length === 0 ? `<div class="h-24 flex flex-col items-center justify-center text-center p-3 border border-dashed border-slate-800/80 rounded-xl bg-slate-950/40"><i data-lucide="inbox" class="w-5 h-5 text-slate-600 mb-1"></i><span class="text-xs text-slate-500">Nenhum item aqui</span></div>` : ''}
             ${locItems.map(item => {
               const isChecked = checkedItems.has(item.id);
-              const otherLocsCount = (item.locationIds || []).length - 1;
+              const otherLocsCount = currentTab === 'edc' ? (item.locationIds || []).length - 1 : 0;
               return `
                 <div draggable="true" data-item-id="${item.id}" data-source-loc="${loc.id}" class="item-card touch-card group relative p-2.5 sm:p-3 rounded-xl bg-slate-950/90 border ${isChecked ? 'border-brand-500/40 bg-brand-500/5' : 'border-slate-800/90 hover:border-slate-700'} transition-all cursor-grab active:cursor-grabbing shadow-sm">
                   <div class="flex items-start justify-between gap-2">
@@ -844,7 +1055,7 @@
                       </div>
                     </div>
                     <div class="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-0.5 shrink-0 bg-slate-950/90 rounded-lg p-0.5 border border-slate-800 sm:border-none">
-                      <button onclick="openQuickMoveModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-brand-400" title="Mudar locais"><i data-lucide="layers" class="w-3.5 h-3.5"></i></button>
+                      ${currentTab === 'edc' ? `<button onclick="openQuickMoveModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-brand-400" title="Mudar locais"><i data-lucide="layers" class="w-3.5 h-3.5"></i></button>` : ''}
                       <button onclick="openEditItemModal('${item.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200" title="Editar"><i data-lucide="edit-3" class="w-3.5 h-3.5"></i></button>
                       <button onclick="deleteItem('${item.id}', '${loc.id}')" class="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-rose-400" title="Remover"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                     </div>
@@ -888,16 +1099,35 @@
     };
 
     /* ITEM MODAL */
-    function renderLocationCheckboxes(selectedIds = []) {
+    function renderLocationCheckboxes(selectedIdsOrCat = []) {
       const container = document.getElementById('item-locations-container');
       container.innerHTML = '';
-      getActiveLocations().forEach(loc => {
-        const isChecked = selectedIds.includes(loc.id);
-        const label = document.createElement('label');
-        label.className = 'flex items-center gap-2 text-xs text-slate-300 hover:text-white cursor-pointer select-none py-0.5';
-        label.innerHTML = `<input type="checkbox" value="${loc.id}" ${isChecked ? 'checked' : ''} class="item-loc-checkbox rounded border-slate-700 text-brand-500 bg-slate-900"><span class="truncate">${loc.name}</span>`;
-        container.appendChild(label);
-      });
+
+      if (currentTab === 'edc') {
+        document.getElementById('item-locations-label').textContent = 'Locais Onde Fica Guardado *';
+        document.getElementById('item-locations-desc').textContent = 'Marque um ou mais locais simultâneos para este item:';
+        document.getElementById('item-category-wrapper').style.display = 'grid';
+
+        getActiveLocations().forEach(loc => {
+          const isChecked = selectedIdsOrCat.includes(loc.id);
+          const label = document.createElement('label');
+          label.className = 'flex items-center gap-2 text-xs text-slate-300 hover:text-white cursor-pointer select-none py-0.5';
+          label.innerHTML = `<input type="checkbox" value="${loc.id}" ${isChecked ? 'checked' : ''} class="item-loc-checkbox rounded border-slate-700 text-brand-500 bg-slate-900"><span class="truncate">${loc.name}</span>`;
+          container.appendChild(label);
+        });
+      } else {
+        document.getElementById('item-locations-label').textContent = 'Categoria de Viagem *';
+        document.getElementById('item-locations-desc').textContent = 'Selecione a categoria principal para este item:';
+        document.getElementById('item-category-wrapper').style.display = 'none'; // category is the location itself
+
+        getActiveLocations().forEach(loc => {
+          const isSelected = selectedIdsOrCat === loc.name;
+          const label = document.createElement('label');
+          label.className = 'flex items-center gap-2 text-xs text-slate-300 hover:text-white cursor-pointer select-none py-0.5';
+          label.innerHTML = `<input type="radio" name="travel-cat-radio" value="${loc.name}" ${isSelected ? 'checked' : ''} class="item-loc-radio rounded-full border-slate-700 text-brand-500 bg-slate-900"><span class="truncate">${loc.name}</span>`;
+          container.appendChild(label);
+        });
+      }
     }
 
     function populateCategoryDropdown(selected = '') {
@@ -912,14 +1142,21 @@
       });
     }
 
-    window.openAddItemModal = function(preselectedLocId = null) {
+    window.openAddItemModal = function(preselectedLocIdOrCat = null) {
       document.getElementById('item-modal-title').innerHTML = '<i data-lucide="package" class="w-4 h-4 text-brand-500"></i> Adicionar Item';
       document.getElementById('item-id').value = '';
       document.getElementById('item-name').value = '';
       document.getElementById('item-notes').value = '';
       document.getElementById('item-status').value = 'ok';
-      populateCategoryDropdown(selectedCategory !== 'Todas' ? selectedCategory : null);
-      renderLocationCheckboxes(preselectedLocId ? [preselectedLocId] : [getActiveLocations()[0]?.id]);
+
+      if (currentTab === 'edc') {
+        populateCategoryDropdown(selectedCategory !== 'Todas' ? selectedCategory : null);
+        renderLocationCheckboxes(preselectedLocIdOrCat ? [preselectedLocIdOrCat] : [getActiveLocations()[0]?.id]);
+      } else {
+        const targetCat = preselectedLocIdOrCat ? getActiveLocations().find(l => l.id === preselectedLocIdOrCat)?.name || getActiveLocations()[0]?.name : getActiveLocations()[0]?.name;
+        renderLocationCheckboxes(targetCat);
+      }
+
       document.getElementById('item-modal').classList.remove('hidden');
       if (window.lucide) lucide.createIcons();
     };
@@ -932,8 +1169,15 @@
       document.getElementById('item-name').value = item.name;
       document.getElementById('item-notes').value = item.notes || '';
       document.getElementById('item-status').value = item.status || 'ok';
-      populateCategoryDropdown(item.category);
-      renderLocationCheckboxes(item.locationIds || []);
+
+      if (currentTab === 'edc') {
+        populateCategoryDropdown(item.category);
+        renderLocationCheckboxes(item.locationIds || []);
+      } else {
+        renderLocationCheckboxes(item.category);
+      }
+
+      document.getElementById('item-modal').classList.add('hidden');
       document.getElementById('item-modal').classList.remove('hidden');
       if (window.lucide) lucide.createIcons();
     };
@@ -943,23 +1187,44 @@
       const id = document.getElementById('item-id').value;
       const name = document.getElementById('item-name').value.trim();
       const notes = document.getElementById('item-notes').value.trim();
-      const category = document.getElementById('item-category').value;
       const status = document.getElementById('item-status').value;
-      const selectedLocIds = Array.from(document.querySelectorAll('.item-loc-checkbox:checked')).map(cb => cb.value);
-
-      if (selectedLocIds.length === 0) {
-        showToast('Selecione pelo menos 1 local!', 'error');
-        return;
-      }
 
       const items = getActiveItems();
-      if (id) {
-        const item = items.find(i => i.id === id);
-        if (item) { item.name = name; item.locationIds = selectedLocIds; item.notes = notes; item.category = category; item.status = status; }
-        showToast('Item atualizado!', 'success');
+
+      if (currentTab === 'edc') {
+        const category = document.getElementById('item-category').value;
+        const selectedLocIds = Array.from(document.querySelectorAll('.item-loc-checkbox:checked')).map(cb => cb.value);
+
+        if (selectedLocIds.length === 0) {
+          showToast('Selecione pelo menos 1 local!', 'error');
+          return;
+        }
+
+        if (id) {
+          const item = items.find(i => i.id === id);
+          if (item) { item.name = name; item.locationIds = selectedLocIds; item.notes = notes; item.category = category; item.status = status; }
+          showToast('Item atualizado!', 'success');
+        } else {
+          items.push({ id: 'item-' + Date.now(), name, locationIds: selectedLocIds, category, status, notes });
+          showToast('Item criado!', 'success');
+        }
       } else {
-        items.push({ id: 'item-' + Date.now(), name, locationIds: selectedLocIds, category, status, notes });
-        showToast('Item criado!', 'success');
+        const radio = document.querySelector('.item-loc-radio:checked');
+        const selectedCategoryName = radio ? radio.value : getActiveLocations()[0]?.name;
+
+        if (!selectedCategoryName) {
+          showToast('Selecione uma categoria!', 'error');
+          return;
+        }
+
+        if (id) {
+          const item = items.find(i => i.id === id);
+          if (item) { item.name = name; item.category = selectedCategoryName; item.notes = notes; item.status = status; }
+          showToast('Item de viagem atualizado!', 'success');
+        } else {
+          items.push({ id: 'tr-' + Date.now(), name, category: selectedCategoryName, status, notes });
+          showToast('Item de viagem criado!', 'success');
+        }
       }
 
       document.getElementById('item-modal').classList.add('hidden');
@@ -972,19 +1237,26 @@
       const item = items.find(i => i.id === itemId);
       if (!item) return;
 
-      if ((item.locationIds || []).length > 1) {
-        item.locationIds = item.locationIds.filter(id => id !== fromLocationId);
-        showToast('Removido deste local', 'info');
+      if (currentTab === 'edc') {
+        if ((item.locationIds || []).length > 1) {
+          item.locationIds = item.locationIds.filter(id => id !== fromLocationId);
+          showToast('Removido deste local', 'info');
+        } else {
+          setActiveItems(items.filter(i => i.id !== itemId));
+          checkedItems.delete(itemId);
+          showToast('Item excluído', 'info');
+        }
       } else {
         setActiveItems(items.filter(i => i.id !== itemId));
         checkedItems.delete(itemId);
         showToast('Item excluído', 'info');
       }
+
       renderLocationsGrid();
       await saveData();
     };
 
-    /* QUICK MOVE MODAL */
+    /* QUICK MOVE MODAL (EDC Only) */
     let currentQuickMoveItemId = null;
     window.openQuickMoveModal = function(itemId) {
       const item = getActiveItems().find(i => i.id === itemId);
@@ -1017,11 +1289,12 @@
       showToast('Locais atualizados', 'success');
     };
 
-    /* LOCATION MODAL */
+    /* LOCATION / CATEGORY GROUP MODAL */
     window.openEditLocationModal = function(locId) {
       const loc = getActiveLocations().find(l => l.id === locId);
       if (!loc) return;
-      document.getElementById('loc-modal-title').innerHTML = '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Local';
+      document.getElementById('loc-modal-title').innerHTML = currentTab === 'edc' ? '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Local' : '<i data-lucide="edit" class="w-4 h-4 text-brand-500"></i> Editar Categoria';
+      document.getElementById('loc-name-label').textContent = currentTab === 'edc' ? 'Nome do Compartimento *' : 'Nome da Categoria *';
       document.getElementById('loc-id').value = loc.id;
       document.getElementById('loc-name').value = loc.name;
       document.getElementById('loc-icon').value = loc.icon || 'box';
@@ -1030,10 +1303,11 @@
     };
 
     document.getElementById('btn-add-location').onclick = function() {
-      document.getElementById('loc-modal-title').innerHTML = '<i data-lucide="folder-plus" class="w-4 h-4 text-brand-500"></i> Novo Compartimento';
+      document.getElementById('loc-modal-title').innerHTML = currentTab === 'edc' ? '<i data-lucide="folder-plus" class="w-4 h-4 text-brand-500"></i> Novo Compartimento' : '<i data-lucide="folder-plus" class="w-4 h-4 text-brand-500"></i> Nova Categoria';
+      document.getElementById('loc-name-label').textContent = currentTab === 'edc' ? 'Nome do Compartimento *' : 'Nome da Categoria *';
       document.getElementById('loc-id').value = '';
       document.getElementById('loc-name').value = '';
-      document.getElementById('loc-icon').value = 'luggage';
+      document.getElementById('loc-icon').value = currentTab === 'edc' ? 'luggage' : 'tag';
       document.getElementById('loc-desc').value = '';
       document.getElementById('loc-modal').classList.remove('hidden');
     };
@@ -1048,15 +1322,32 @@
       let locs = getActiveLocations();
       if (id) {
         const loc = locs.find(l => l.id === id);
-        if (loc) { loc.name = name; loc.icon = icon; loc.description = desc; }
-        showToast('Local atualizado', 'success');
+        if (loc) { 
+          const oldName = loc.name;
+          loc.name = name; 
+          loc.icon = icon; 
+          loc.description = desc; 
+
+          // If travel category name changed, update items matching old category name
+          if (currentTab === 'travel' && oldName !== name) {
+            travelItems.forEach(i => {
+              if (i.category === oldName) i.category = name;
+            });
+            if (!TRAVEL_CATEGORIES.includes(name)) TRAVEL_CATEGORIES.push(name);
+          }
+        }
+        showToast('Atualizado com sucesso', 'success');
       } else {
         const newId = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now().toString().slice(-4);
         locs.push({ id: newId, name, icon, description: desc });
-        showToast('Local criado', 'success');
+        if (currentTab === 'travel' && !TRAVEL_CATEGORIES.includes(name)) {
+          TRAVEL_CATEGORIES.push(name);
+        }
+        showToast('Criado com sucesso', 'success');
       }
       document.getElementById('loc-modal').classList.add('hidden');
       renderLocationsGrid();
+      renderCategoryPills();
       await saveData();
     };
 
@@ -1077,7 +1368,7 @@
       document.getElementById('tab-travel').className = 'flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 bg-brand-600 text-white shadow';
       document.getElementById('tab-edc').className = 'flex-1 md:flex-none px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center justify-center gap-1.5 text-slate-400 hover:text-slate-200';
       document.getElementById('app-title-header').textContent = 'Travel Gear Manager';
-      document.getElementById('app-subtitle-header').textContent = 'Organização de Malas, Crianças, Camping e Viagens';
+      document.getElementById('app-subtitle-header').textContent = 'Organização por Categoria de Viagem';
       selectedCategory = 'Todas';
       renderCategoryPills();
       renderLocationsGrid();
@@ -1110,7 +1401,7 @@
       } else {
         tabBtnJson.className = 'py-2.5 px-3 text-brand-500 border-b-2 border-brand-500 focus:outline-none whitespace-nowrap';
         contentJson.classList.remove('hidden');
-        jsonTextarea.value = JSON.stringify({ edcLocations, edcItems, travelLocations, travelItems }, null, 2);
+        jsonTextarea.value = JSON.stringify({ edcLocations, edcItems, travelCategories, travelItems }, null, 2);
       }
     }
 
@@ -1150,7 +1441,7 @@
           const imported = JSON.parse(ev.target.result);
           if (imported.locations && imported.items) {
             edcLocations = imported.locations;
-            edcItems = normalizeItems(imported.items);
+            edcItems = normalizeEdcItems(imported.items);
             if (currentTab === 'edc') renderLocationsGrid();
             await saveData();
             toolsModal.classList.add('hidden');
@@ -1167,10 +1458,10 @@
     /* SEPARATE TRAVEL EXPORT & IMPORT */
     document.getElementById('btn-copy-travel-text').onclick = () => {
       let output = `=== VIAGEM REPORT ===\n\n`;
-      travelLocations.forEach(loc => {
-        const locItems = travelItems.filter(i => (i.locationIds || []).includes(loc.id));
-        output += `[ ${loc.name.toUpperCase()} ] (${locItems.length})\n`;
-        locItems.forEach(i => output += `  • ${i.name} [${i.category}]${i.notes ? ' - ' + i.notes : ''}\n`);
+      travelCategories.forEach(cat => {
+        const catItems = travelItems.filter(i => i.category === cat.name);
+        output += `[ ${cat.name.toUpperCase()} ] (${catItems.length})\n`;
+        catItems.forEach(i => output += `  • ${i.name}${i.notes ? ' - ' + i.notes : ''}\n`);
         output += '\n';
       });
       copyToClipboard(output);
@@ -1178,7 +1469,7 @@
     };
 
     document.getElementById('btn-download-travel-json').onclick = () => {
-      downloadJsonFile({ locations: travelLocations, items: travelItems }, `Travel_Backup_${new Date().toISOString().slice(0,10)}.json`);
+      downloadJsonFile({ categories: travelCategories, items: travelItems }, `Travel_Backup_${new Date().toISOString().slice(0,10)}.json`);
       showToast('Download de Viagem iniciado', 'success');
     };
 
@@ -1189,9 +1480,9 @@
       reader.onload = async (ev) => {
         try {
           const imported = JSON.parse(ev.target.result);
-          if (imported.locations && imported.items) {
-            travelLocations = imported.locations;
-            travelItems = normalizeItems(imported.items);
+          if (imported.categories && imported.items) {
+            travelCategories = imported.categories;
+            travelItems = normalizeTravelItems(imported.items);
             if (currentTab === 'travel') renderLocationsGrid();
             await saveData();
             toolsModal.classList.add('hidden');
@@ -1215,9 +1506,9 @@
       try {
         const parsed = JSON.parse(jsonTextarea.value);
         if (parsed.edcLocations) edcLocations = parsed.edcLocations;
-        if (parsed.edcItems) edcItems = normalizeItems(parsed.edcItems);
-        if (parsed.travelLocations) travelLocations = parsed.travelLocations;
-        if (parsed.travelItems) travelItems = normalizeItems(parsed.travelItems);
+        if (parsed.edcItems) edcItems = normalizeEdcItems(parsed.edcItems);
+        if (parsed.travelCategories) travelCategories = parsed.travelCategories;
+        if (parsed.travelItems) travelItems = normalizeTravelItems(parsed.travelItems);
         renderLocationsGrid();
         await saveData();
         toolsModal.classList.add('hidden');
