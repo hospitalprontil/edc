@@ -400,20 +400,31 @@
 
   <!-- MODAL: Export / Share / Backup -->
   <div id="exportModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl space-y-4 p-6">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl space-y-4 p-6 max-h-[90vh] flex flex-col">
       
-      <div class="flex items-center justify-between border-b border-zinc-800 pb-3">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-3 shrink-0">
         <h3 class="text-base font-bold text-zinc-100 flex items-center gap-2">
-          <i class="fa-solid fa-file-export text-emerald-400"></i>
-          Exportar & Backup de Dados
+          <i class="fa-solid fa-sliders text-emerald-400"></i>
+          Exportar & Edição em Massa
         </h3>
         <button id="closeExportModalBtn" class="text-zinc-400 hover:text-zinc-200">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <div class="space-y-3">
-        <p class="text-xs text-zinc-400">Você pode copiar a lista formatada em texto simples para enviar no WhatsApp / bloco de notas ou exportar o arquivo JSON de backup.</p>
+      <!-- Navigation Tabs inside Modal -->
+      <div class="flex border-b border-zinc-800 gap-2 shrink-0">
+        <button id="tabTextBtn" class="px-3.5 py-2 text-xs font-semibold rounded-t-lg bg-zinc-800 text-emerald-400 border-t border-x border-zinc-700 transition">
+          <i class="fa-solid fa-file-lines mr-1.5"></i>Texto / Backup
+        </button>
+        <button id="tabJsonEditBtn" class="px-3.5 py-2 text-xs font-semibold rounded-t-lg text-zinc-400 hover:text-zinc-200 transition">
+          <i class="fa-solid fa-code mr-1.5"></i>Editar JSON Diretamente
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Copy / Backup -->
+      <div id="modalTabTextContent" class="space-y-3 overflow-y-auto pr-1">
+        <p class="text-xs text-zinc-400">Copie a lista formatada para mensagens ou baixe/restaure o arquivo de backup `.json`.</p>
 
         <!-- Actions -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -427,7 +438,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-zinc-400 mb-1">Restaurar de Backup JSON:</label>
+          <label class="block text-xs font-semibold text-zinc-400 mb-1">Restaurar de arquivo JSON existente:</label>
           <div class="flex gap-2">
             <input type="file" id="importFileInput" accept=".json" class="hidden">
             <button id="triggerImportBtn" class="flex-1 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 px-3 py-2 rounded-lg text-xs font-medium text-left truncate">
@@ -438,12 +449,30 @@
 
         <div>
           <label class="block text-xs font-semibold text-zinc-400 mb-1">Pré-visualização da Lista em Texto:</label>
-          <textarea id="formattedTextPreview" readonly rows="8" 
+          <textarea id="formattedTextPreview" readonly rows="7" 
             class="w-full bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-xs font-mono text-zinc-300 select-all resize-none"></textarea>
         </div>
       </div>
 
-      <div class="flex justify-end pt-2 border-t border-zinc-800">
+      <div id="modalTabJsonEditContent" class="hidden space-y-3 overflow-y-auto pr-1 flex-1 flex flex-col">
+        <p class="text-xs text-zinc-400">Edite ou cole sua nova estrutura JSON abaixo e clique em <strong>"Salvar e Aplicar Esta Configuração"</strong> para atualizar todo o seu EDC instantaneamente.</p>
+        
+        <textarea id="jsonTextEditor" rows="10" 
+          class="w-full font-mono text-xs bg-zinc-950 text-emerald-400 border border-zinc-800 rounded-lg p-3 focus:outline-none focus:border-emerald-500 resize-y flex-1"
+          spellcheck="false" placeholder="Cole ou edite seu JSON aqui..."></textarea>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+          <button id="formatJsonBtn" type="button" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded-lg text-xs font-medium transition">
+            <i class="fa-solid fa-align-left mr-1"></i> Formatar / Indentar
+          </button>
+
+          <button id="applyJsonEditBtn" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition shadow-lg shadow-emerald-600/20">
+            <i class="fa-solid fa-check mr-1.5"></i> Salvar e Aplicar Esta Configuração
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-2 border-t border-zinc-800 shrink-0">
         <button id="closeExportModalBottomBtn" class="px-4 py-2 bg-zinc-800 text-zinc-300 rounded-lg text-xs font-medium">Fechar</button>
       </div>
 
@@ -1083,7 +1112,30 @@
 
     function openExportModal() {
       document.getElementById('formattedTextPreview').value = generateFormattedText();
+      document.getElementById('jsonTextEditor').value = JSON.stringify({ locations, items }, null, 2);
+      
+      // Default to text tab
+      switchModalTab('text');
       document.getElementById('exportModal').classList.remove('hidden');
+    }
+
+    function switchModalTab(tabName) {
+      const tabTextBtn = document.getElementById('tabTextBtn');
+      const tabJsonEditBtn = document.getElementById('tabJsonEditBtn');
+      const textContent = document.getElementById('modalTabTextContent');
+      const jsonContent = document.getElementById('modalTabJsonEditContent');
+
+      if (tabName === 'text') {
+        tabTextBtn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg bg-zinc-800 text-emerald-400 border-t border-x border-zinc-700 transition';
+        tabJsonEditBtn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg text-zinc-400 hover:text-zinc-200 transition';
+        textContent.classList.remove('hidden');
+        jsonContent.classList.add('hidden');
+      } else {
+        tabJsonEditBtn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg bg-zinc-800 text-emerald-400 border-t border-x border-zinc-700 transition';
+        tabTextBtn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg text-zinc-400 hover:text-zinc-200 transition';
+        textContent.classList.add('hidden');
+        jsonContent.classList.remove('hidden');
+      }
     }
 
     function closeExportModal() {
@@ -1295,6 +1347,9 @@
         document.getElementById('quickMoveModal').classList.add('hidden');
       });
 
+      document.getElementById('tabTextBtn').addEventListener('click', () => switchModalTab('text'));
+      document.getElementById('tabJsonEditBtn').addEventListener('click', () => switchModalTab('json'));
+
       // Export / Backup Modal Listeners
       document.getElementById('closeExportModalBtn').addEventListener('click', closeExportModal);
       document.getElementById('closeExportModalBottomBtn').addEventListener('click', closeExportModal);
@@ -1326,7 +1381,39 @@
         showToast('Backup JSON gerado!', 'success');
       });
 
-      // JSON Import
+      // Format JSON button
+      document.getElementById('formatJsonBtn').addEventListener('click', () => {
+        try {
+          const raw = document.getElementById('jsonTextEditor').value;
+          const parsed = JSON.parse(raw);
+          document.getElementById('jsonTextEditor').value = JSON.stringify(parsed, null, 2);
+          showToast('JSON formatado com sucesso!', 'success');
+        } catch (e) {
+          showToast('Erro de sintaxe no JSON. Verifique vírgulas ou chaves.', 'error');
+        }
+      });
+
+      // Apply Live JSON Edit
+      document.getElementById('applyJsonEditBtn').addEventListener('click', () => {
+        try {
+          const raw = document.getElementById('jsonTextEditor').value;
+          const parsed = JSON.parse(raw);
+
+          if (parsed && Array.isArray(parsed.locations) && Array.isArray(parsed.items)) {
+            locations = parsed.locations;
+            items = parsed.items;
+            saveData();
+            closeExportModal();
+            showToast(`Nova configuração salva com sucesso! (${items.length} itens)`, 'success');
+          } else {
+            showToast('O JSON precisa conter as propriedades "locations" e "items".', 'error');
+          }
+        } catch (e) {
+          showToast('Erro de sintaxe no JSON! Verifique a formatação.', 'error');
+        }
+      });
+
+      // JSON Import File Selection
       const importFileInput = document.getElementById('importFileInput');
       document.getElementById('triggerImportBtn').addEventListener('click', () => {
         importFileInput.click();
@@ -1340,18 +1427,20 @@
         reader.onload = (event) => {
           try {
             const importedData = JSON.parse(event.target.result);
-            if (importedData.locations && importedData.items) {
+            if (importedData.locations && Array.isArray(importedData.locations) && importedData.items && Array.isArray(importedData.items)) {
               locations = importedData.locations;
               items = importedData.items;
               saveData();
               closeExportModal();
-              showToast('Dados do EDC importados com sucesso!', 'success');
+              showToast(`Backup importado! ${items.length} itens em ${locations.length} locais.`, 'success');
             } else {
               showToast('Formato do arquivo de backup inválido.', 'error');
             }
           } catch (err) {
             showToast('Erro ao ler o arquivo JSON.', 'error');
           }
+          // Reset file input so re-selecting the same file triggers change event
+          importFileInput.value = '';
         };
         reader.readAsText(file);
       });
